@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: rosparam
+Description: Description of rosparam
+Version: 1.11.16
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: 

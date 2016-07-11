@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: image_view
+Description: Description of image_view
+Version: 1.12.16
+Cflags: -I/home/fengkaiwen/caros/ros/include
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: dynamic_reconfigure

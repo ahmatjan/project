@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: qt_gui_cpp
+Description: Description of qt_gui_cpp
+Version: 0.2.30
+Cflags: -I/home/fengkaiwen/caros/ros/include -I/usr/include
+Libs: -L/home/fengkaiwen/caros/ros/lib -lqt_gui_cpp -l:/usr/lib/x86_64-linux-gnu/libboost_filesystem.so -l:/usr/lib/x86_64-linux-gnu/libboost_system.so
+Requires: pluginlib

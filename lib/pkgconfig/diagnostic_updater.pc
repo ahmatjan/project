@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: diagnostic_updater
+Description: Description of diagnostic_updater
+Version: 1.8.9
+Cflags: -I/home/fengkaiwen/caros/ros/include
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: diagnostic_msgs roscpp std_msgs

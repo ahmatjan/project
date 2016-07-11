@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: stage_ros
+Description: Description of stage_ros
+Version: 1.7.5
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: 

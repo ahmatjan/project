@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: camera_calibration
+Description: Description of camera_calibration
+Version: 1.12.16
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: 

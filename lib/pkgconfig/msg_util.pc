@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: msg_util
+Description: Description of msg_util
+Version: 1.0.0
+Cflags: -I/home/fengkaiwen/caros/ros/include
+Libs: -L/home/fengkaiwen/caros/ros/lib -lmsg_util -lroscpp
+Requires: 

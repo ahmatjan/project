@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: diagnostic_analysis
+Description: Description of diagnostic_analysis
+Version: 1.8.9
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: diagnostic_msgs rosbag roslib

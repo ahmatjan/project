@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: convex_decomposition
+Description: Description of convex_decomposition
+Version: 0.1.10
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: 

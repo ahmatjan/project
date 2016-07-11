@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: rosout
+Description: Description of rosout
+Version: 1.11.16
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: 

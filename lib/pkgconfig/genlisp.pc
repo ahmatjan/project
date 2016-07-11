@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: genlisp
+Description: Description of genlisp
+Version: 0.4.15
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: genmsg

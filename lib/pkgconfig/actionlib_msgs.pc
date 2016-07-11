@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: actionlib_msgs
+Description: Description of actionlib_msgs
+Version: 1.11.9
+Cflags: -I/home/fengkaiwen/caros/ros/include
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: message_runtime std_msgs

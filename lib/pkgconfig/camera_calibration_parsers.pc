@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: camera_calibration_parsers
+Description: Description of camera_calibration_parsers
+Version: 1.11.10
+Cflags: -I/home/fengkaiwen/caros/ros/include
+Libs: -L/home/fengkaiwen/caros/ros/lib -lcamera_calibration_parsers
+Requires: sensor_msgs

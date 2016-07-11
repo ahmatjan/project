@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: rqt_tf_tree
+Description: Description of rqt_tf_tree
+Version: 0.4.3
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: 

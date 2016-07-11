@@ -1,0 +1,143 @@
+<launch>    
+    <arg name="bag" default=""/>
+    <arg name="velodyne64_calibration_file" default=""/> 
+    <arg name="velodyne16_calibration_file" default=""/>    
+    <arg name="extrinsics_velodyne64" default=""/>
+    <arg name="extrinsics_velodyne16_left" default=""/>
+    <arg name="extrinsics_velodyne16_right" default=""/>
+    <arg name="extrinsics_velodyne16_back" default=""/>    
+    <arg name="organized" default="false"/>
+    <arg name="min_range" default="0.9" />
+    <arg name="max_range" default="70.0" />
+    <arg name="imu_sync" default="xsens" />
+    <arg name="pcd_folder" default="/home/work/pcd_files"/>
+
+    <include file="$(find velodyne_pointcloud)/launch/nodelet_manager.launch"></include>
+  
+    <include file="$(find velodyne_pointcloud)/launch/rosbag_replay.launch">
+        <arg name="rate" default="1" />
+        <arg name="start" default="0" />
+        <arg name="bag" default="$(arg bag)"/>
+    </include>
+  
+    <!--  HDL64E --> 
+    <!-- start cloud nodelet using test calibration file -->
+    <include file="$(find velodyne_pointcloud)/launch/cloud_nodelet.launch">
+        <arg name="model" default="64E_S2" />
+        <arg name="calibration" default="$(arg velodyne64_calibration_file)" />
+        <arg name="organized" default="$(arg organized)"/>
+        <arg name="min_range" default="$(arg min_range)" />
+        <arg name="max_range" default="$(arg max_range)" />
+        <arg name="imu_sync" default="$(arg imu_sync)" />
+        <arg name="topic_pointcloud" default="/sensor/velodyne64/PointCloud2"/>
+        <arg name="topic_packets" default="/sensor/velodyne64/VelodyneScan"/>
+        <arg name="node_name" value="sensor_velodyne64_points"/>
+    </include>
+  
+    <!-- start compensator nodelet -->
+    <include file="$(find velodyne_pointcloud)/launch/compensator_nodelet.launch">
+        <arg name="node_name" value="sensor_velodyne64_compensator"/>
+        <arg name="child_frame_id" value="velodyne64"/>
+        <arg name="topic_pointcloud" value="/sensor/velodyne64/PointCloud2"/>
+        <arg name="topic_compensated_pointcloud" value="/sensor/velodyne64/compensator/PointCloud2"/>
+    </include>
+  
+    <!--  HDL16 Left -->
+    <!-- start cloud nodelet using test calibration file -->
+    <include file="$(find velodyne_pointcloud)/launch/cloud_nodelet.launch">
+        <arg name="model" default="VLP16" />
+        <arg name="calibration" default="$(arg velodyne16_calibration_file)" />
+        <arg name="organized" default="$(arg organized)"/>
+        <arg name="min_range" default="$(arg min_range)" />
+        <arg name="max_range" default="$(arg max_range)" />
+        <arg name="imu_sync" default="$(arg imu_sync)" />
+        <arg name="topic_pointcloud" default="/sensor/velodyne16/left/PointCloud2"/>
+        <arg name="topic_packets" default="/sensor/velodyne16/left/VelodyneScan"/>
+        <arg name="node_name" value="sensor_velodyne16_left_points"/>
+    </include>
+  
+    <!-- start compensator nodelet -->
+    <include file="$(find velodyne_pointcloud)/launch/compensator_nodelet.launch">
+        <arg name="child_frame_id" value="velodyne16_left"/>
+        <arg name="node_name" value="sensor_velodyne16_left_compensator"/>
+        <arg name="topic_pointcloud" value="/sensor/velodyne16/left/PointCloud2"/>
+        <arg name="topic_compensated_pointcloud" value="/sensor/velodyne16/left/compensator/PointCloud2"/>
+    </include>
+  
+    <!--  HDL16 Right -->
+    <!-- start cloud nodelet using test calibration file -->
+    <include file="$(find velodyne_pointcloud)/launch/cloud_nodelet.launch">
+        <arg name="model" default="VLP16" />
+        <arg name="calibration" default="$(arg velodyne16_calibration_file)" />
+        <arg name="organized" default="$(arg organized)"/>
+        <arg name="min_range" default="$(arg min_range)" />
+        <arg name="max_range" default="$(arg max_range)" />
+        <arg name="imu_sync" default="$(arg imu_sync)" />
+        <arg name="topic_pointcloud" default="/sensor/velodyne16/right/PointCloud2"/>
+        <arg name="topic_packets" default="/sensor/velodyne16/right/VelodyneScan"/>
+        <arg name="node_name" value="sensor_velodyne16_right_points"/>
+    </include>
+  
+    <!-- start compensator nodelet -->
+    <include file="$(find velodyne_pointcloud)/launch/compensator_nodelet.launch">
+        <arg name="child_frame_id" value="velodyne16_right"/>
+        <arg name="node_name" value="sensor_velodyne16_right_compensator"/>
+        <arg name="topic_pointcloud" value="/sensor/velodyne16/right/PointCloud2"/>
+        <arg name="topic_compensated_pointcloud" value="/sensor/velodyne16/right/compensator/PointCloud2"/>
+    </include>
+  
+    <!--  HDL16 Back -->
+    <!-- start cloud nodelet using test calibration file -->
+    <include file="$(find velodyne_pointcloud)/launch/cloud_nodelet.launch">
+        <arg name="model" default="VLP16" />
+        <arg name="calibration" default="$(arg velodyne16_calibration_file)" />
+        <arg name="organized" default="$(arg organized)"/>
+        <arg name="min_range" default="$(arg min_range)" />
+        <arg name="max_range" default="$(arg max_range)" />
+        <arg name="imu_sync" default="$(arg imu_sync)" />
+        <arg name="topic_pointcloud" default="/sensor/velodyne16/back/PointCloud2"/>
+        <arg name="topic_packets" default="/sensor/velodyne16/back/VelodyneScan"/>
+        <arg name="node_name" value="sensor_velodyne16_back_points"/>
+    </include>
+  
+    <!-- start compensator nodelet -->
+    <include file="$(find velodyne_pointcloud)/launch/compensator_nodelet.launch">
+        <arg name="child_frame_id" value="velodyne16_back"/>
+        <arg name="node_name" value="sensor_velodyne16_back_compensator"/>
+        <arg name="topic_pointcloud" value="/sensor/velodyne16/back/PointCloud2"/>
+        <arg name="topic_compensated_pointcloud" value="/sensor/velodyne16/back/compensator/PointCloud2"/>
+    </include>
+  
+    <include file="$(find velodyne_pointcloud)/launch/fusion_nodelet.launch">
+        <arg name="node_name" value="sensor_velodyne_fusion"/>
+        <arg name="topic_pointclouds" value="/sensor/velodyne64/compensator/PointCloud2,/sensor/velodyne16/back/compensator/PointCloud2,/sensor/velodyne16/left/compensator/PointCloud2,/sensor/velodyne16/right/compensator/PointCloud2"/>
+        <arg name="topic_fused_pointcloud" value="/sensor/velodyne/fusion/PointCloud2"/>
+    </include>
+  
+    <param name="proj4_text" value="+proj=utm +zone=50 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs " />
+  
+    <node pkg="novatel_preprocess" type="extrinsics_broadcaster.py" args="$(arg extrinsics_velodyne64)" name="static_transform_velodyne64" />
+    <node pkg="novatel_preprocess" type="extrinsics_broadcaster.py" args="$(arg extrinsics_velodyne16_left)" name="static_transform_velodyne16_left" />
+    <node pkg="novatel_preprocess" type="extrinsics_broadcaster.py" args="$(arg extrinsics_velodyne16_right)" name="static_transform_velodyne16_right" />
+    <node pkg="novatel_preprocess" type="extrinsics_broadcaster.py" args="$(arg extrinsics_velodyne16_back)" name="static_transform_velodyne16_back" />
+    
+    <node pkg="novatel_preprocess" type="novatel_odometry_republisher" name="novatel_odometry_republisher_node" output="screen">
+        <param name="topic_inspva" value="/sensor/novatel/inspva"/>
+        <param name="topic_odometry" value="/sensor/novatel/Odometry"/>
+    </node>
+
+    <node pkg="novatel_preprocess" type="inspva_broadcaster" name="inspva_broadcaster_node" output="screen">
+        <param name="topic_odometry" value="/sensor/novatel/Odometry"/>
+    </node>
+    
+    <include file="$(find velodyne_pointcloud)/launch/pcd_exporter_nodelet.launch">
+        <arg name="pcd_folder" default="$(arg pcd_folder)"/>
+        <arg name="skip_static_frames" default="false"/>
+        <arg name="child_frame_id" value="velodyne"/>
+        <arg name="stamp_file" default="$(arg pcd_folder)/stamp.txt"/>
+        <arg name="pose_file" default="$(arg pcd_folder)/pose.txt"/>
+        <arg name="queue_size" default="10"/>
+        <arg name="topic_pointcloud" default="/sensor/velodyne/fusion/PointCloud2"/>
+    </include>
+
+</launch>

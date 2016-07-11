@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: rosbag_storage
+Description: Description of rosbag_storage
+Version: 1.11.16
+Cflags: -I/home/fengkaiwen/caros/ros/include -I/usr/include
+Libs: -L/home/fengkaiwen/caros/ros/lib -lrosbag_storage -l:/home/fengkaiwen/caros/ros/lib/libconsole_bridge.so -l:/usr/lib/x86_64-linux-gnu/libboost_date_time.so -l:/usr/lib/x86_64-linux-gnu/libboost_filesystem.so -l:/usr/lib/x86_64-linux-gnu/libboost_program_options.so -l:/usr/lib/x86_64-linux-gnu/libboost_regex.so
+Requires: roslz4

@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: rqt_gui
+Description: Description of rqt_gui
+Version: 0.2.14
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: 

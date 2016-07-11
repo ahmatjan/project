@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: rosmake
+Description: Description of rosmake
+Version: 1.11.12
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: 

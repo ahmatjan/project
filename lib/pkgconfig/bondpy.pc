@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: bondpy
+Description: Description of bondpy
+Version: 1.7.16
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: 

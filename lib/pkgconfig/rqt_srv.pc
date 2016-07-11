@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: rqt_srv
+Description: Description of rqt_srv
+Version: 0.3.13
+Cflags: 
+Libs: -L/home/fengkaiwen/caros/ros/lib 
+Requires: 

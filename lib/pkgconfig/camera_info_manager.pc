@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: camera_info_manager
+Description: Description of camera_info_manager
+Version: 1.11.10
+Cflags: -I/home/fengkaiwen/caros/ros/include -I/usr/include
+Libs: -L/home/fengkaiwen/caros/ros/lib -lcamera_info_manager
+Requires: roscpp sensor_msgs

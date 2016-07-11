@@ -1,0 +1,8 @@
+prefix=/home/fengkaiwen/caros/ros
+
+Name: collada_urdf
+Description: Description of collada_urdf
+Version: 1.11.10
+Cflags: -I/home/fengkaiwen/caros/ros/include
+Libs: -L/home/fengkaiwen/caros/ros/lib -lcollada_urdf
+Requires: angles collada_parser resource_retriever urdf geometric_shapes tf
