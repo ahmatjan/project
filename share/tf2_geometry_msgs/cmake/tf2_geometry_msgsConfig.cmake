@@ -67,14 +67,14 @@ set(tf2_geometry_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(tf2_geometry_msgs_SOURCE_PREFIX /home/fengkaiwen/ros/geometry2/tf2_geometry_msgs)
-  set(tf2_geometry_msgs_DEVEL_PREFIX /home/fengkaiwen/devel_isolated/tf2_geometry_msgs)
+  set(tf2_geometry_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/geometry2/tf2_geometry_msgs)
+  set(tf2_geometry_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/tf2_geometry_msgs)
   set(tf2_geometry_msgs_INSTALL_PREFIX "")
   set(tf2_geometry_msgs_PREFIX ${tf2_geometry_msgs_DEVEL_PREFIX})
 else()
   set(tf2_geometry_msgs_SOURCE_PREFIX "")
   set(tf2_geometry_msgs_DEVEL_PREFIX "")
-  set(tf2_geometry_msgs_INSTALL_PREFIX /home/fengkaiwen/caros/ros)
+  set(tf2_geometry_msgs_INSTALL_PREFIX /home/caros/ros)
   set(tf2_geometry_msgs_PREFIX ${tf2_geometry_msgs_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(tf2_geometry_msgs_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "include;/usr/include/eigen3;/home/fengkaiwen/caros/ros/include " STREQUAL " ")
+if(NOT "include;/usr/include/eigen3;/home/caros/ros/include " STREQUAL " ")
   set(tf2_geometry_msgs_INCLUDE_DIRS "")
-  set(_include_dirs "include;/usr/include/eigen3;/home/fengkaiwen/caros/ros/include")
+  set(_include_dirs "include;/usr/include/eigen3;/home/caros/ros/include")
   foreach(idir ${_include_dirs})
     if(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})
       set(include ${idir})
@@ -103,13 +103,13 @@ if(NOT "include;/usr/include/eigen3;/home/fengkaiwen/caros/ros/include " STREQUA
         message(FATAL_ERROR "Project 'tf2_geometry_msgs' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  Ask the maintainer 'Tully Foote <tfoote@osrfoundation.org>' to fix it.")
       endif()
     else()
-      message(FATAL_ERROR "Project 'tf2_geometry_msgs' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/fengkaiwen/caros/ros/${idir}'.  Ask the maintainer 'Tully Foote <tfoote@osrfoundation.org>' to fix it.")
+      message(FATAL_ERROR "Project 'tf2_geometry_msgs' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/caros/ros/${idir}'.  Ask the maintainer 'Tully Foote <tfoote@osrfoundation.org>' to fix it.")
     endif()
     _list_append_unique(tf2_geometry_msgs_INCLUDE_DIRS ${include})
   endforeach()
 endif()
 
-set(libraries "/home/fengkaiwen/caros/ros/lib/liborocos-kdl.so;/home/fengkaiwen/caros/ros/lib/liborocos-kdl.so.1.3.0")
+set(libraries "/home/caros/ros/lib/liborocos-kdl.so;/home/caros/ros/lib/liborocos-kdl.so.1.3.0")
 foreach(library ${libraries})
   # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
@@ -122,7 +122,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/fengkaiwen/caros/ros/lib;/home/fengkaiwen/caros/ros/lib)
+    foreach(path /home/caros/ros/lib;/home/caros/ros/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

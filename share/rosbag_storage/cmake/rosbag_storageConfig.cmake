@@ -67,14 +67,14 @@ set(rosbag_storage_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosbag_storage_SOURCE_PREFIX /home/fengkaiwen/ros/ros_comm/rosbag_storage)
-  set(rosbag_storage_DEVEL_PREFIX /home/fengkaiwen/devel_isolated/rosbag_storage)
+  set(rosbag_storage_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/rosbag_storage)
+  set(rosbag_storage_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rosbag_storage)
   set(rosbag_storage_INSTALL_PREFIX "")
   set(rosbag_storage_PREFIX ${rosbag_storage_DEVEL_PREFIX})
 else()
   set(rosbag_storage_SOURCE_PREFIX "")
   set(rosbag_storage_DEVEL_PREFIX "")
-  set(rosbag_storage_INSTALL_PREFIX /home/fengkaiwen/caros/ros)
+  set(rosbag_storage_INSTALL_PREFIX /home/caros/ros)
   set(rosbag_storage_PREFIX ${rosbag_storage_INSTALL_PREFIX})
 endif()
 
@@ -103,13 +103,13 @@ if(NOT "include;/usr/include " STREQUAL " ")
         message(FATAL_ERROR "Project 'rosbag_storage' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  Ask the maintainer 'Dirk Thomas <dthomas@osrfoundation.org>' to fix it.")
       endif()
     else()
-      message(FATAL_ERROR "Project 'rosbag_storage' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/fengkaiwen/caros/ros/${idir}'.  Ask the maintainer 'Dirk Thomas <dthomas@osrfoundation.org>' to fix it.")
+      message(FATAL_ERROR "Project 'rosbag_storage' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/caros/ros/${idir}'.  Ask the maintainer 'Dirk Thomas <dthomas@osrfoundation.org>' to fix it.")
     endif()
     _list_append_unique(rosbag_storage_INCLUDE_DIRS ${include})
   endforeach()
 endif()
 
-set(libraries "rosbag_storage;/home/fengkaiwen/caros/ros/lib/libconsole_bridge.so;/usr/lib/x86_64-linux-gnu/libboost_date_time.so;/usr/lib/x86_64-linux-gnu/libboost_filesystem.so;/usr/lib/x86_64-linux-gnu/libboost_program_options.so;/usr/lib/x86_64-linux-gnu/libboost_regex.so")
+set(libraries "rosbag_storage;/home/caros/ros/lib/libconsole_bridge.so;/usr/lib/x86_64-linux-gnu/libboost_date_time.so;/usr/lib/x86_64-linux-gnu/libboost_filesystem.so;/usr/lib/x86_64-linux-gnu/libboost_program_options.so;/usr/lib/x86_64-linux-gnu/libboost_regex.so")
 foreach(library ${libraries})
   # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
@@ -122,7 +122,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/fengkaiwen/caros/ros/lib;/home/fengkaiwen/caros/ros/lib)
+    foreach(path /home/caros/ros/lib;/home/caros/ros/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

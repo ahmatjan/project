@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: rqt_image_view
 Description: Description of rqt_image_view
 Version: 0.3.13
-Cflags: -I/home/fengkaiwen/caros/ros/include
-Libs: -L/home/fengkaiwen/caros/ros/lib -lrqt_image_view
+Cflags: -I/home/caros/ros/include
+Libs: -L/home/caros/ros/lib -lrqt_image_view
 Requires: rqt_gui rqt_gui_cpp image_transport sensor_msgs cv_bridge

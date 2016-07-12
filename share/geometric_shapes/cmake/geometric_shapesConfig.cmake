@@ -67,14 +67,14 @@ set(geometric_shapes_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(geometric_shapes_SOURCE_PREFIX /home/fengkaiwen/ros/geometric_shapes)
-  set(geometric_shapes_DEVEL_PREFIX /home/fengkaiwen/devel_isolated/geometric_shapes)
+  set(geometric_shapes_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/geometric_shapes)
+  set(geometric_shapes_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/geometric_shapes)
   set(geometric_shapes_INSTALL_PREFIX "")
   set(geometric_shapes_PREFIX ${geometric_shapes_DEVEL_PREFIX})
 else()
   set(geometric_shapes_SOURCE_PREFIX "")
   set(geometric_shapes_DEVEL_PREFIX "")
-  set(geometric_shapes_INSTALL_PREFIX /home/fengkaiwen/caros/ros)
+  set(geometric_shapes_INSTALL_PREFIX /home/caros/ros)
   set(geometric_shapes_PREFIX ${geometric_shapes_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(geometric_shapes_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "include;/home/fengkaiwen/caros/ros/include;/usr/include/eigen3;/usr/include " STREQUAL " ")
+if(NOT "include;/home/caros/ros/include;/usr/include/eigen3;/usr/include " STREQUAL " ")
   set(geometric_shapes_INCLUDE_DIRS "")
-  set(_include_dirs "include;/home/fengkaiwen/caros/ros/include;/usr/include/eigen3;/usr/include")
+  set(_include_dirs "include;/home/caros/ros/include;/usr/include/eigen3;/usr/include")
   foreach(idir ${_include_dirs})
     if(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})
       set(include ${idir})
@@ -103,13 +103,13 @@ if(NOT "include;/home/fengkaiwen/caros/ros/include;/usr/include/eigen3;/usr/incl
         message(FATAL_ERROR "Project 'geometric_shapes' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  Ask the maintainer 'Ioan Sucan <isucan@google.com>, Dave Coleman <dave@dav.ee>' to fix it.")
       endif()
     else()
-      message(FATAL_ERROR "Project 'geometric_shapes' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/fengkaiwen/caros/ros/${idir}'.  Ask the maintainer 'Ioan Sucan <isucan@google.com>, Dave Coleman <dave@dav.ee>' to fix it.")
+      message(FATAL_ERROR "Project 'geometric_shapes' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/caros/ros/${idir}'.  Ask the maintainer 'Ioan Sucan <isucan@google.com>, Dave Coleman <dave@dav.ee>' to fix it.")
     endif()
     _list_append_unique(geometric_shapes_INCLUDE_DIRS ${include})
   endforeach()
 endif()
 
-set(libraries "geometric_shapes;/home/fengkaiwen/caros/ros/lib/liboctomap.so;/home/fengkaiwen/caros/ros/lib/liboctomath.so;/home/fengkaiwen/caros/ros/lib/libconsole_bridge.so")
+set(libraries "geometric_shapes;/home/caros/ros/lib/liboctomap.so;/home/caros/ros/lib/liboctomath.so;/home/caros/ros/lib/libconsole_bridge.so")
 foreach(library ${libraries})
   # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
@@ -122,7 +122,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/fengkaiwen/caros/ros/lib;/home/fengkaiwen/caros/ros/lib)
+    foreach(path /home/caros/ros/lib;/home/caros/ros/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

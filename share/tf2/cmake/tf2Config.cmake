@@ -67,14 +67,14 @@ set(tf2_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(tf2_SOURCE_PREFIX /home/fengkaiwen/ros/geometry2/tf2)
-  set(tf2_DEVEL_PREFIX /home/fengkaiwen/devel_isolated/tf2)
+  set(tf2_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/geometry2/tf2)
+  set(tf2_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/tf2)
   set(tf2_INSTALL_PREFIX "")
   set(tf2_PREFIX ${tf2_DEVEL_PREFIX})
 else()
   set(tf2_SOURCE_PREFIX "")
   set(tf2_DEVEL_PREFIX "")
-  set(tf2_INSTALL_PREFIX /home/fengkaiwen/caros/ros)
+  set(tf2_INSTALL_PREFIX /home/caros/ros)
   set(tf2_PREFIX ${tf2_INSTALL_PREFIX})
 endif()
 
@@ -103,13 +103,13 @@ if(NOT "include;/usr/include " STREQUAL " ")
         message(FATAL_ERROR "Project 'tf2' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  Ask the maintainer 'Tully Foote <tfoote@osrfoundation.org>' to fix it.")
       endif()
     else()
-      message(FATAL_ERROR "Project 'tf2' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/fengkaiwen/caros/ros/${idir}'.  Ask the maintainer 'Tully Foote <tfoote@osrfoundation.org>' to fix it.")
+      message(FATAL_ERROR "Project 'tf2' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/caros/ros/${idir}'.  Ask the maintainer 'Tully Foote <tfoote@osrfoundation.org>' to fix it.")
     endif()
     _list_append_unique(tf2_INCLUDE_DIRS ${include})
   endforeach()
 endif()
 
-set(libraries "tf2;/home/fengkaiwen/caros/ros/lib/libconsole_bridge.so")
+set(libraries "tf2;/home/caros/ros/lib/libconsole_bridge.so")
 foreach(library ${libraries})
   # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
@@ -122,7 +122,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/fengkaiwen/caros/ros/lib;/home/fengkaiwen/caros/ros/lib)
+    foreach(path /home/caros/ros/lib;/home/caros/ros/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

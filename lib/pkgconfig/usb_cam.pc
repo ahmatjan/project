@@ -1,0 +1,8 @@
+prefix=/home/caros/ros
+
+Name: usb_cam
+Description: Description of usb_cam
+Version: 0.3.4
+Cflags: -I/home/caros/ros/include
+Libs: -L/home/caros/ros/lib -lusb_cam
+Requires: time_util

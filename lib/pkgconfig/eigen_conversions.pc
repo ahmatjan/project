@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: eigen_conversions
 Description: Description of eigen_conversions
 Version: 1.11.8
-Cflags: -I/home/fengkaiwen/caros/ros/include -I/usr/include/eigen3
-Libs: -L/home/fengkaiwen/caros/ros/lib -leigen_conversions -l:/home/fengkaiwen/caros/ros/lib/liborocos-kdl.so.1.3.0
+Cflags: -I/home/caros/ros/include -I/usr/include/eigen3
+Libs: -L/home/caros/ros/lib -leigen_conversions -l:/home/caros/ros/lib/liborocos-kdl.so.1.3.0
 Requires: geometry_msgs std_msgs

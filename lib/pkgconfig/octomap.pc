@@ -1,4 +1,4 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 libdir=${prefix}/lib
 includedir=${prefix}/include
 
