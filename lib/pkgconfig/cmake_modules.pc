@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: cmake_modules
 Description: Description of cmake_modules
 Version: 0.3.3
 Cflags: 
-Libs: -L/home/fengkaiwen/caros/ros/lib 
+Libs: -L/home/caros/ros/lib 
 Requires: 

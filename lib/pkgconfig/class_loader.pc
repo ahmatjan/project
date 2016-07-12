@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: class_loader
 Description: Description of class_loader
 Version: 0.3.3
-Cflags: -I/home/fengkaiwen/caros/ros/include -I/usr/include
-Libs: -L/home/fengkaiwen/caros/ros/lib -lclass_loader -l:/usr/lib/x86_64-linux-gnu/libboost_thread.so -l:/usr/lib/x86_64-linux-gnu/libboost_system.so -l:/usr/lib/x86_64-linux-gnu/libpthread.so -l:/usr/lib/libPocoFoundation.so -ldl -l:/home/fengkaiwen/caros/ros/lib/libconsole_bridge.so
+Cflags: -I/home/caros/ros/include -I/usr/include
+Libs: -L/home/caros/ros/lib -lclass_loader -l:/usr/lib/x86_64-linux-gnu/libboost_thread.so -l:/usr/lib/x86_64-linux-gnu/libboost_system.so -l:/usr/lib/x86_64-linux-gnu/libpthread.so -l:/usr/lib/libPocoFoundation.so -ldl -l:/home/caros/ros/lib/libconsole_bridge.so
 Requires: 

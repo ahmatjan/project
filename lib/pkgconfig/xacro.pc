@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: xacro
 Description: Description of xacro
 Version: 1.9.5
 Cflags: 
-Libs: -L/home/fengkaiwen/caros/ros/lib 
+Libs: -L/home/caros/ros/lib 
 Requires: 

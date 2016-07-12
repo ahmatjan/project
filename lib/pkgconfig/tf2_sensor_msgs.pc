@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: tf2_sensor_msgs
 Description: Description of tf2_sensor_msgs
 Version: 0.5.13
-Cflags: -I/home/fengkaiwen/caros/ros/include -I/usr/include/eigen3
-Libs: -L/home/fengkaiwen/caros/ros/lib 
+Cflags: -I/home/caros/ros/include -I/usr/include/eigen3
+Libs: -L/home/caros/ros/lib 
 Requires: sensor_msgs tf2_ros tf2

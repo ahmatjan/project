@@ -1,0 +1,11 @@
+<launch>
+  <arg name="model" default="64E_S2"/>
+  <arg name="topic_packets" value="/velodyne_packets"/>
+  <arg name="topic_packets_legacy" value="/dusensor/velodyne/packets"/>
+  <node pkg="nodelet" type="nodelet" name="scan_msg_transform_nodelet"
+        args="load velodyne_pointcloud/ScanMsgTransformNodelet velodyne_nodelet_manager" output="screen">
+        <param name="model" value="$(arg model)"/>
+        <param name="topic_packets" value="$(arg topic_packets)"/>
+        <param name="topic_packets_legacy" value="$(arg topic_packets_legacy)"/>
+  </node>
+</launch>

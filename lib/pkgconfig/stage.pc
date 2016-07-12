@@ -1,4 +1,4 @@
-prefix="/home/fengkaiwen/caros/ros"
+prefix="/home/caros/ros"
 
 Name: stage
 Description: Stage robot simulation program, C++ library and Player plugin - part of the Player Project (http://playerstage.org)

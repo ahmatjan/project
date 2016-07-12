@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: bondcpp
 Description: Description of bondcpp
 Version: 1.7.16
-Cflags: -I/home/fengkaiwen/caros/ros/include -I/usr/include
-Libs: -L/home/fengkaiwen/caros/ros/lib -lbondcpp -l:/usr/lib/x86_64-linux-gnu/libuuid.so
+Cflags: -I/home/caros/ros/include -I/usr/include
+Libs: -L/home/caros/ros/lib -lbondcpp -l:/usr/lib/x86_64-linux-gnu/libuuid.so
 Requires: bond roscpp smclib

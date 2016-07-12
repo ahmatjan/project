@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: tf
 Description: Description of tf
 Version: 1.11.8
-Cflags: -I/home/fengkaiwen/caros/ros/include
-Libs: -L/home/fengkaiwen/caros/ros/lib -ltf
+Cflags: -I/home/caros/ros/include
+Libs: -L/home/caros/ros/lib -ltf
 Requires: geometry_msgs message_filters message_runtime roscpp sensor_msgs std_msgs tf2_ros rosconsole

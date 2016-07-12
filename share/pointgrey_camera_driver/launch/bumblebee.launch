@@ -1,0 +1,37 @@
+<launch>
+  <!-- Determine this using rosrun pointgrey_camera_driver list_cameras.
+       If not specified, defaults to first camera found. -->
+  <arg name="bumblebee_serial" default="15361984" />
+  <arg name="calibrated" default="0" />
+
+  <group ns="camera">
+    <node pkg="nodelet" type="nodelet" name="bumblebee_nodelet_manager" args="manager" />
+
+    <node pkg="nodelet" type="nodelet" name="bumblebee_nodelet"
+          args="load pointgrey_camera_driver/PointGreyStereoCameraNodelet bumblebee_nodelet_manager" >
+      <param name="frame_id" value="bumblebee" />
+      <param name="frame_rate" value="16" />
+      <param name="first_namespace" value="bumblebee/left" />
+      <param name="second_namespace" value="bumblebee/right" />
+      <param name="format7_color_coding" value="raw16" />
+      <param name="serial" value="$(arg bumblebee_serial)" />
+      <param name="cam_type" value="0" />
+      <param name="need_rectify_image" value="true" />
+      <!-- Baidu hardware trigger frequency, frame_rate should match this. -->
+      <param name="trigger_freq" value="16" />
+      <!-- Timestamp mode: 0 - host time, 1 - Baidu HW trigger time. -->
+      <param name="timestamp_mode" value="1" />
+      <!-- Max shutter time in milli-seconds, 0: use default based on camera type. -->
+      <param name="max_shutter_ms" value="0" />
+      <!-- Build shutter time map (relative -> absolute) at runtime: 0 - no, use pre-built,
+        1 - yes, build it at run time. -->
+      <param name="build_shutter_map" value="0" />
+
+      <!-- Use the camera_calibration package to create these files -->
+      <param name="camera_info_url" if="$(arg calibrated)"
+             value="file://$(env HOME)/.ros/camera_info/$(arg bumblebee_serial).yaml" />
+      <param name="second_info_url" if="$(arg calibrated)"
+             value="file://$(env HOME)/.ros/camera_info/$(arg bumblebee_serial)_right.yaml" />
+    </node>
+  </group>
+</launch>

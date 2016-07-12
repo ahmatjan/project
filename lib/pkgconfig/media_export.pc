@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: media_export
 Description: Description of media_export
 Version: 0.2.0
 Cflags: 
-Libs: -L/home/fengkaiwen/caros/ros/lib 
+Libs: -L/home/caros/ros/lib 
 Requires: 

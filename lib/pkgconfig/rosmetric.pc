@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: rosmetric
 Description: Description of rosmetric
 Version: 1.0.0
-Cflags: -I/home/fengkaiwen/caros/ros/include -I/usr/include
-Libs: -L/home/fengkaiwen/caros/ros/lib -l:/home/fengkaiwen/caros/ros/lib/libtopic_tools.so -l:/home/fengkaiwen/caros/ros/lib/libroscpp.so -l:/home/fengkaiwen/caros/ros/lib/librosconsole.so -l:/home/fengkaiwen/caros/ros/lib/librosconsole_log4cxx.so -l:/home/fengkaiwen/caros/ros/lib/librosconsole_backend_interface.so -l:/usr/lib/liblog4cxx.so -l:/home/fengkaiwen/caros/ros/lib/libroscpp_serialization.so -l:/home/fengkaiwen/caros/ros/lib/librostime.so -l:/home/fengkaiwen/caros/ros/lib/libxmlrpcpp.so -l:/home/fengkaiwen/caros/ros/lib/libcpp_common.so -l:/usr/lib/x86_64-linux-gnu/libboost_thread.so -l:/usr/lib/x86_64-linux-gnu/libpthread.so -l:/home/fengkaiwen/caros/ros/lib/libconsole_bridge.so -lroscpp -lpthread -l:/usr/lib/x86_64-linux-gnu/libboost_date_time.so -l:/usr/lib/x86_64-linux-gnu/libboost_regex.so -l:/usr/lib/x86_64-linux-gnu/libboost_program_options.so -l:/usr/lib/x86_64-linux-gnu/libboost_filesystem.so -l:/usr/lib/x86_64-linux-gnu/libboost_signals.so -l:/usr/lib/x86_64-linux-gnu/libboost_system.so
+Cflags: -I/home/caros/ros/include -I/usr/include
+Libs: -L/home/caros/ros/lib -l:/home/caros/ros/lib/libtopic_tools.so -l:/home/caros/ros/lib/libroscpp.so -l:/home/caros/ros/lib/librosconsole.so -l:/home/caros/ros/lib/librosconsole_log4cxx.so -l:/home/caros/ros/lib/librosconsole_backend_interface.so -l:/usr/lib/liblog4cxx.so -l:/home/caros/ros/lib/libroscpp_serialization.so -l:/home/caros/ros/lib/librostime.so -l:/home/caros/ros/lib/libxmlrpcpp.so -l:/home/caros/ros/lib/libcpp_common.so -l:/usr/lib/x86_64-linux-gnu/libboost_thread.so -l:/usr/lib/x86_64-linux-gnu/libpthread.so -l:/home/caros/ros/lib/libconsole_bridge.so -lroscpp -lpthread -l:/usr/lib/x86_64-linux-gnu/libboost_date_time.so -l:/usr/lib/x86_64-linux-gnu/libboost_regex.so -l:/usr/lib/x86_64-linux-gnu/libboost_program_options.so -l:/usr/lib/x86_64-linux-gnu/libboost_filesystem.so -l:/usr/lib/x86_64-linux-gnu/libboost_signals.so -l:/usr/lib/x86_64-linux-gnu/libboost_system.so
 Requires: roscpp metric_msgs message_runtime

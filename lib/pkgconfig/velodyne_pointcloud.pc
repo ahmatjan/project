@@ -1,0 +1,8 @@
+prefix=/home/caros/ros
+
+Name: velodyne_pointcloud
+Description: Description of velodyne_pointcloud
+Version: 1.0.0
+Cflags: -I/home/caros/ros/include
+Libs: -L/home/caros/ros/lib -lvelodyne_rawdata
+Requires: angles nodelet pcl_ros roscpp roslib sensor_msgs velodyne_driver velodyne_msgs eigen_conversions image_transport cv_bridge novatel_preprocess time_util math_util msg_util

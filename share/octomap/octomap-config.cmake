@@ -23,12 +23,12 @@
 # ===================================================================================
 
  
-set(OCTOMAP_INCLUDE_DIRS "/home/fengkaiwen/caros/ros/include")
-set(OCTOMAP_LIBRARY_DIRS "/home/fengkaiwen/caros/ros/lib")
+set(OCTOMAP_INCLUDE_DIRS "/home/caros/ros/include")
+set(OCTOMAP_LIBRARY_DIRS "/home/caros/ros/lib")
  
 
 # Set library names as absolute paths:
 set(OCTOMAP_LIBRARIES
-  "/home/fengkaiwen/caros/ros/lib/liboctomap.so"
-  "/home/fengkaiwen/caros/ros/lib/liboctomath.so"
+  "/home/caros/ros/lib/liboctomap.so"
+  "/home/caros/ros/lib/liboctomath.so"
 )

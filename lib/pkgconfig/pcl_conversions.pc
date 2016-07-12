@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: pcl_conversions
 Description: Description of pcl_conversions
 Version: 0.2.1
-Cflags: -I/home/fengkaiwen/caros/ros/include -I/usr/include/eigen3 -I/usr/include -I/usr/include/pcl-1.7
-Libs: -L/home/fengkaiwen/caros/ros/lib 
+Cflags: -I/home/caros/ros/include -I/usr/include/eigen3 -I/usr/include -I/usr/include/pcl-1.7
+Libs: -L/home/caros/ros/lib 
 Requires: pcl_msgs roscpp sensor_msgs std_msgs

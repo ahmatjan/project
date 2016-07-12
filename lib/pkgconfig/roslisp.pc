@@ -1,8 +1,8 @@
-prefix=/home/fengkaiwen/caros/ros
+prefix=/home/caros/ros
 
 Name: roslisp
 Description: Description of roslisp
 Version: 1.9.20
 Cflags: 
-Libs: -L/home/fengkaiwen/caros/ros/lib 
+Libs: -L/home/caros/ros/lib 
 Requires: 

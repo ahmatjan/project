@@ -67,14 +67,14 @@ set(urdf_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(urdf_SOURCE_PREFIX /home/fengkaiwen/ros/robot_model/urdf)
-  set(urdf_DEVEL_PREFIX /home/fengkaiwen/devel_isolated/urdf)
+  set(urdf_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/robot_model/urdf)
+  set(urdf_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/urdf)
   set(urdf_INSTALL_PREFIX "")
   set(urdf_PREFIX ${urdf_DEVEL_PREFIX})
 else()
   set(urdf_SOURCE_PREFIX "")
   set(urdf_DEVEL_PREFIX "")
-  set(urdf_INSTALL_PREFIX /home/fengkaiwen/caros/ros)
+  set(urdf_INSTALL_PREFIX /home/caros/ros)
   set(urdf_PREFIX ${urdf_INSTALL_PREFIX})
 endif()
 
@@ -103,13 +103,13 @@ if(NOT "include;/usr/include " STREQUAL " ")
         message(FATAL_ERROR "Project 'urdf' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  Ask the maintainer 'Ioan Sucan <isucan@gmail.com>, Jackie Kay <jacquelinekay1@gmail.com>' to fix it.")
       endif()
     else()
-      message(FATAL_ERROR "Project 'urdf' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/fengkaiwen/caros/ros/${idir}'.  Ask the maintainer 'Ioan Sucan <isucan@gmail.com>, Jackie Kay <jacquelinekay1@gmail.com>' to fix it.")
+      message(FATAL_ERROR "Project 'urdf' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/caros/ros/${idir}'.  Ask the maintainer 'Ioan Sucan <isucan@gmail.com>, Jackie Kay <jacquelinekay1@gmail.com>' to fix it.")
     endif()
     _list_append_unique(urdf_INCLUDE_DIRS ${include})
   endforeach()
 endif()
 
-set(libraries "urdf;/usr/lib/x86_64-linux-gnu/liburdfdom_sensor.so;/usr/lib/x86_64-linux-gnu/liburdfdom_model_state.so;/usr/lib/x86_64-linux-gnu/liburdfdom_model.so;/usr/lib/x86_64-linux-gnu/liburdfdom_world.so;/home/fengkaiwen/caros/ros/lib/libconsole_bridge.so;/usr/lib/x86_64-linux-gnu/libboost_thread.so;/usr/lib/x86_64-linux-gnu/libpthread.so")
+set(libraries "urdf;/usr/lib/x86_64-linux-gnu/liburdfdom_sensor.so;/usr/lib/x86_64-linux-gnu/liburdfdom_model_state.so;/usr/lib/x86_64-linux-gnu/liburdfdom_model.so;/usr/lib/x86_64-linux-gnu/liburdfdom_world.so;/home/caros/ros/lib/libconsole_bridge.so;/usr/lib/x86_64-linux-gnu/libboost_thread.so;/usr/lib/x86_64-linux-gnu/libpthread.so")
 foreach(library ${libraries})
   # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
@@ -122,7 +122,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/fengkaiwen/caros/ros/lib;/home/fengkaiwen/caros/ros/lib)
+    foreach(path /home/caros/ros/lib;/home/caros/ros/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

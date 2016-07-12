@@ -6,7 +6,7 @@
 
 # Compute paths
 get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-set(orocos_kdl_INCLUDE_DIRS "/usr/include/eigen3;/home/fengkaiwen/caros/ros/include")
+set(orocos_kdl_INCLUDE_DIRS "/usr/include/eigen3;/home/caros/ros/include")
 
 if(NOT TARGET orocos-kdl)
   include("${SELF_DIR}/OrocosKDLTargets.cmake")
@@ -15,4 +15,4 @@ endif()
 set(orocos_kdl_LIBRARIES orocos-kdl)
 
 # where the .pc pkgconfig files are installed
-set(orocos_kdl_PKGCONFIG_DIR "/home/fengkaiwen/caros/ros/lib/pkgconfig")
+set(orocos_kdl_PKGCONFIG_DIR "/home/caros/ros/lib/pkgconfig")

@@ -67,14 +67,14 @@ set(pcl_ros_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(pcl_ros_SOURCE_PREFIX /home/fengkaiwen/ros/perception_pcl/pcl_ros)
-  set(pcl_ros_DEVEL_PREFIX /home/fengkaiwen/devel_isolated/pcl_ros)
+  set(pcl_ros_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/perception_pcl/pcl_ros)
+  set(pcl_ros_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/pcl_ros)
   set(pcl_ros_INSTALL_PREFIX "")
   set(pcl_ros_PREFIX ${pcl_ros_DEVEL_PREFIX})
 else()
   set(pcl_ros_SOURCE_PREFIX "")
   set(pcl_ros_DEVEL_PREFIX "")
-  set(pcl_ros_INSTALL_PREFIX /home/fengkaiwen/caros/ros)
+  set(pcl_ros_INSTALL_PREFIX /home/caros/ros)
   set(pcl_ros_PREFIX ${pcl_ros_INSTALL_PREFIX})
 endif()
 
@@ -103,7 +103,7 @@ if(NOT "include;/usr/include;/usr/include/eigen3;/usr/include/pcl-1.7;/usr/inclu
         message(FATAL_ERROR "Project 'pcl_ros' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  Ask the maintainer 'Paul Bovbel <paul@bovbel.com>, Bill Morris <bill@neautomation.com>' to fix it.")
       endif()
     else()
-      message(FATAL_ERROR "Project 'pcl_ros' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/fengkaiwen/caros/ros/${idir}'.  Ask the maintainer 'Paul Bovbel <paul@bovbel.com>, Bill Morris <bill@neautomation.com>' to fix it.")
+      message(FATAL_ERROR "Project 'pcl_ros' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/caros/ros/${idir}'.  Ask the maintainer 'Paul Bovbel <paul@bovbel.com>, Bill Morris <bill@neautomation.com>' to fix it.")
     endif()
     _list_append_unique(pcl_ros_INCLUDE_DIRS ${include})
   endforeach()
@@ -122,7 +122,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/fengkaiwen/caros/ros/lib;/home/fengkaiwen/caros/ros/lib)
+    foreach(path /home/caros/ros/lib;/home/caros/ros/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
