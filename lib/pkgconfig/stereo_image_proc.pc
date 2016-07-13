@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: stereo_image_proc
-Description: Description of stereo_image_proc
-Version: 1.12.16
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -lstereo_image_proc
-Requires: image_geometry image_proc sensor_msgs stereo_msgs

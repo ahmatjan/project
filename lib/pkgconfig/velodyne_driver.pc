@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: velodyne_driver
-Description: Description of velodyne_driver
-Version: 1.2.0
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -lvelodyne_input
-Requires: diagnostic_updater nodelet roscpp tf velodyne_msgs time_util

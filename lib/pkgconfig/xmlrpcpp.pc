@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: xmlrpcpp
-Description: Description of xmlrpcpp
-Version: 1.11.16
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -lxmlrpcpp
-Requires: cpp_common

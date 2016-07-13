@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: genpy
-Description: Description of genpy
-Version: 0.5.9
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: genmsg

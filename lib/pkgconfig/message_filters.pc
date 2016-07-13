@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: message_filters
-Description: Description of message_filters
-Version: 1.11.16
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -lmessage_filters
-Requires: roscpp xmlrpcpp rosconsole

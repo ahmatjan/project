@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: ivcon
-Description: Description of ivcon
-Version: 0.1.5
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

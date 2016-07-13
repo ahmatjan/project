@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: polled_camera
-Description: Description of polled_camera
-Version: 1.11.10
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -lpolled_camera
-Requires: roscpp sensor_msgs

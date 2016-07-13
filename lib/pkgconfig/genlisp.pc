@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: genlisp
-Description: Description of genlisp
-Version: 0.4.15
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: genmsg

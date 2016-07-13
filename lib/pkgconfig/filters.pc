@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: filters
-Description: Description of filters
-Version: 1.7.4
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -lmean -lparams -lincrement -lmedian -ltransfer_function
-Requires: roslib roscpp rosconsole pluginlib

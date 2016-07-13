@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: joint_state_publisher
-Description: Description of joint_state_publisher
-Version: 1.11.10
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

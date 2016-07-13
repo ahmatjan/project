@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: opencv_apps
-Description: Description of opencv_apps
-Version: 1.11.13
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -lopencv_apps
-Requires: std_msgs

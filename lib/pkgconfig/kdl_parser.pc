@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: kdl_parser
-Description: Description of kdl_parser
-Version: 1.11.10
-Cflags: -I/home/caros/ros/include -I/usr/include/eigen3 -I/usr/include
-Libs: -L/home/caros/ros/lib -lkdl_parser -l:/home/caros/ros/lib/liborocos-kdl.so -l:/home/caros/ros/lib/liborocos-kdl.so.1.3.0 -l:/usr/lib/x86_64-linux-gnu/libtinyxml.so
-Requires: roscpp rosconsole urdf

@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: interactive_markers
-Description: Description of interactive_markers
-Version: 1.11.1
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -linteractive_markers
-Requires: roscpp rosconsole rospy tf visualization_msgs

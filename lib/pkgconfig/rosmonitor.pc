@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: rosmonitor
-Description: Description of rosmonitor
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: roscreate
-Description: Description of roscreate
-Version: 1.11.12
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

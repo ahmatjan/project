@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: smclib
-Description: Description of smclib
-Version: 1.7.16
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib 
-Requires: 

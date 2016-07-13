@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: eigen_stl_containers
-Description: Description of eigen_stl_containers
-Version: 0.1.4
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib 
-Requires: 

@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: collada_parser
-Description: Description of collada_parser
-Version: 1.11.10
-Cflags: -I/home/caros/ros/include -I/usr/include
-Libs: -L/home/caros/ros/lib -lcollada_parser
-Requires: roscpp urdf_parser_plugin

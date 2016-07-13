@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: rqt_robot_steering
-Description: Description of rqt_robot_steering
-Version: 0.4.3
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

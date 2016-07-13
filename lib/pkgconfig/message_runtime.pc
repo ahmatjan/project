@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: message_runtime
-Description: Description of message_runtime
-Version: 0.4.12
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: cpp_common roscpp_serialization roscpp_traits rostime

@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: roscpp_traits
-Description: Description of roscpp_traits
-Version: 0.5.7
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib 
-Requires: cpp_common rostime

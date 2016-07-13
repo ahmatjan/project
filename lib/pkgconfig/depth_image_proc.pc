@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: depth_image_proc
-Description: Description of depth_image_proc
-Version: 1.12.16
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -ldepth_image_proc
-Requires: 

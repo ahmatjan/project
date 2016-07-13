@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: angles
-Description: Description of angles
-Version: 1.9.10
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib 
-Requires: 

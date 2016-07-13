@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: time_util
-Description: Description of time_util
-Version: 1.0.0
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -ltime_util
-Requires: 

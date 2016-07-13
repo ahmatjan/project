@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: cpp_common
-Description: Description of cpp_common
-Version: 0.5.7
-Cflags: -I/home/caros/ros/include -I/usr/include
-Libs: -L/home/caros/ros/lib -lcpp_common -l:/usr/lib/x86_64-linux-gnu/libboost_system.so -l:/usr/lib/x86_64-linux-gnu/libboost_thread.so -l:/usr/lib/x86_64-linux-gnu/libpthread.so -l:/home/caros/ros/lib/libconsole_bridge.so
-Requires: 

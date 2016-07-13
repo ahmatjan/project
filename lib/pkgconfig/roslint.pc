@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: roslint
-Description: Description of roslint
-Version: 0.10.0
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

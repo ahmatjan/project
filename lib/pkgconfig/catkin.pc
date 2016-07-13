@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: catkin
-Description: Description of catkin
-Version: 0.6.18
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

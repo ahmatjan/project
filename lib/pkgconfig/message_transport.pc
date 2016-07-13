@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: message_transport
-Description: Description of message_transport
-Version: 1.0.0
-Cflags: -I/home/caros/ros/include -I/usr/include
-Libs: -L/home/caros/ros/lib -lmessage_transport
-Requires: pluginlib message_filters

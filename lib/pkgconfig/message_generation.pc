@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: message_generation
-Description: Description of message_generation
-Version: 0.2.10
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: gencpp genlisp genmsg genpy

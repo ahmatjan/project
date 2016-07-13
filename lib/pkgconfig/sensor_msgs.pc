@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: sensor_msgs
-Description: Description of sensor_msgs
-Version: 1.11.9
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib 
-Requires: geometry_msgs message_runtime std_msgs

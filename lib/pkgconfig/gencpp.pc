@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: gencpp
-Description: Description of gencpp
-Version: 0.5.4
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: genmsg

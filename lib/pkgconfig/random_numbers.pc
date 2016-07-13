@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: random_numbers
-Description: Description of random_numbers
-Version: 0.3.0
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib -lrandom_numbers
-Requires: 

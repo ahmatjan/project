@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: genmsg
-Description: Description of genmsg
-Version: 0.5.7
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

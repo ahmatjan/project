@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: tf2
-Description: Description of tf2
-Version: 0.5.13
-Cflags: -I/home/caros/ros/include -I/usr/include
-Libs: -L/home/caros/ros/lib -ltf2 -l:/home/caros/ros/lib/libconsole_bridge.so
-Requires: geometry_msgs tf2_msgs rostime

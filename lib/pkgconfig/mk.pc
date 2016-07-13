@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: mk
-Description: Description of mk
-Version: 1.11.12
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

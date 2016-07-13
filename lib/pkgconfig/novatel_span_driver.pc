@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: novatel_span_driver
-Description: Description of novatel_span_driver
-Version: 1.0.0
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

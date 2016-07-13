@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: image_rotate
-Description: Description of image_rotate
-Version: 1.12.16
-Cflags: -I/home/caros/ros/include
-Libs: -L/home/caros/ros/lib 
-Requires: 

@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: rqt_runtime_monitor
-Description: Description of rqt_runtime_monitor
-Version: 0.4.3
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 

@@ -1,8 +1,0 @@
-prefix=/home/caros/ros
-
-Name: thirdparty
-Description: Description of thirdparty
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/caros/ros/lib 
-Requires: 
