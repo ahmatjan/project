@@ -1,0 +1,8 @@
+prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
+
+Name: pointgrey_camera_driver
+Description: Description of pointgrey_camera_driver
+Version: 0.12.1
+Cflags: -I/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/include
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib 
+Requires: roscpp nodelet

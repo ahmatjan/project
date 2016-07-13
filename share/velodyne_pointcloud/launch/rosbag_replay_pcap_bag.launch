@@ -1,0 +1,11 @@
+<launch>
+  <arg name="rate" default="1" />
+  <arg name="start" default="0" />
+  <arg name="bag" default="$(find velodyne_pointcloud)/tests/64e_s2_pcap_replay.bag"/>
+  <node pkg="rosbag" type="play" name="replay" 
+    args="--clock --rate=$(arg rate) --start=$(arg start) $(arg bag)">
+    <param name="rate" value="$(arg rate)"/>
+    <param name="start" value="$(arg start)"/>
+    <param name="bag" value="$(arg bag)"/>
+  </node>
+</launch>

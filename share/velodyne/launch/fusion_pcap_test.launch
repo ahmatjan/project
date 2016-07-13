@@ -1,0 +1,36 @@
+<launch>
+
+  <include file="$(find velodyne_pointcloud)/launch/nodelet_manager.launch">
+  </include>
+  
+  <!-- start nodelet manager and driver nodelets -->
+  <include file="$(find velodyne_driver)/launch/driver_nodelet.launch">
+    <arg name="model" value="VLP16"/>
+    <arg name="rpm" value="600"/>
+    <arg name="pcap" value="/home/work/vlp16_gps.pcap"/>
+  </include>
+  
+  <!-- start cloud nodelet using test calibration file -->
+  <include file="$(find velodyne_pointcloud)/launch/cloud_nodelet.launch">
+    <arg name="model" default="VLP16" />
+    <arg name="calibration" default="$(find velodyne_pointcloud)/params/VLP16_calibration.yaml" />
+    <arg name="organized" default="false"/>
+    <arg name="min_range" default="0.9" />
+    <arg name="max_range" default="70.0" />
+    <arg name="imu_sync" default="xsens" />
+  </include>
+  
+  <include file="$(find velodyne_pointcloud)/launch/republish_for_fusion_test_nodelet.launch">
+    <arg name="time_offset" value="500"/>
+  </include>
+  
+  <include file="$(find velodyne_pointcloud)/launch/republish_for_fusion_test_nodelet.launch">
+    <arg name="node_name" value="republisher2"/>
+    <arg name="topic_republish_pointcloud" value="/dusensor/velodyne/republish_points2"/>
+  </include>
+   
+  <include file="$(find velodyne_pointcloud)/launch/fusion_test_nodelet.launch">
+    <arg name="topic_pointclouds" value="/dusensor/velodyne/points,/dusensor/velodyne/republish_points,/dusensor/velodyne/republish_points2"/>
+  </include>
+
+</launch>

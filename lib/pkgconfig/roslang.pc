@@ -1,0 +1,8 @@
+prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
+
+Name: roslang
+Description: Description of roslang
+Version: 1.11.12
+Cflags: 
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib 
+Requires: 
