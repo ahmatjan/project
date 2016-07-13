@@ -1,2 +1,2 @@
-*.msg
+share/velodyne_pointcloud/tests/velodyne_test_msg_files/*.msg
 *.bag
