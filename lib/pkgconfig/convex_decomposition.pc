@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
-
-Name: convex_decomposition
-Description: Description of convex_decomposition
-Version: 0.1.10
-Cflags: 
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib 
-Requires: 

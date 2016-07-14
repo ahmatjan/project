@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
-
-Name: tf2_sensor_msgs
-Description: Description of tf2_sensor_msgs
-Version: 0.5.13
-Cflags: -I/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/include -I/usr/include/eigen3
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib 
-Requires: sensor_msgs tf2_ros tf2

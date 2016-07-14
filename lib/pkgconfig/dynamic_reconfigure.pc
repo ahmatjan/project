@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
-
-Name: dynamic_reconfigure
-Description: Description of dynamic_reconfigure
-Version: 1.5.43
-Cflags: -I/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/include
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib -ldynamic_reconfigure_config_init_mutex
-Requires: message_runtime std_msgs

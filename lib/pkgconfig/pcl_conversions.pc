@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
-
-Name: pcl_conversions
-Description: Description of pcl_conversions
-Version: 0.2.1
-Cflags: -I/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/include -I/usr/include/eigen3 -I/usr/include -I/usr/include/pcl-1.7
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib 
-Requires: pcl_msgs roscpp sensor_msgs std_msgs

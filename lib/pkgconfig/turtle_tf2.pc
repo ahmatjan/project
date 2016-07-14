@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
-
-Name: turtle_tf2
-Description: Description of turtle_tf2
-Version: 0.2.2
-Cflags: 
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib 
-Requires: geometry_msgs roscpp rospy std_msgs tf2 tf2_ros
