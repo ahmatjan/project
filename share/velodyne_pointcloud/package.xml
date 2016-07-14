@@ -1,0 +1,64 @@
+<package>
+
+  <name>velodyne_pointcloud</name>
+  <version>1.0.0</version>
+  <description>
+    Point cloud conversions for Velodyne 3D LIDARs.
+  </description>
+  <maintainer email="car-os@todo.todo">car-os</maintainer>
+  <author>liu bocong</author>
+  <author>dengchengliang</author>
+  <author>fengkaiwen01</author>
+  <license>todo</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>angles</build_depend>
+  <build_depend>nodelet</build_depend>
+  <build_depend>pcl_conversions</build_depend>
+  <build_depend>pcl_ros</build_depend>
+  <build_depend>pluginlib</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>roslib</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>velodyne_driver</build_depend>
+  <build_depend>velodyne_msgs</build_depend>
+  <build_depend>yaml-cpp</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>eigen_conversions</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>novatel_preprocess</build_depend>
+  <build_depend>time_util</build_depend>
+  <build_depend>math_util</build_depend>
+  <build_depend>msg_util</build_depend>
+
+  <!-- these build dependencies are only needed for unit testing -->
+  <build_depend>roslaunch</build_depend>
+  <build_depend>rostest</build_depend>
+
+  <run_depend>angles</run_depend>
+  <run_depend>nodelet</run_depend>
+  <run_depend>pcl_ros</run_depend>
+  <run_depend>pluginlib</run_depend>
+  <run_depend>python-yaml</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>roslib</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>velodyne_driver</run_depend>
+  <run_depend>velodyne_msgs</run_depend>
+  <run_depend>yaml-cpp</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+  <run_depend>eigen_conversions</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>novatel_preprocess</run_depend>
+  <run_depend>time_util</run_depend>
+  <run_depend>math_util</run_depend>
+  <run_depend>msg_util</run_depend>
+
+  <export>
+    <nodelet plugin="${prefix}/nodelets.xml"/>
+  </export>
+
+</package>

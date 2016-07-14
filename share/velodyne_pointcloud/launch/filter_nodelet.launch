@@ -1,0 +1,10 @@
+<launch>
+  <arg name="topic_fused_pointcloud" default="/sensor/velodyne/fusion/PointCloud2"/>
+  <arg name="topic_downsample_pointcloud" default="/sensor/velodyne/fusion/downsample/PointCloud2"/>
+  <arg name="node_name" default="filter_nodelet"/>
+  <node pkg="nodelet" type="nodelet" name="$(arg node_name)"
+        args="load velodyne_pointcloud/FilterNodelet velodyne_nodelet_manager" output="screen">
+    <param name="topic_fused_pointcloud" value="$(arg topic_fused_pointcloud)"/>
+    <param name="topic_downsample_pointcloud" value="$(arg topic_downsample_pointcloud)"/>
+  </node>
+</launch>

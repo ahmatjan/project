@@ -1,0 +1,29 @@
+<launch>
+  <!-- start novatel republisher -->
+  <arg name="required" default="false" />
+  <!--
+  <arg name="extrinsics" default="$(find velodyne_pointcloud)/params/velodyne_novatel_extrinsics.yaml"/>
+  <node pkg="novatel_preprocess" type="extrinsics_broadcaster.py"
+    args="$(arg extrinsics)" name="extrinsics_broadcaster" />
+  -->
+  <!-- external params, default we use bmw8-->
+  <!-- <include file="$(find novatel_preprocess)/launch/extrinsics_broadcaster_bmw8.launch"/> -->
+
+  <arg name="extrinsics" default="$(find velodyne_pointcloud)/params/velodyne_novatel_extrinsics_bmw8.yaml"/>
+  <node pkg="novatel_preprocess" type="extrinsics_broadcaster.py"
+    args="$(arg extrinsics)" name="extrinsics_broadcaster" />
+  
+  <node pkg="novatel_preprocess" type="novatel_rawimu_republisher" name="novatel_rawimu_republisher_node">  
+    <remap from="/novatel_data/rawimu" to="/DuSensor/novatel_data/rawimu"/>
+  </node>
+
+  <node pkg="novatel_preprocess" type="novatel_odometry_republisher" name="novatel_odometry_republisher_node">
+    <remap from="/novatel_data/inspva" to="/DuSensor/novatel_data/inspva"/>
+    <remap from="/novatel_data/inscov" to="/DuSensor/novatel_data/inscov"/>
+  </node>
+
+  <node pkg="novatel_preprocess" type="inspva_broadcaster" name="inspva_broadcaster_node" required="$(arg required)">
+        <remap from="/pose_with_covariance_stamped_odometry" to="/novatel_driver/inspva_pose_with_covariance_stamped_odometry"/>
+  </node>
+
+</launch>

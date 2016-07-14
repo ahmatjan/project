@@ -1,0 +1,8 @@
+prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
+
+Name: rqt_gui
+Description: Description of rqt_gui
+Version: 0.2.14
+Cflags: 
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib 
+Requires: 
