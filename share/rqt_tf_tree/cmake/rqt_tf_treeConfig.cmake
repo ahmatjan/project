@@ -67,8 +67,8 @@ set(rqt_tf_tree_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rqt_tf_tree_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/rqt_robot_plugins/rqt_tf_tree)
-  set(rqt_tf_tree_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rqt_tf_tree)
+  set(rqt_tf_tree_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/rqt_robot_plugins/rqt_tf_tree)
+  set(rqt_tf_tree_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rqt_tf_tree)
   set(rqt_tf_tree_INSTALL_PREFIX "")
   set(rqt_tf_tree_PREFIX ${rqt_tf_tree_DEVEL_PREFIX})
 else()

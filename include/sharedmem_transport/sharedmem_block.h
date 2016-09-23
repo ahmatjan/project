@@ -15,20 +15,25 @@
 
 namespace sharedmem_transport {
 
-// Allocated size compared to msg size for each block, default 1.5
-// To make sense, suggest value [1.0, 2.0]
-const float ROS_SHM_BLOCK_SIZE_RATIO = 1.5;
+// Allocated size compared to msg size for each block, default 2.5
+const float ROS_SHM_BLOCK_SIZE_RATIO = 2.5;
 const int ROS_SHM_UTIL_SEGMENT_NAME_SIZE = 1000; // Util segment name temp size
 const uint64_t ROS_SHM_BLOCK_SIZE = 250; // block size, byte
 const uint64_t ROS_SHM_SEGMENT_SIZE = 500; // segment size, byte
 const uint32_t ROS_SHM_BLOCK_MUTEX_TIMEOUT_SEC = 1; // Timeout for block mutex, sec
 const uint32_t ROS_SHM_BLOCK_STATUS_TIMEOUT_SEC = 2; // Timeout for block status, sec
 
+// Timeout for block conservative mutex, sec
+const uint32_t ROS_SHM_BLOCK_MUTEX_CONSERVATIVE_TIMEOUT_SEC = 5;
+
+// Timeout for block conservative overtime, times
+const uint32_t ROS_SHM_BLOCK_CONSERVATIVE_OVERTIME_TIMES = 15000;
+
+// Timeout for block conservative reserve inteval, usec
+const uint32_t ROS_SHM_BLOCK_CONSERVATIVE_RESERVE_INTERVAL_USEC = 1000;
+
 const std::string ROS_SHM_TRANSPORT_NAME = "sharedmem";
 const std::string ROS_SHM_REGISTER_SEGMENT_SERVICE = "/sharedmem_manager/register_segment";
-
-static jmp_buf s_env_alrm_read;
-static jmp_buf s_env_alrm_write;
 
 /**
  * \brief Class for Shared Memory Block, which is defined to describer the block.
@@ -48,26 +53,68 @@ public:
      *
      * Return result for try, true or false
      */
-    bool try_reserve_for_write();
+    bool try_reserve_for_radical_write();
 
     /**
      * \brief Try reserve block for read
      *
      * Return result for try, true or false
      */
-    bool try_reserve_for_read();
+    bool try_reserve_for_radical_read();
 
     /**
      * \brief Release reserve block for write
      *
      */
-    void release_reserve_for_write();
+    void release_reserve_for_radical_write();
 
     /**
      * \brief Release reserve block for read
      *
      */
-    void release_reserve_for_read();
+    void release_reserve_for_radical_read();
+
+    /**
+     * \brief Try reserve block for conservative write
+     *
+     * Return result for try, true or false
+     */
+    bool try_reserve_for_conservative_write();
+
+    /**
+     * \brief Try reserve block for conservative read
+     *
+     */
+    void try_reserve_for_conservative_read();
+
+    /**
+     * \brief Release reserve block for conservative write
+     *
+     */
+    void release_reserve_for_conservative_write();
+
+    /**
+     * \brief Release reserve block for conservative read
+     *
+     */
+    void release_reserve_for_conservative_read();
+
+    /**
+     * \brief Set conservative block reading count. 
+     * when we want to leave the current block, we have to ensure the next 
+     * wrote block can not be written second times.
+     *
+     */
+    void set_reading_count_for_conservative_block();
+
+    /**
+     * \brief Unset conservative reading count. 
+     * The subscriber node is aborted  when reading a block, we must unset 
+     * reading_count order to publisher node can write a new message into 
+     * the block.
+     *
+     */
+    void unset_reading_count_for_conservative_block();
 
     /**
      * \brief Check block status. If the block waiting time since being wrote last 
@@ -78,6 +125,15 @@ public:
      * Return if the block status has been reset, true or false.
      */
     bool check_and_reset_block_status(long wt_timeout);
+
+    /**
+     * \brief Reset conservative reading count.
+     * The subscriber node is aborted  when reading a block, we must unset
+     * reading_count order to publisher node can write a new message into
+     * the block.
+     *
+     */
+    void reset_reading_count_for_conservative_block();
 
     /**
      * \brief Write to block
@@ -161,24 +217,6 @@ private:
     }
 
     /**
-     * \brief Recive publisher alarm signal
-     *
-     */
-    static void sig_alarm_write(int signo) {
-        ROS_DEBUG("==== Write time out ====");
-        siglongjmp(s_env_alrm_write, 2);
-    }
-
-    /**
-     * \brief Recive subscriber alarm signal
-     *
-     */
-    static void sig_alarm_read(int signo) {
-        ROS_DEBUG("==== Read timeout ====");
-        siglongjmp(s_env_alrm_read, 1);
-    }
-
-    /**
      * \brief Reset waiting_time to current system clock, when a publisher 
      * wrote the block every time.
      *
@@ -189,20 +227,18 @@ private:
     inline void reset_waiting_time() {
         boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(
             _waiting_time_mutex);
-        
-        time_t unix_time;
-        time(&unix_time);
-        _waiting_time = static_cast<long>(unix_time);
+
+        _waiting_time = static_cast<long>(ros::Time::now().toSec());
     }
 
 private:
     // Mutex to protect access to _writing_flag, _reading_count
     boost::interprocess::interprocess_mutex _write_read_mutex;
+    // When use conservative mechanism, publisher notified subscribers after writing msg.
+    boost::interprocess::interprocess_condition _read_cond;
     bool _writing_flag;
     uint32_t _reading_count;
-    
-    // Mutex to protect access to _msg_size and _alloc_size
-    boost::interprocess::interprocess_mutex _msg_alloc_mutex;
+ 
     uint64_t _msg_size;
     uint64_t _alloc_size;
 

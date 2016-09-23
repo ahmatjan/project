@@ -7,3 +7,5 @@ sed -i "s#$old_str#$new_str#g" `grep -R $old_str . | grep cmake | awk -F':' '{pr
 
 # ignore errors in sed for binary file
 exit 0
+
+

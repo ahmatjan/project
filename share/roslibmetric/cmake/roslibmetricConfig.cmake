@@ -67,8 +67,8 @@ set(roslibmetric_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(roslibmetric_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/roslibmetric)
-  set(roslibmetric_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/roslibmetric)
+  set(roslibmetric_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/roslibmetric)
+  set(roslibmetric_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/roslibmetric)
   set(roslibmetric_INSTALL_PREFIX "")
   set(roslibmetric_PREFIX ${roslibmetric_DEVEL_PREFIX})
 else()
@@ -109,7 +109,7 @@ if(NOT "include;/usr/include " STREQUAL " ")
   endforeach()
 endif()
 
-set(libraries "roscpp;pthread;/usr/lib/x86_64-linux-gnu/libboost_signals.so;/usr/lib/x86_64-linux-gnu/libboost_filesystem.so;/usr/lib/x86_64-linux-gnu/libboost_system.so")
+set(libraries "/home/caros/ros/lib/libroscpp.so;/usr/lib/x86_64-linux-gnu/libboost_chrono.so;/home/caros/ros/lib/librosconsole.so;/home/caros/ros/lib/librosconsole_log4cxx.so;/home/caros/ros/lib/librosconsole_backend_interface.so;/usr/lib/liblog4cxx.so;/usr/lib/x86_64-linux-gnu/libboost_regex.so;/home/caros/ros/lib/libroscpp_serialization.so;/home/caros/ros/lib/librostime.so;/usr/lib/x86_64-linux-gnu/libboost_date_time.so;/home/caros/ros/lib/libxmlrpcpp.so;/home/caros/ros/lib/libcpp_common.so;/usr/lib/x86_64-linux-gnu/libboost_thread.so;/usr/lib/x86_64-linux-gnu/libpthread.so;/usr/lib/x86_64-linux-gnu/libconsole_bridge.so;roscpp;pthread;/usr/lib/x86_64-linux-gnu/libboost_signals.so;/usr/lib/x86_64-linux-gnu/libboost_filesystem.so;/usr/lib/x86_64-linux-gnu/libboost_system.so")
 foreach(library ${libraries})
   # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
@@ -153,7 +153,7 @@ foreach(t ${roslibmetric_EXPORTED_TARGETS})
   endif()
 endforeach()
 
-set(depends "cpp_common;message_runtime;rosconsole;roscpp_serialization;roscpp_traits;metric_msgs;rosgraph_msgs;rostime;std_msgs;xmlrpcpp")
+set(depends "cpp_common;message_runtime;roscpp;rosconsole;roscpp_serialization;roscpp_traits;metric_msgs;rosgraph_msgs;rostime;std_msgs;xmlrpcpp")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
   # the package name of the dependency must be kept in a unique variable so that it is not overwritten in recursive calls

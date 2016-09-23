@@ -67,8 +67,8 @@ set(std_srvs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(std_srvs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm_msgs/std_srvs)
-  set(std_srvs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/std_srvs)
+  set(std_srvs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm_msgs/std_srvs)
+  set(std_srvs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/std_srvs)
   set(std_srvs_INSTALL_PREFIX "")
   set(std_srvs_PREFIX ${std_srvs_DEVEL_PREFIX})
 else()

@@ -16,6 +16,7 @@
 #ifndef ROS_COUNTER_H
 #define ROS_COUNTER_H
 
+#include <memory>
 #include <ros/common.h>
 #include "roslibmetric/metric/metric_interface.h"
 
@@ -35,7 +36,7 @@ public:
     void clear();
 private:
     class Impl;
-    boost::shared_ptr<Impl> _impl;
+    std::unique_ptr<Impl> _impl;
 };
 }
 

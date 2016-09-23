@@ -67,8 +67,8 @@ set(random_numbers_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(random_numbers_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/random_numbers)
-  set(random_numbers_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/random_numbers)
+  set(random_numbers_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/random_numbers)
+  set(random_numbers_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/random_numbers)
   set(random_numbers_INSTALL_PREFIX "")
   set(random_numbers_PREFIX ${random_numbers_DEVEL_PREFIX})
 else()

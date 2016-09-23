@@ -67,8 +67,8 @@ set(urdf_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(urdf_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/robot_model/urdf)
-  set(urdf_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/urdf)
+  set(urdf_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/robot_model/urdf)
+  set(urdf_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/urdf)
   set(urdf_INSTALL_PREFIX "")
   set(urdf_PREFIX ${urdf_DEVEL_PREFIX})
 else()

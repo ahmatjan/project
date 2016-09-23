@@ -67,8 +67,8 @@ set(genlisp_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(genlisp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/genlisp)
-  set(genlisp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/genlisp)
+  set(genlisp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/genlisp)
+  set(genlisp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/genlisp)
   set(genlisp_INSTALL_PREFIX "")
   set(genlisp_PREFIX ${genlisp_DEVEL_PREFIX})
 else()

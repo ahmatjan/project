@@ -67,8 +67,8 @@ set(rospy_tutorials_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rospy_tutorials_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_tutorials/rospy_tutorials)
-  set(rospy_tutorials_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rospy_tutorials)
+  set(rospy_tutorials_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_tutorials/rospy_tutorials)
+  set(rospy_tutorials_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rospy_tutorials)
   set(rospy_tutorials_INSTALL_PREFIX "")
   set(rospy_tutorials_PREFIX ${rospy_tutorials_DEVEL_PREFIX})
 else()

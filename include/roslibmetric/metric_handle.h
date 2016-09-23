@@ -15,6 +15,7 @@
 #ifndef ROS_METRIC_HANDLE_H
 #define ROS_METRIC_HANDLE_H
 
+#include <memory>
 #include "roslibmetric/metric/metric_registry.h"
 
 namespace ros {
@@ -25,8 +26,12 @@ public:
     ~MetricHandle();
     void set_healthy(uint8_t level, std::string msg);
     metric::Counter& new_counter(std::string metric_name, int64_t init);
+    void set_frequence();
+    void set_topichz(std::string topic_name, double expt_hz);
+    void publish_callback(std::string topic_name);
 private:
-    boost::shared_ptr<metric::MetricsRegistry> _metric_registry;
+    std::shared_ptr<metric::MetricsRegistry> _metric_registry;
+    //metric::Frequence& _frequence;
 };
 
 MetricHandle& get_metric_handle(std::string nodename = "");

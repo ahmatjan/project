@@ -1,4 +1,4 @@
-prefix="/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated"
+prefix="/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros"
 
 Name: stage
 Description: Stage robot simulation program, C++ library and Player plugin - part of the Player Project (http://playerstage.org)
