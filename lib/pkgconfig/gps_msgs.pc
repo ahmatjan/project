@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
-
-Name: gps_msgs
-Description: Description of gps_msgs
-Version: 0.0.0
-Cflags: -I/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/include
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib 
-Requires: message_runtime sensor_msgs std_msgs

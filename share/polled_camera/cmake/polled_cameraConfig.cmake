@@ -67,8 +67,8 @@ set(polled_camera_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(polled_camera_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/image_common/polled_camera)
-  set(polled_camera_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/polled_camera)
+  set(polled_camera_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/image_common/polled_camera)
+  set(polled_camera_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/polled_camera)
   set(polled_camera_INSTALL_PREFIX "")
   set(polled_camera_PREFIX ${polled_camera_DEVEL_PREFIX})
 else()

@@ -1,0 +1,16 @@
+<package>
+  #PACKAGE_NAME
+  <version>0.5.10</version>
+  <description>
+    Protobuf messages for debug tools.
+  </description>
+  <maintainer email="hewei03@baidu.com">hewei03</maintainer>
+  <license>BSD</license>
+
+  <author email="hewei03@baidu.com">hewei03</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>message_generation</build_depend>
+  #DEPENDS
+  <run_depend>message_runtime</run_depend>
+</package>

@@ -67,8 +67,8 @@ set(shape_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(shape_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/common_msgs/shape_msgs)
-  set(shape_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/shape_msgs)
+  set(shape_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/common_msgs/shape_msgs)
+  set(shape_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/shape_msgs)
   set(shape_msgs_INSTALL_PREFIX "")
   set(shape_msgs_PREFIX ${shape_msgs_DEVEL_PREFIX})
 else()

@@ -1,0 +1,11 @@
+float64 x 
+float64 y 
+float64 z 
+float64 s 
+float64 l 
+float64 speed 
+float64 acceleration_s 
+float64 curvature 
+float64 curvature_change_rate 
+float64 relative_time 
+float64 theta 

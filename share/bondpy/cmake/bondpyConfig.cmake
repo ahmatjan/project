@@ -67,8 +67,8 @@ set(bondpy_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(bondpy_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/bond_core/bondpy)
-  set(bondpy_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/bondpy)
+  set(bondpy_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/bond_core/bondpy)
+  set(bondpy_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/bondpy)
   set(bondpy_INSTALL_PREFIX "")
   set(bondpy_PREFIX ${bondpy_DEVEL_PREFIX})
 else()

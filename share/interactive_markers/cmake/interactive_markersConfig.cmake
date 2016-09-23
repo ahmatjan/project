@@ -67,8 +67,8 @@ set(interactive_markers_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(interactive_markers_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/interactive_markers)
-  set(interactive_markers_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/interactive_markers)
+  set(interactive_markers_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/interactive_markers)
+  set(interactive_markers_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/interactive_markers)
   set(interactive_markers_INSTALL_PREFIX "")
   set(interactive_markers_PREFIX ${interactive_markers_DEVEL_PREFIX})
 else()

@@ -1,8 +1,8 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
+prefix=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros
 
 Name: catkin
 Description: Description of catkin
 Version: 0.6.18
 Cflags: 
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib 
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib 
 Requires: 

@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 2.8.3)
+#PROJECT
+
+find_package(catkin REQUIRED COMPONENTS 
+    #CATKIN_DEPENDS
+    message_generation)
+
+add_message_files(
+  DIRECTORY msg
+  FILES
+  #FILE
+)
+
+generate_messages(
+#MSG_DEPENDS
+)
+
+catkin_package(
+  CATKIN_DEPENDS 
+  message_runtime 
+  #CATKIN_DEPENDS
+)
+

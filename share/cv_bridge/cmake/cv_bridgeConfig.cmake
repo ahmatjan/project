@@ -67,8 +67,8 @@ set(cv_bridge_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(cv_bridge_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/vision_opencv/cv_bridge)
-  set(cv_bridge_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/cv_bridge)
+  set(cv_bridge_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/vision_opencv/cv_bridge)
+  set(cv_bridge_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/cv_bridge)
   set(cv_bridge_INSTALL_PREFIX "")
   set(cv_bridge_PREFIX ${cv_bridge_DEVEL_PREFIX})
 else()

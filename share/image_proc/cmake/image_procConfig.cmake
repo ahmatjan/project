@@ -67,8 +67,8 @@ set(image_proc_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(image_proc_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/image_pipeline/image_proc)
-  set(image_proc_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/image_proc)
+  set(image_proc_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/image_pipeline/image_proc)
+  set(image_proc_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/image_proc)
   set(image_proc_INSTALL_PREFIX "")
   set(image_proc_PREFIX ${image_proc_DEVEL_PREFIX})
 else()

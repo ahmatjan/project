@@ -67,8 +67,8 @@ set(qt_dotgraph_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(qt_dotgraph_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/qt_gui_core/qt_dotgraph)
-  set(qt_dotgraph_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/qt_dotgraph)
+  set(qt_dotgraph_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/qt_gui_core/qt_dotgraph)
+  set(qt_dotgraph_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/qt_dotgraph)
   set(qt_dotgraph_INSTALL_PREFIX "")
   set(qt_dotgraph_PREFIX ${qt_dotgraph_DEVEL_PREFIX})
 else()

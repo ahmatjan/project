@@ -67,8 +67,8 @@ set(convex_decomposition_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(convex_decomposition_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/convex_decomposition)
-  set(convex_decomposition_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/convex_decomposition)
+  set(convex_decomposition_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/convex_decomposition)
+  set(convex_decomposition_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/convex_decomposition)
   set(convex_decomposition_INSTALL_PREFIX "")
   set(convex_decomposition_PREFIX ${convex_decomposition_DEVEL_PREFIX})
 else()

@@ -78,7 +78,7 @@ def get_master_uri(env=None, argv=None):
             zk.start()
             data, _stat = zk.get(ROS_MASTER_PATH)
             ret = data
-        except e:
+        except Exception as e:
             pass
         finally:
             zk.stop()

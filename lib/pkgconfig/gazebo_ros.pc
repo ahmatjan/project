@@ -1,8 +1,8 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
+prefix=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros
 
 Name: gazebo_ros
 Description: Description of gazebo_ros
 Version: 2.4.10
-Cflags: -I/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/include -I/usr/include
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib -lgazebo_ros_api_plugin -lgazebo_ros_paths_plugin -l:/usr/lib/x86_64-linux-gnu/libtinyxml.so
+Cflags: -I/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/include -I/usr/include
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib -lgazebo_ros_api_plugin -lgazebo_ros_paths_plugin -l:/usr/lib/x86_64-linux-gnu/libtinyxml.so
 Requires: roslib roscpp geometry_msgs std_srvs tf rosgraph_msgs dynamic_reconfigure message_generation std_msgs gazebo_msgs
