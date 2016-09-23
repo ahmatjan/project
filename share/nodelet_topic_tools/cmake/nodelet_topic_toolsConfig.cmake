@@ -67,8 +67,8 @@ set(nodelet_topic_tools_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(nodelet_topic_tools_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/nodelet_core/nodelet_topic_tools)
-  set(nodelet_topic_tools_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/nodelet_topic_tools)
+  set(nodelet_topic_tools_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/nodelet_core/nodelet_topic_tools)
+  set(nodelet_topic_tools_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/nodelet_topic_tools)
   set(nodelet_topic_tools_INSTALL_PREFIX "")
   set(nodelet_topic_tools_PREFIX ${nodelet_topic_tools_DEVEL_PREFIX})
 else()

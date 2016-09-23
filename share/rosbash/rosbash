@@ -740,7 +740,7 @@ function _roscomplete_rostopic {
     arg="${COMP_WORDS[COMP_CWORD]}"
 
     if [[ $COMP_CWORD == 1 ]]; then
-        opts="bw echo hz list pub type find info parse send"
+        opts="bw echo hz list pub type find info"
         COMPREPLY=($(compgen -W "$opts" -- ${arg}))
     elif [[ $COMP_CWORD -ge 2 ]]; then
         if [[ ${arg} =~ \-\-.* ]]; then
@@ -774,32 +774,6 @@ function _roscomplete_rostopic {
 								find)
 										opts=`_msg_opts ${COMP_WORDS[$COMP_CWORD]}`
 										COMPREPLY=($(compgen -W "$opts" -- ${arg}))
-										;;
-                                parse)
-										if [[ $COMP_CWORD == 2 ]]; then
-												opts=`rostopic list 2> /dev/null`
-												COMPREPLY=($(compgen -W "$opts" -- ${arg}))
-										elif [[ $COMP_CWORD == 3 ]]; then
-                                                opts=`cat $ROS_ETC_DIR/proto.list`
-												COMPREPLY=($(compgen -W "$opts" -- ${arg}))
-                                        fi
-                                        ;;
-								send)
-										if [[ $COMP_CWORD == 2 ]]; then
-												opts=`rostopic list 2> /dev/null`
-												COMPREPLY=($(compgen -W "$opts" -- ${arg}))
-										elif [[ $COMP_CWORD == 3 ]]; then
-                                                opts=`cat $ROS_ETC_DIR/proto.list`
-												COMPREPLY=($(compgen -W "$opts" -- ${arg}))
-								    elif [[ $COMP_CWORD == 4 ]]; then
-                                            IFS='/' read -a ADDR <<< "${COMP_WORDS[3]}"
-                                            msg="${ADDR[0]}_pb_msgs/${ADDR[2]}"
-                                            unset IFS
-								    		opts=`rosmsg-proto msg 2> /dev/null -s $msg`
-												if [ 0 -eq $? ]; then
-													COMPREPLY="$opts"
-												fi
-										fi
 										;;
 								pub)
 										if [[ $COMP_CWORD == 2 ]]; then

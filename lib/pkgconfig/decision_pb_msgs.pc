@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros
-
-Name: decision_pb_msgs
-Description: Description of decision_pb_msgs
-Version: 0.5.10
-Cflags: -I/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/include
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib 
-Requires: message_runtime prediction_pb_msgs header_pb_msgs common_pb_msgs

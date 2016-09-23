@@ -67,8 +67,8 @@ set(diagnostic_updater_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(diagnostic_updater_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/diagnostics/diagnostic_updater)
-  set(diagnostic_updater_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/diagnostic_updater)
+  set(diagnostic_updater_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/diagnostics/diagnostic_updater)
+  set(diagnostic_updater_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/diagnostic_updater)
   set(diagnostic_updater_INSTALL_PREFIX "")
   set(diagnostic_updater_PREFIX ${diagnostic_updater_DEVEL_PREFIX})
 else()

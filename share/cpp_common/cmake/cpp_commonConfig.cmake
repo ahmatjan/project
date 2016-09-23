@@ -67,8 +67,8 @@ set(cpp_common_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(cpp_common_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/roscpp_core/cpp_common)
-  set(cpp_common_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/cpp_common)
+  set(cpp_common_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/roscpp_core/cpp_common)
+  set(cpp_common_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/cpp_common)
   set(cpp_common_INSTALL_PREFIX "")
   set(cpp_common_PREFIX ${cpp_common_DEVEL_PREFIX})
 else()

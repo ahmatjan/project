@@ -1,0 +1,55 @@
+<launch>
+
+  <!-- start rosbag replay -->
+  <include file="$(find velodyne_pointcloud)/launch/rosbag_replay.launch">
+    <arg name="rate" default="1" />
+    <arg name="start" default="0" />
+    <arg name="bag" default="/home/work/bag_files/short_idl.bag"/>
+  </include> 
+  
+  <include file="$(find velodyne_pointcloud)/launch/nodelet_manager.launch">
+  </include>
+  <include file="$(find velodyne_pointcloud)/launch/scan_msg_transform_nodelet.launch">
+    <arg name="model" default="64E_S2" />
+  </include>
+  <!-- start cloud nodelet using test calibration file -->
+  <include file="$(find velodyne_pointcloud)/launch/cloud_nodelet.launch">
+    <arg name="model" default="64E_S2" />
+    <arg name="calibration" default="$(find velodyne_pointcloud)/params/64E_S2_calibration.yaml" />
+    <arg name="organized" default="false"/>
+    <arg name="min_range" default="5.0" />
+    <arg name="max_range" default="70.0" />
+    <arg name="imu_sync" default="xsens" />
+    <arg name="topic_packets" default="velodyne_packets" />
+  </include>
+
+  <param name="use_sim_time" value="true" />
+  <param name="proj4_text"
+         value="+proj=utm +zone=50 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs " />
+  <param name="srid" value="23870" />
+  
+  <arg name="extrinsics" default="$(find velodyne_pointcloud)/params/velodyne_novatel_extrinsics_bmw8.yaml"/>
+  <node pkg="novatel_preprocess" type="extrinsics_broadcaster.py"
+    args="$(arg extrinsics)" name="static_transform_velodyne" />
+
+  
+  <node pkg="novatel_preprocess" type="novatel_rawimu_republisher" name="novatel_rawimu_republisher_node" output="screen">  
+    <param name="topic_rawimu" value="/dusensor/novatel/rawimu"/>
+  </node>
+
+ <node pkg="novatel_preprocess" type="novatel_odometry_republisher" name="novatel_odometry_republisher_node" output="screen">
+    <param name="topic_inspva" value="/dusensor/novatel/inspva"/>
+    <param name="topic_odometry" value="/dusensor/novatel/Odometry"/>
+  </node>
+
+  <node pkg="novatel_preprocess" type="inspva_broadcaster" name="inspva_broadcaster_node" output="screen">
+    <param name="topic_odometry" value="/dusensor/novatel/Odometry"/>
+        <remap from="/pose_with_covariance_stamped_odometry" to="/novatel_driver/inspva_pose_with_covariance_stamped_odometry"/>
+    <!--<param name="child_frame_id" value="novatel_compensated" type="str"/>-->
+  </node>
+  
+  <!-- start compensator nodelet -->
+  <include file="$(find velodyne_pointcloud)/launch/compensator_nodelet.launch">
+  </include>
+
+</launch>

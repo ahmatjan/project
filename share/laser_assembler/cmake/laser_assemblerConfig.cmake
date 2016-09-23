@@ -67,8 +67,8 @@ set(laser_assembler_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(laser_assembler_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/laser_assembler)
-  set(laser_assembler_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/laser_assembler)
+  set(laser_assembler_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/laser_assembler)
+  set(laser_assembler_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/laser_assembler)
   set(laser_assembler_INSTALL_PREFIX "")
   set(laser_assembler_PREFIX ${laser_assembler_DEVEL_PREFIX})
 else()

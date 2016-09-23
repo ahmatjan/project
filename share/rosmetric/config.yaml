@@ -8,13 +8,20 @@
 # period: tick number, eg. tick time =100ms. tick number = 10 , period time = 100*10 =1000ms. 
 # if oneshot is true, after period time and then get only one time metric.
 # if you want to immediately get only one time metric , pls set period = 1, oneshort =true . 
-- group: sensor
-  name: velodyne
+- group: common
+  name: talker
   testtype: 0
-  testfunc: /velodyne_nodelet_manager/metric_check
-  testargs: metric_frequency       
+  testfunc: /talker/metric_check
+  testargs: metric_healthy        
   oneshot: false  
   period: 5
+- group: common
+  name: listener
+  testtype: 0
+  testfunc: /listener/metric_check
+  testargs: metric_healthy        
+  oneshot: false  
+  period: 5  
 - group: master
   name: master  
   testtype: 1

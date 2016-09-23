@@ -67,8 +67,8 @@ set(visualization_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(visualization_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/common_msgs/visualization_msgs)
-  set(visualization_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/visualization_msgs)
+  set(visualization_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/common_msgs/visualization_msgs)
+  set(visualization_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/visualization_msgs)
   set(visualization_msgs_INSTALL_PREFIX "")
   set(visualization_msgs_PREFIX ${visualization_msgs_DEVEL_PREFIX})
 else()

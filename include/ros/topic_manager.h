@@ -60,8 +60,6 @@ typedef boost::shared_ptr<ConnectionManager> ConnectionManagerPtr;
 class SubscriptionCallbackHelper;
 typedef boost::shared_ptr<SubscriptionCallbackHelper> SubscriptionCallbackHelperPtr;
 
-typedef std::function<void (std::string)> PubCallbackFunc;
-
 class ROSCPP_DECL TopicManager
 {
 public:
@@ -133,9 +131,6 @@ public:
 
   void incrementSequence(const std::string &_topic);
   bool isLatched(const std::string& topic);
-
-  /* METRIC */
-  void register_pub_callback(const PubCallbackFunc& func);
 
 private:
   /** if it finds a pre-existing subscription to the same topic and of the
@@ -237,10 +232,6 @@ private:
   PollManagerPtr poll_manager_;
   ConnectionManagerPtr connection_manager_;
   XMLRPCManagerPtr xmlrpc_manager_;
-
-  /* METRIC */
-  void pub_callback(std::string topic_name);
-  std::function<void (std::string)> _pub_callback_func;
 };
 
 } // namespace ros

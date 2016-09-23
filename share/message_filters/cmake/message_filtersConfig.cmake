@@ -67,8 +67,8 @@ set(message_filters_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(message_filters_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/message_filters)
-  set(message_filters_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/message_filters)
+  set(message_filters_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/message_filters)
+  set(message_filters_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/message_filters)
   set(message_filters_INSTALL_PREFIX "")
   set(message_filters_PREFIX ${message_filters_DEVEL_PREFIX})
 else()

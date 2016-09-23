@@ -1,8 +1,8 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros
+prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
 
 Name: genlisp
 Description: Description of genlisp
 Version: 0.4.15
 Cflags: 
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib 
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib 
 Requires: genmsg

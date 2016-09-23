@@ -67,8 +67,8 @@ set(xmlrpcpp_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(xmlrpcpp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/xmlrpcpp)
-  set(xmlrpcpp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/xmlrpcpp)
+  set(xmlrpcpp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/xmlrpcpp)
+  set(xmlrpcpp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/xmlrpcpp)
   set(xmlrpcpp_INSTALL_PREFIX "")
   set(xmlrpcpp_PREFIX ${xmlrpcpp_DEVEL_PREFIX})
 else()

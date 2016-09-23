@@ -8,7 +8,7 @@
 
 # since this file is sourced either use the provided _CATKIN_SETUP_DIR
 # or fall back to the destination set at configure time
-: ${_CATKIN_SETUP_DIR:=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros}
+: ${_CATKIN_SETUP_DIR:=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated}
 _SETUP_UTIL="$_CATKIN_SETUP_DIR/_setup_util.py"
 unset _CATKIN_SETUP_DIR
 
@@ -96,3 +96,5 @@ unset _CATKIN_ENVIRONMENT_HOOKS_COUNT
 #set library path for ros environment
 export LD_LIBRARY_PATH=$HOME/ros/lib:$LD_LIBRARY_PATH
 
+#set zookeeper env
+#export ZK_HOST=127.0.0.1:2180,127.0.0.1:2181,127.0.0.1:2182

@@ -67,8 +67,8 @@ set(class_loader_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(class_loader_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/class_loader)
-  set(class_loader_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/class_loader)
+  set(class_loader_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/class_loader)
+  set(class_loader_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/class_loader)
   set(class_loader_INSTALL_PREFIX "")
   set(class_loader_PREFIX ${class_loader_DEVEL_PREFIX})
 else()

@@ -67,8 +67,8 @@ set(message_runtime_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(message_runtime_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/message_runtime)
-  set(message_runtime_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/message_runtime)
+  set(message_runtime_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/message_runtime)
+  set(message_runtime_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/message_runtime)
   set(message_runtime_INSTALL_PREFIX "")
   set(message_runtime_PREFIX ${message_runtime_DEVEL_PREFIX})
 else()

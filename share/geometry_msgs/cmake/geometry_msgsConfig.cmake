@@ -67,8 +67,8 @@ set(geometry_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(geometry_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/common_msgs/geometry_msgs)
-  set(geometry_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/geometry_msgs)
+  set(geometry_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/common_msgs/geometry_msgs)
+  set(geometry_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/geometry_msgs)
   set(geometry_msgs_INSTALL_PREFIX "")
   set(geometry_msgs_PREFIX ${geometry_msgs_DEVEL_PREFIX})
 else()

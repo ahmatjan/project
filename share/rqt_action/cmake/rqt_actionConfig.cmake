@@ -67,8 +67,8 @@ set(rqt_action_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rqt_action_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/rqt_common_plugins/rqt_action)
-  set(rqt_action_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rqt_action)
+  set(rqt_action_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/rqt_common_plugins/rqt_action)
+  set(rqt_action_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rqt_action)
   set(rqt_action_INSTALL_PREFIX "")
   set(rqt_action_PREFIX ${rqt_action_DEVEL_PREFIX})
 else()

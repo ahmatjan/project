@@ -1,4 +1,4 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros
+prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
 libdir=${prefix}/lib
 includedir=${prefix}/include
 

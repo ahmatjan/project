@@ -67,8 +67,8 @@ set(rosmsg_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosmsg_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/rosmsg)
-  set(rosmsg_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosmsg)
+  set(rosmsg_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/rosmsg)
+  set(rosmsg_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rosmsg)
   set(rosmsg_INSTALL_PREFIX "")
   set(rosmsg_PREFIX ${rosmsg_DEVEL_PREFIX})
 else()

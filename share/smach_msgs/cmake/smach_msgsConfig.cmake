@@ -67,8 +67,8 @@ set(smach_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(smach_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/executive_smach/smach_msgs)
-  set(smach_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/smach_msgs)
+  set(smach_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/executive_smach/smach_msgs)
+  set(smach_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/smach_msgs)
   set(smach_msgs_INSTALL_PREFIX "")
   set(smach_msgs_PREFIX ${smach_msgs_DEVEL_PREFIX})
 else()

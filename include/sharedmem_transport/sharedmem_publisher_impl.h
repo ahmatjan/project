@@ -72,7 +72,7 @@ private:
     SharedMemorySegment* _segment_mgr;
     SharedMemoryBlock* _descriptors_pub;
     uint8_t** _addr_pub;
-
+    
     bool _client_registered;
     ros::NodeHandle _nh;
 };

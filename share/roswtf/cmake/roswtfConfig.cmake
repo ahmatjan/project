@@ -67,8 +67,8 @@ set(roswtf_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(roswtf_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/roswtf)
-  set(roswtf_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/roswtf)
+  set(roswtf_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/roswtf)
+  set(roswtf_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/roswtf)
   set(roswtf_INSTALL_PREFIX "")
   set(roswtf_PREFIX ${roswtf_DEVEL_PREFIX})
 else()

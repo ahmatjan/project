@@ -67,8 +67,8 @@ set(pluginlib_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(pluginlib_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/pluginlib)
-  set(pluginlib_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/pluginlib)
+  set(pluginlib_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/pluginlib)
+  set(pluginlib_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/pluginlib)
   set(pluginlib_INSTALL_PREFIX "")
   set(pluginlib_PREFIX ${pluginlib_DEVEL_PREFIX})
 else()

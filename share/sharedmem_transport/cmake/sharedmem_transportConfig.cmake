@@ -67,8 +67,8 @@ set(sharedmem_transport_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(sharedmem_transport_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/message_transport/sharedmem_transport)
-  set(sharedmem_transport_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/sharedmem_transport)
+  set(sharedmem_transport_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/message_transport/sharedmem_transport)
+  set(sharedmem_transport_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/sharedmem_transport)
   set(sharedmem_transport_INSTALL_PREFIX "")
   set(sharedmem_transport_PREFIX ${sharedmem_transport_DEVEL_PREFIX})
 else()

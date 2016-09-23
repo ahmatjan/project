@@ -67,8 +67,8 @@ set(nav_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(nav_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/common_msgs/nav_msgs)
-  set(nav_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/nav_msgs)
+  set(nav_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/common_msgs/nav_msgs)
+  set(nav_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/nav_msgs)
   set(nav_msgs_INSTALL_PREFIX "")
   set(nav_msgs_PREFIX ${nav_msgs_DEVEL_PREFIX})
 else()

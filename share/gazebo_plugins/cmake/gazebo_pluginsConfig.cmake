@@ -67,8 +67,8 @@ set(gazebo_plugins_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(gazebo_plugins_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/gazebo_ros_pkgs/gazebo_plugins)
-  set(gazebo_plugins_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/gazebo_plugins)
+  set(gazebo_plugins_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/gazebo_ros_pkgs/gazebo_plugins)
+  set(gazebo_plugins_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/gazebo_plugins)
   set(gazebo_plugins_INSTALL_PREFIX "")
   set(gazebo_plugins_PREFIX ${gazebo_plugins_DEVEL_PREFIX})
 else()

@@ -67,8 +67,8 @@ set(rosbash_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosbash_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros/rosbash)
-  set(rosbash_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosbash)
+  set(rosbash_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros/rosbash)
+  set(rosbash_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rosbash)
   set(rosbash_INSTALL_PREFIX "")
   set(rosbash_PREFIX ${rosbash_DEVEL_PREFIX})
 else()

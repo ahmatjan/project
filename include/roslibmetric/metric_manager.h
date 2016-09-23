@@ -40,14 +40,14 @@ public:
     void start();
     void shutdown();
 
-    inline bool isstarted() {
+    inline bool isStarted() {
         return _started;
     }
     ros::MetricHandle& get_metric_handle(std::string nodename);
 
 private:
     void thread_func();
-//    bool is_node_name(std::string nodename, std::string thisnode);
+    bool is_node_name(std::string nodename, std::string thisnode);
     std::map<std::string, boost::shared_ptr<ros::MetricHandle>> _m_metrichandles;
     std::map<std::string, boost::shared_ptr<metric::MetricSrv>> _m_services;
     std::thread _server_thread;

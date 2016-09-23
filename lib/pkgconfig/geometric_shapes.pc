@@ -1,8 +1,8 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros
+prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
 
 Name: geometric_shapes
 Description: Description of geometric_shapes
 Version: 0.4.4
-Cflags: -I/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/include -I/usr/include/eigen3 -I/usr/include
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib -lgeometric_shapes -l:/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib/liboctomap.so -l:/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib/liboctomath.so -l:/usr/lib/x86_64-linux-gnu/libconsole_bridge.so
+Cflags: -I/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/include -I/usr/include/eigen3 -I/usr/include
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib -lgeometric_shapes -l:/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib/liboctomap.so -l:/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib/liboctomath.so -l:/usr/lib/x86_64-linux-gnu/libconsole_bridge.so
 Requires: shape_msgs random_numbers eigen_stl_containers visualization_msgs

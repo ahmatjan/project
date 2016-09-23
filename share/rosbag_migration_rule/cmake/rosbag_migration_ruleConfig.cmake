@@ -67,8 +67,8 @@ set(rosbag_migration_rule_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosbag_migration_rule_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/rosbag_migration_rule)
-  set(rosbag_migration_rule_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosbag_migration_rule)
+  set(rosbag_migration_rule_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/rosbag_migration_rule)
+  set(rosbag_migration_rule_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rosbag_migration_rule)
   set(rosbag_migration_rule_INSTALL_PREFIX "")
   set(rosbag_migration_rule_PREFIX ${rosbag_migration_rule_DEVEL_PREFIX})
 else()

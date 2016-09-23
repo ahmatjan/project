@@ -1,8 +1,8 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros
+prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
 
 Name: rostime
 Description: Description of rostime
 Version: 0.5.7
-Cflags: -I/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/include -I/usr/include
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib -lrostime -l:/usr/lib/x86_64-linux-gnu/libboost_date_time.so -l:/usr/lib/x86_64-linux-gnu/libboost_system.so -l:/usr/lib/x86_64-linux-gnu/libboost_thread.so -l:/usr/lib/x86_64-linux-gnu/libpthread.so
+Cflags: -I/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/include -I/usr/include
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib -lrostime -l:/usr/lib/x86_64-linux-gnu/libboost_date_time.so -l:/usr/lib/x86_64-linux-gnu/libboost_system.so -l:/usr/lib/x86_64-linux-gnu/libboost_thread.so -l:/usr/lib/x86_64-linux-gnu/libpthread.so
 Requires: cpp_common

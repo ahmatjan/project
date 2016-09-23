@@ -67,8 +67,8 @@ set(rostest_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rostest_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/rostest)
-  set(rostest_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rostest)
+  set(rostest_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/rostest)
+  set(rostest_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rostest)
   set(rostest_INSTALL_PREFIX "")
   set(rostest_PREFIX ${rostest_DEVEL_PREFIX})
 else()

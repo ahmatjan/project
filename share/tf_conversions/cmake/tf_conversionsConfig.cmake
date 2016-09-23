@@ -67,8 +67,8 @@ set(tf_conversions_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(tf_conversions_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/geometry/tf_conversions)
-  set(tf_conversions_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/tf_conversions)
+  set(tf_conversions_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/geometry/tf_conversions)
+  set(tf_conversions_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/tf_conversions)
   set(tf_conversions_INSTALL_PREFIX "")
   set(tf_conversions_PREFIX ${tf_conversions_DEVEL_PREFIX})
 else()

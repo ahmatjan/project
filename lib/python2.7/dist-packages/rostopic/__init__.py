@@ -45,7 +45,6 @@ import socket
 import time
 import traceback
 import yaml
-
 try:
     from xmlrpc.client import Fault
 except ImportError:
@@ -57,40 +56,12 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-try:
-    from google.protobuf.message import Message
-    from google.protobuf.descriptor import FieldDescriptor
-    mod = __import__("std_msgs")
-    TYPE_MAP = {
-        FieldDescriptor.TYPE_DOUBLE: float,
-        FieldDescriptor.TYPE_FLOAT: float,
-        FieldDescriptor.TYPE_INT32: int,
-        FieldDescriptor.TYPE_INT64: long,
-        FieldDescriptor.TYPE_UINT32: int,
-        FieldDescriptor.TYPE_UINT64: long,
-        FieldDescriptor.TYPE_SINT32: int,
-        FieldDescriptor.TYPE_SINT64: long,
-        FieldDescriptor.TYPE_FIXED32: int,
-        FieldDescriptor.TYPE_FIXED64: long,
-        FieldDescriptor.TYPE_SFIXED32: int,
-        FieldDescriptor.TYPE_SFIXED64: long,
-        FieldDescriptor.TYPE_BOOL: bool,
-        FieldDescriptor.TYPE_STRING: unicode,
-        FieldDescriptor.TYPE_BYTES: lambda b: b.encode("base64"),
-        FieldDescriptor.TYPE_ENUM: int,
-    }
-except ImportError:
-    TYPE_MAP = {}
-    pass
-
 import genpy
+
 import roslib.message
 import rosgraph
 #TODO: lazy-import rospy or move rospy-dependent routines to separate location
 import rospy
-
-INVALID_FIELD_NAME = ["yield"]
-
 
 class ROSTopicException(Exception):
     """
@@ -628,93 +599,6 @@ def _convert_getattr(val, f, t):
     else:
         return attr
 
-
-class CallbackParse(object):
-    """
-    Callback instance that can print callback data in a variety of
-    formats. Used for all variants of rostopic echo
-    """
-
-    def __init__(self, topic, msg_eval, pub, topic_type):
-
-        if topic and topic[-1] == '/':
-            topic = topic[:-1]
-        self.topic = topic
-        self.msg_eval = msg_eval
-        self.pub = pub
-
-        msg_pkg, msg_file, msg_class = topic_type.split("/")
-        self.proto_type = msg_file + "_pb2"
-        self.proto = __import__(self.proto_type)
-        self.proto_class = getattr(self.proto, msg_class)
-        
-        self.mod = __import__(msg_pkg + "_pb_msgs")
-        self.msg = getattr(self.mod.msg, msg_class)
-        self.prefix = ''
-        
-        # done tracks when we've exceeded the count
-        self.done = False
-
-        # cache
-        self.last_topic = None
-        self.last_msg_eval = None
-
-    def _repeated(self, type_callable):
-        return lambda value_list: [type_callable(value) for value in value_list]
-
-    def _pb_to_msg(self, pb, msg_class):
-        msg = msg_class()
-        for fd, val in pb.ListFields():
-            if fd.name in INVALID_FIELD_NAME:
-                fd_name = fd.name + "X"
-            else:
-                fd_name = fd.name
-
-            if hasattr(msg, fd_name):
-                type_callable = self._field_eval(fd, msg)
-                if fd.label == FieldDescriptor.LABEL_REPEATED:
-                    type_callable = self._repeated(type_callable)
-
-                setattr(msg, fd_name, type_callable(val))
-            else:
-                print("Unrecognized field: %s" % fd.name)
-        return msg
-
-    def _field_eval(self, fd, msg, type_map=TYPE_MAP):
-        if fd.type == FieldDescriptor.TYPE_MESSAGE:
-            try:
-                msg_type = dict(zip(msg.__slots__, msg._slot_types))[fd.name]
-                msg_class = roslib.message.get_message_class(msg_type.replace("[]", ""))
-                return lambda pb: self._pb_to_msg(pb, msg_class)
-            except Exception as e:
-                print(e)
-                exit("Can not find ros message: %s" % (fd.message_type.name))
-        elif fd.type in type_map:
-            return type_map[fd.type]
-        else:
-            exit("invalid type: %s" % fd.type)
-
-    #internal interface
-    def callback(self, data, callback_args, current_time=None):
-        topic = callback_args['topic']
-        pub_topic = '/debug' + topic 
-        type_information = callback_args.get('type_information', None)
-
-        try:
-            if data is not None:
-                pb = self.proto_class()
-                pb.ParseFromString(data.data)
-                #print([fd.name for fd, val in pb.ListFields()])
-                msg = self._pb_to_msg(pb, self.msg)
-                self.pub.publish(msg)
-
-        except IOError:
-            self.done = True
-        except:
-            # set done flag so we exit
-            self.done = True
-            traceback.print_exc()
-
 class CallbackEcho(object):
     """
     Callback instance that can print callback data in a variety of
@@ -884,63 +768,12 @@ def _rostopic_echo_bag(callback_echo, bag_file):
             if callback_echo.done:
                 break
 
-
-def _rostopic_parse(topic, callback_parse):
-    _check_master()
-    #rospy.init_node("rosparser", anonymous=True)
-    msg_class, real_topic, msg_eval = get_topic_class(topic, blocking=True)
-    if msg_class is None:
-        # occurs on ctrl-C
-        return
-    callback_parse.msg_eval = msg_eval
-
-    # extract type information for submessages
-    type_information = None
-    if len(topic) > len(real_topic):
-        subtopic = topic[len(real_topic):]
-        subtopic = subtopic.strip('/')
-        if subtopic:
-            fields = subtopic.split('/')
-            submsg_class = msg_class
-            while fields:
-                field = fields[0].split('[')[0]
-                del fields[0]
-                index = submsg_class.__slots__.index(field)
-                type_information = submsg_class._slot_types[index]
-                if fields:
-                    submsg_class = roslib.message.get_message_class(
-                            type_information.split('[', 1)[0])
-                    if not submsg_class:
-                        raise ROSTopicException("Cannot load message class for [%s]. \
-                                Are your messages built?" % type_information)
-
-    use_sim_time = rospy.get_param('/use_sim_time', False)
-    sub = rospy.Subscriber(real_topic, msg_class, 
-            callback_parse.callback, {'topic': topic, 'type_information': type_information})
-
-    if use_sim_time:
-        # #2950: print warning if nothing received for two seconds
-        timeout_t = time.time() + 2.
-        while time.time() < timeout_t and \
-                callback_parse.count == 0 and \
-                not rospy.is_shutdown() and \
-                not callback_parse.done:
-            _sleep(0.1)
-
-        if callback_parse.count == 0 and \
-                not rospy.is_shutdown() and \
-                not callback_echo.done:
-            sys.stderr.write("WARNING: no messages received and simulated time is active.\n \
-                    Is /clock being published?\n")
-
-    while not rospy.is_shutdown() and not callback_parse.done:
-        _sleep(0.1)
-
 def _rostopic_echo(topic, callback_echo, bag_file=None, echo_all_topics=False):
     """
     Print new messages on topic to screen.
     
     :param topic: topic name, ``str``
+    :param bag_file: name of bag file to echo messages from or ``None``, ``str``
     """
     # we have to init a node regardless and bag echoing can print timestamps
 
@@ -1510,56 +1343,7 @@ def _publish_latched(pub, msg, once=False, verbose=False):
     if not once:
         rospy.spin()        
 
-
-def dict_to_pb(cls, adict):
-    obj = cls()
-    for field in obj.DESCRIPTOR.fields:
-        if not field.name in adict:
-            continue
-        msg_type = field.message_type
-        if field.label == FieldDescriptor.LABEL_REPEATED:
-            if field.type == FieldDescriptor.TYPE_MESSAGE:
-                for sub_dict in adict[field.name]:
-                    item = getattr(obj, field.name).add()
-                    item.CopyFrom(dict_to_pb(msg_type._concrete_class, sub_dict))
-            else:
-                map(getattr(obj, field.name).append, adict[field.name])
-        else:
-            if field.type == FieldDescriptor.TYPE_MESSAGE:
-                value = dict_to_pb(msg_type._concrete_class, adict[field.name])
-                getattr(obj, field.name).CopyFrom(value)
-            else:
-                setattr(obj, field.name, adict[field.name])
-    return obj
-
-
-def ros_to_pb(proto_class, msg):
-    proto = proto_class()
-    for field in proto.DESCRIPTOR.fields:
-        if not field.name in msg.__slots__:
-            continue
-        msg_type = field.message_type
-        if field.label == FieldDescriptor.LABEL_REPEATED:
-            if field.type == FieldDescriptor.TYPE_MESSAGE:
-                for sub_dict in getattr(msg, field.name):
-                    item = getattr(proto, field.name).add()
-                    item.CopyFrom(ros_to_pb(msg_type._concrete_class, sub_dict))
-            else:
-                map(getattr(proto, field.name).append, getattr(msg, field.name))
-        else:
-            if field.type == FieldDescriptor.TYPE_MESSAGE:
-                value = ros_to_pb(msg_type._concrete_class, getattr(msg, field.name))
-                getattr(proto, field.name).CopyFrom(value)
-            else:
-                try:
-                    setattr(proto, field.name, getattr(msg, field.name))
-                except ValueError as e:
-                    print(e)
-    return proto
-
-
-def publish_message(pub, msg_class, pub_args, 
-        rate=None, once=False, verbose=False, topic_type=None):
+def publish_message(pub, msg_class, pub_args, rate=None, once=False, verbose=False):
     """
     Create new instance of msg_class, populate with pub_args, and publish. This may
     print output to screen.
@@ -1571,15 +1355,6 @@ def publish_message(pub, msg_class, pub_args,
     :param once: publish only once and return, ``bool``
     :param verbose: If ``True``, print more verbose output to stdout, ``bool``
     """
-
-    if topic_type:
-        msg_pkg, msg_file, msg_class = topic_type.split("/")
-        ros_msg_type = ("%s_pb_msgs/%s") % (msg_pkg, msg_class)
-        try:
-            msg_class = roslib.message.get_message_class(ros_msg_type)
-        except:
-            raise ROSTopicException("invalid topic type: %s" % topic_type)
-
     msg = msg_class()
     try:
         # Populate the message and enable substitution keys for 'now'
@@ -1599,21 +1374,6 @@ def publish_message(pub, msg_class, pub_args,
         genpy.message.fill_message_args(msg, pub_args, keys=keys)
     except genpy.MessageException as e:
         raise ROSTopicException(str(e)+"\n\nArgs are: [%s]"%genpy.message.get_printable_message_args(msg))
-
-    #convert msg into protobuf
-    if topic_type:
-        msg_pkg, msg_file, msg_class = topic_type.split("/")
-        proto_type = msg_file + "_pb2"
-        proto = __import__(proto_type)
-        proto_class = getattr(proto, msg_class)
-        proto_msg = dict_to_pb(proto_class, pub_args[0])
-        #proto_msg = ros_to_pb(proto_class, msg)
-
-        from std_msgs.msg import String
-        str_msg = String()
-        str_msg.data = proto_msg.SerializeToString()
-        msg = str_msg
-
     try:
         
         if rate is None:
@@ -1634,138 +1394,6 @@ def publish_message(pub, msg_class, pub_args,
         # we could just print the message definition, but rosmsg is more readable
         raise ROSTopicException("Unable to publish message. One of the fields has an incorrect type:\n"+\
                                 "  %s\n\nmsg file:\n%s"%(e, rosmsg.get_msg_text(msg_class._type)))
-
-
-def _rostopic_cmd_parse(argv):
-    args = argv[2:]
-    from optparse import OptionParser
-    parser = OptionParser(usage="usage: %prog pub /topic type [args...]", prog=NAME)
-    parser.add_option("-v", dest="verbose", default=False,
-                      action="store_true",
-                      help="print verbose output")
-
-    (options, args) = parser.parse_args(args)
-        
-    # validate args len
-    if len(args) == 0:
-        parser.error("/topic must be specified")
-    if len(args) == 1:
-        parser.error("topic type must be specified")
-    topic_name, topic_type = args[0], args[1]
-
-    # make sure master is online. we wait until after we've parsed the
-    # args to do this so that syntax errors are reported first
-    _check_master()
-
-    # we don't need latch here
-    latch = False
-
-    # debug topics are start with "/debug"
-    pub_topic = "/debug" + topic_name
-
-    #topic_type looks like "hdmap/map_id/Id"
-    msg_pkg, msg_file, msg_class = topic_type.split("/")
-    ros_msg_type = ("%s_pb_msgs/%s") % (msg_pkg, msg_class)
-
-    pub, msg_class = create_publisher(pub_topic, ros_msg_type, latch)
-    callback_parse = CallbackParse(topic_name, None, pub, topic_type)
-
-    try:
-        _rostopic_parse(topic_name, callback_parse)
-    except socket.error:
-        sys.stderr.write("Network communication failed. \
-                Most likely failed to communicate with master.\n")
-
-
-def camel_to_underline(camel_string):
-    underline_format = ""
-    for _s_ in camel_string:  
-        underline_format += _s_ if _s_.islower() else '_' + _s_.lower()  
-    return underline_format
-
-
-def _rostopic_cmd_send(argv):
-    args = argv[2:]
-    from optparse import OptionParser
-    parser = OptionParser(usage="usage: %prog pub /topic type [args...]", prog=NAME)
-    parser.add_option("-v", dest="verbose", default=False,
-                      action="store_true",
-                      help="print verbose output")
-    parser.add_option("-r", "--rate", dest="rate", default=None,
-                      help="publishing rate (hz).  \
-                              For -f and stdin input, this defaults to 10.  Otherwise it is not set.")
-    parser.add_option("-1", "--once", action="store_true", dest="once", default=False,
-                      help="publish one message and exit")
-    parser.add_option("-f", '--file', dest="file", metavar='FILE', default=None,
-                      help="read args from YAML file (Bagy)")
-    parser.add_option("-l", '--latch', dest="latch", default=False, action="store_true",
-                      help="enable latching for -f, -r and piped input.  \
-                              This latches the first message.")
-    parser.add_option("-p", '--proto', dest="proto", default=False, action="store_true",
-                      help="convert msg into protobuf")
-    
-    (options, args) = parser.parse_args(args)
-    if options.rate is not None:
-        if options.once:
-            parser.error("You cannot select both -r and -1 (--once)")
-        try:
-            rate = float(options.rate)
-        except ValueError:
-            parser.error("rate must be a number")
-        if rate <= 0:
-            parser.error("rate must be greater than zero")
-    else:
-        # we will default this to 10 for file/stdin later
-        rate = None
-        
-    # validate args len
-    if len(args) == 0:
-        parser.error("/topic must be specified")
-    if len(args) == 1:
-        parser.error("topic type must be specified")
-    if 0:
-        if len(args) > 2 and options.parameter:
-            parser.error("args confict with -p setting")        
-    if len(args) > 2 and options.file:
-        parser.error("args confict with -f setting")        
-    topic_name, topic_type = args[0], args[1]
-
-    # type-case using YAML
-    try:
-        pub_args = []
-        for arg in args[2:]:
-            pub_args.append(yaml.load(arg))
-    except Exception as e:
-        parser.error("Argument error: " + str(e))
-
-    # make sure master is online. we wait until after we've parsed the
-    # args to do this so that syntax errors are reported first
-    _check_master()
-
-    # if no rate, or explicit latch, we latch
-    latch = (rate is None) or options.latch
-
-    msg_pkg, msg_file, msg_class = topic_type.split("/")
-    ros_msg_type = ("%s_pb_msgs/%s") % (msg_pkg, msg_class)
-
-    pub, msg_class = create_publisher(topic_name, "std_msgs/String", latch)
-
-    if 0 and options.parameter:
-        param_name = rosgraph.names.script_resolve_name('rostopic', options.parameter)
-        if options.once:
-            param_publish_once(pub, msg_class, param_name, rate, options.verbose)
-        else:
-            param_publish(pub, msg_class, param_name, rate, options.verbose)
-        
-    elif not pub_args and len(msg_class.__slots__):
-        if not options.file and sys.stdin.isatty():
-            parser.error("Please specify message values")
-        # stdin/file input has a rate by default
-        if rate is None and not options.latch and not options.once:
-            rate = 10.
-        stdin_publish(pub, msg_class, rate, options.once, options.file, options.verbose)
-    else:
-        argv_publish(pub, msg_class, pub_args, rate, options.once, options.verbose, topic_type)
     
 def _rostopic_cmd_pub(argv):
     """
@@ -1871,10 +1499,9 @@ def file_yaml_arg(filename):
         except yaml.YAMLError as e:
             raise ROSTopicException("invalid YAML in file: %s"%(str(e)))
     return bagy_iter
-
     
-def argv_publish(pub, msg_class, pub_args, rate, once, verbose, topic_type=None):
-    publish_message(pub, msg_class, pub_args, rate, once, verbose=verbose, topic_type=topic_type)
+def argv_publish(pub, msg_class, pub_args, rate, once, verbose):
+    publish_message(pub, msg_class, pub_args, rate, once, verbose=verbose)
 
     if once:
         # stick around long enough for others to grab
@@ -2135,7 +1762,6 @@ Commands:
 \trostopic list\tlist active topics
 \trostopic pub\tpublish data to topic
 \trostopic type\tprint topic type
-\trostopic parse\tremap protobuf topic to ros message
 
 Type rostopic <command> -h for more detailed usage, e.g. 'rostopic echo -h'
 """)
@@ -2169,10 +1795,6 @@ def rostopicmain(argv=None):
             _rostopic_cmd_bw(argv)
         elif command == 'find':
             _rostopic_cmd_find(argv)
-        elif command == 'parse':
-            _rostopic_cmd_parse(argv)
-        elif command == 'send':
-            _rostopic_cmd_send(argv)
         else:
             _fullusage()
     except socket.error:

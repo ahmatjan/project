@@ -1,0 +1,8 @@
+prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
+
+Name: velodyne_pointcloud
+Description: Description of velodyne_pointcloud
+Version: 1.0.0
+Cflags: -I/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/include
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib -lvelodyne_rawdata
+Requires: angles nodelet pcl_ros roscpp roslib sensor_msgs velodyne_driver velodyne_msgs eigen_conversions image_transport cv_bridge novatel_preprocess time_util math_util msg_util

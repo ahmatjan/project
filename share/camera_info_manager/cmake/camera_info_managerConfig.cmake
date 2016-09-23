@@ -67,8 +67,8 @@ set(camera_info_manager_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(camera_info_manager_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/image_common/camera_info_manager)
-  set(camera_info_manager_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/camera_info_manager)
+  set(camera_info_manager_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/image_common/camera_info_manager)
+  set(camera_info_manager_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/camera_info_manager)
   set(camera_info_manager_INSTALL_PREFIX "")
   set(camera_info_manager_PREFIX ${camera_info_manager_DEVEL_PREFIX})
 else()

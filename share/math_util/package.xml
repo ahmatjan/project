@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package>
+  <name>math_util</name>
+  <version>1.0.0</version>
+  <description>The math_util package</description>
+  <maintainer email="fengkaiwen01@baidu.com">work</maintainer>
+  <license>TODO</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>angles</build_depend>
+  <run_depend>angles</run_depend>
+
+  <export>
+  </export>
+</package>

@@ -67,8 +67,8 @@ set(joint_state_publisher_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(joint_state_publisher_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/robot_model/joint_state_publisher)
-  set(joint_state_publisher_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/joint_state_publisher)
+  set(joint_state_publisher_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/robot_model/joint_state_publisher)
+  set(joint_state_publisher_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/joint_state_publisher)
   set(joint_state_publisher_INSTALL_PREFIX "")
   set(joint_state_publisher_PREFIX ${joint_state_publisher_DEVEL_PREFIX})
 else()

@@ -67,8 +67,8 @@ set(rosclean_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosclean_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros/rosclean)
-  set(rosclean_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosclean)
+  set(rosclean_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros/rosclean)
+  set(rosclean_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rosclean)
   set(rosclean_INSTALL_PREFIX "")
   set(rosclean_PREFIX ${rosclean_DEVEL_PREFIX})
 else()

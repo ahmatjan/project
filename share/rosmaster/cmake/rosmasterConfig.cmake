@@ -67,8 +67,8 @@ set(rosmaster_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosmaster_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/rosmaster)
-  set(rosmaster_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosmaster)
+  set(rosmaster_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/rosmaster)
+  set(rosmaster_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rosmaster)
   set(rosmaster_INSTALL_PREFIX "")
   set(rosmaster_PREFIX ${rosmaster_DEVEL_PREFIX})
 else()

@@ -67,8 +67,8 @@ set(rqt_nav_view_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rqt_nav_view_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/rqt_robot_plugins/rqt_nav_view)
-  set(rqt_nav_view_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rqt_nav_view)
+  set(rqt_nav_view_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/rqt_robot_plugins/rqt_nav_view)
+  set(rqt_nav_view_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rqt_nav_view)
   set(rqt_nav_view_INSTALL_PREFIX "")
   set(rqt_nav_view_PREFIX ${rqt_nav_view_DEVEL_PREFIX})
 else()

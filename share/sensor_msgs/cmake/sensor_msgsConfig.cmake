@@ -67,8 +67,8 @@ set(sensor_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(sensor_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/common_msgs/sensor_msgs)
-  set(sensor_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/sensor_msgs)
+  set(sensor_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/common_msgs/sensor_msgs)
+  set(sensor_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/sensor_msgs)
   set(sensor_msgs_INSTALL_PREFIX "")
   set(sensor_msgs_PREFIX ${sensor_msgs_DEVEL_PREFIX})
 else()

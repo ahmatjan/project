@@ -67,8 +67,8 @@ set(eigen_conversions_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(eigen_conversions_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/geometry/eigen_conversions)
-  set(eigen_conversions_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/eigen_conversions)
+  set(eigen_conversions_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/geometry/eigen_conversions)
+  set(eigen_conversions_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/eigen_conversions)
   set(eigen_conversions_INSTALL_PREFIX "")
   set(eigen_conversions_PREFIX ${eigen_conversions_DEVEL_PREFIX})
 else()

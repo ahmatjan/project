@@ -67,8 +67,8 @@ set(image_view_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(image_view_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/image_pipeline/image_view)
-  set(image_view_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/image_view)
+  set(image_view_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/image_pipeline/image_view)
+  set(image_view_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/image_view)
   set(image_view_INSTALL_PREFIX "")
   set(image_view_PREFIX ${image_view_DEVEL_PREFIX})
 else()

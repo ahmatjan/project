@@ -67,8 +67,8 @@ set(collada_urdf_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(collada_urdf_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/robot_model/collada_urdf)
-  set(collada_urdf_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/collada_urdf)
+  set(collada_urdf_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/robot_model/collada_urdf)
+  set(collada_urdf_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/collada_urdf)
   set(collada_urdf_INSTALL_PREFIX "")
   set(collada_urdf_PREFIX ${collada_urdf_DEVEL_PREFIX})
 else()

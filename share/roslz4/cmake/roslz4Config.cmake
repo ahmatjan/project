@@ -67,8 +67,8 @@ set(roslz4_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(roslz4_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/roslz4)
-  set(roslz4_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/roslz4)
+  set(roslz4_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/roslz4)
+  set(roslz4_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/roslz4)
   set(roslz4_INSTALL_PREFIX "")
   set(roslz4_PREFIX ${roslz4_DEVEL_PREFIX})
 else()

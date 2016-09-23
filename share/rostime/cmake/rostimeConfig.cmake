@@ -67,8 +67,8 @@ set(rostime_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rostime_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/roscpp_core/rostime)
-  set(rostime_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rostime)
+  set(rostime_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/roscpp_core/rostime)
+  set(rostime_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rostime)
   set(rostime_INSTALL_PREFIX "")
   set(rostime_PREFIX ${rostime_DEVEL_PREFIX})
 else()

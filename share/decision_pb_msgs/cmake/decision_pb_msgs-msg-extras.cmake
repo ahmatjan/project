@@ -1,2 +1,0 @@
-set(decision_pb_msgs_MESSAGE_FILES "msg/Range.msg;msg/TargetLane.msg;msg/ObjectIgnore.msg;msg/ObjectStop.msg;msg/ObjectNudge.msg;msg/ObjectYield.msg;msg/ObjectFollow.msg;msg/ObjectOvertake.msg;msg/ObjectSidePass.msg;msg/ObjectDecisionType.msg;msg/ObjectDecision.msg;msg/ObjectDecisions.msg;msg/StopLine.msg;msg/MainStop.msg;msg/MainEmergencyStop.msg;msg/MainCruise.msg;msg/MainChangeLane.msg;msg/MainMissionComplete.msg;msg/MainNotReady.msg;msg/MainDecision.msg;msg/DecisionResult.msg")
-set(decision_pb_msgs_SERVICE_FILES "")

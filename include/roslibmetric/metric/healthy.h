@@ -16,7 +16,6 @@
 #ifndef ROS_HEALTHY_H
 #define ROS_HEALTHY_H
 
-#include <memory>
 #include <ros/common.h>
 #include "roslibmetric/metric/metric_interface.h"
 
@@ -31,7 +30,7 @@ public:
     void set(uint8_t lvl, const std::string s);
 private:
     class Impl;
-    std::unique_ptr<Impl> _impl;
+    boost::shared_ptr<Impl> _impl;
 };
 }
 

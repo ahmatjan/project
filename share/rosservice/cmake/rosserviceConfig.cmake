@@ -67,8 +67,8 @@ set(rosservice_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosservice_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/rosservice)
-  set(rosservice_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosservice)
+  set(rosservice_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/rosservice)
+  set(rosservice_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rosservice)
   set(rosservice_INSTALL_PREFIX "")
   set(rosservice_PREFIX ${rosservice_DEVEL_PREFIX})
 else()

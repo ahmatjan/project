@@ -67,8 +67,8 @@ set(image_geometry_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(image_geometry_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/vision_opencv/image_geometry)
-  set(image_geometry_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/image_geometry)
+  set(image_geometry_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/vision_opencv/image_geometry)
+  set(image_geometry_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/image_geometry)
   set(image_geometry_INSTALL_PREFIX "")
   set(image_geometry_PREFIX ${image_geometry_DEVEL_PREFIX})
 else()

@@ -67,8 +67,8 @@ set(genmsg_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(genmsg_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/genmsg)
-  set(genmsg_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/genmsg)
+  set(genmsg_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/genmsg)
+  set(genmsg_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/genmsg)
   set(genmsg_INSTALL_PREFIX "")
   set(genmsg_PREFIX ${genmsg_DEVEL_PREFIX})
 else()

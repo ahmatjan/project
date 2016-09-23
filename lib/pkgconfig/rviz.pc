@@ -1,8 +1,8 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros
+prefix=/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated
 
 Name: rviz
 Description: Description of rviz
 Version: 1.11.14
-Cflags: -I/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/include -I/usr/include/eigen3 -I/usr/include/OGRE -I/usr/include
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib -lrviz -l:/usr/lib/x86_64-linux-gnu/libOgreMain.so -l:/usr/lib/x86_64-linux-gnu/libpthread.so -l:/usr/lib/x86_64-linux-gnu/libGLU.so -l:/usr/lib/x86_64-linux-gnu/libGL.so -l:/usr/lib/x86_64-linux-gnu/libSM.so -l:/usr/lib/x86_64-linux-gnu/libICE.so -l:/usr/lib/x86_64-linux-gnu/libX11.so -l:/usr/lib/x86_64-linux-gnu/libXext.so
+Cflags: -I/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/include -I/usr/include/eigen3 -I/usr/include/OGRE -I/usr/include
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/lib -lrviz -l:/usr/lib/x86_64-linux-gnu/libOgreMain.so -l:/usr/lib/x86_64-linux-gnu/libpthread.so -l:/usr/lib/x86_64-linux-gnu/libGLU.so -l:/usr/lib/x86_64-linux-gnu/libGL.so -l:/usr/lib/x86_64-linux-gnu/libSM.so -l:/usr/lib/x86_64-linux-gnu/libICE.so -l:/usr/lib/x86_64-linux-gnu/libX11.so -l:/usr/lib/x86_64-linux-gnu/libXext.so
 Requires: geometry_msgs image_geometry image_transport interactive_markers laser_geometry map_msgs message_filters nav_msgs pluginlib resource_retriever roscpp roslib sensor_msgs std_msgs tf urdf visualization_msgs

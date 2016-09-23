@@ -67,8 +67,8 @@ set(roscpp_tutorials_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(roscpp_tutorials_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_tutorials/roscpp_tutorials)
-  set(roscpp_tutorials_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/roscpp_tutorials)
+  set(roscpp_tutorials_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_tutorials/roscpp_tutorials)
+  set(roscpp_tutorials_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/roscpp_tutorials)
   set(roscpp_tutorials_INSTALL_PREFIX "")
   set(roscpp_tutorials_PREFIX ${roscpp_tutorials_DEVEL_PREFIX})
 else()

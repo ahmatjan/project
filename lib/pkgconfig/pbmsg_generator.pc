@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros
-
-Name: pbmsg_generator
-Description: Description of pbmsg_generator
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib 
-Requires: 

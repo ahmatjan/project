@@ -67,8 +67,8 @@ set(message_transport_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(message_transport_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/message_transport/message_transport)
-  set(message_transport_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/message_transport)
+  set(message_transport_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/message_transport/message_transport)
+  set(message_transport_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/message_transport)
   set(message_transport_INSTALL_PREFIX "")
   set(message_transport_PREFIX ${message_transport_DEVEL_PREFIX})
 else()
