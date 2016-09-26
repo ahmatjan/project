@@ -44,7 +44,6 @@ public:
     Stat operator() (const Result& result) const {
         Stat stat;
         stat._node_name = result._task.name;
-        ROS_INFO_STREAM("node_name:" << result._task.name);
         stat._group_name = result._task.group;
         stat._msg = result._msg;
         stat._timestamp = ros::WallTime::now();
@@ -62,10 +61,12 @@ public:
     };
 
     Stat& run(Stat& stat) const {
-        ROS_INFO_STREAM("LogPipe parsing stat:" << stat._node_name << ":" << stat._metric_name);
+        //ROS_INFO_STREAM("LogPipe parsing stat:" << stat._node_name << ":" << stat._metric_name);
         if (stat._msg.level == 1) {
+            ROS_WARN_STREAM("node_name:" << stat._msg.message);
             LOG(WARNING) << stat._node_name << ":" << stat._metric_name;
         } else if (stat._msg.level == 2) {
+            ROS_ERROR_STREAM("node_name:" << stat._msg.message);
             LOG(ERROR) << stat._node_name << ":" << stat._metric_name;
         }
         return stat;

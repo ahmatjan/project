@@ -22,7 +22,7 @@
 namespace ros {
 const std::size_t EXECUTOR_NUM = 20;
 const std::size_t TICK_TIME = 100;
-const std::size_t WATCHDOG_TICK_TIME = 200;
+const std::size_t WATCHDOG_TICK_TIME = 500;
 const std::size_t TOLERANCE = 10;
 
 const int STATUS_OK      = 0;

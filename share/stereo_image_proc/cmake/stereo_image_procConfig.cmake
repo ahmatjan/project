@@ -67,8 +67,8 @@ set(stereo_image_proc_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(stereo_image_proc_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/image_pipeline/stereo_image_proc)
-  set(stereo_image_proc_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/stereo_image_proc)
+  set(stereo_image_proc_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/image_pipeline/stereo_image_proc)
+  set(stereo_image_proc_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/stereo_image_proc)
   set(stereo_image_proc_INSTALL_PREFIX "")
   set(stereo_image_proc_PREFIX ${stereo_image_proc_DEVEL_PREFIX})
 else()

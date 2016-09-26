@@ -67,8 +67,8 @@ set(roslaunch_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(roslaunch_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/ros_comm/roslaunch)
-  set(roslaunch_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/roslaunch)
+  set(roslaunch_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/roslaunch)
+  set(roslaunch_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/roslaunch)
   set(roslaunch_INSTALL_PREFIX "")
   set(roslaunch_PREFIX ${roslaunch_DEVEL_PREFIX})
 else()

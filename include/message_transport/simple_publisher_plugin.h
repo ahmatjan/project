@@ -33,9 +33,15 @@ public:
     }
 
     virtual uint32_t getQueueSize() const {
-        if (simple_impl_)
+        if (simple_impl_) {
+            if (simple_impl_->queue_size_ <= 1) {
+                return 2;
+            } else if (simple_impl_->queue_size_ > 10) {
+                return 10;
+            }
             return simple_impl_->queue_size_;
-        return 1;
+        }  
+        return 10;
     }
 
     virtual uint32_t getNumSubscribers() const {

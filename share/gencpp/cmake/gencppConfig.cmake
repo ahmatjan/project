@@ -67,8 +67,8 @@ set(gencpp_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(gencpp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/gencpp)
-  set(gencpp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/gencpp)
+  set(gencpp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/gencpp)
+  set(gencpp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/gencpp)
   set(gencpp_INSTALL_PREFIX "")
   set(gencpp_PREFIX ${gencpp_DEVEL_PREFIX})
 else()

@@ -1,0 +1,8 @@
+prefix=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros
+
+Name: status_pb_msgs
+Description: Description of status_pb_msgs
+Version: 0.5.10
+Cflags: -I/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/include
+Libs: -L/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros/lib 
+Requires: message_runtime localization_pb_msgs header_pb_msgs common_pb_msgs

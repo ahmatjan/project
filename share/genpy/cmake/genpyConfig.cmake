@@ -67,8 +67,8 @@ set(genpy_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(genpy_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/genpy)
-  set(genpy_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/genpy)
+  set(genpy_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/genpy)
+  set(genpy_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/genpy)
   set(genpy_INSTALL_PREFIX "")
   set(genpy_PREFIX ${genpy_DEVEL_PREFIX})
 else()

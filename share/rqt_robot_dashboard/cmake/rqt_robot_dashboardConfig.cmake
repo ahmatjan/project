@@ -67,8 +67,8 @@ set(rqt_robot_dashboard_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rqt_robot_dashboard_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/rqt_robot_plugins/rqt_robot_dashboard)
-  set(rqt_robot_dashboard_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/rqt_robot_dashboard)
+  set(rqt_robot_dashboard_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/rqt_robot_plugins/rqt_robot_dashboard)
+  set(rqt_robot_dashboard_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rqt_robot_dashboard)
   set(rqt_robot_dashboard_INSTALL_PREFIX "")
   set(rqt_robot_dashboard_PREFIX ${rqt_robot_dashboard_DEVEL_PREFIX})
 else()

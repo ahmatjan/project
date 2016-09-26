@@ -67,8 +67,8 @@ set(dynamic_reconfigure_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(dynamic_reconfigure_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/dynamic_reconfigure)
-  set(dynamic_reconfigure_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/dynamic_reconfigure)
+  set(dynamic_reconfigure_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/dynamic_reconfigure)
+  set(dynamic_reconfigure_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/dynamic_reconfigure)
   set(dynamic_reconfigure_INSTALL_PREFIX "")
   set(dynamic_reconfigure_PREFIX ${dynamic_reconfigure_DEVEL_PREFIX})
 else()

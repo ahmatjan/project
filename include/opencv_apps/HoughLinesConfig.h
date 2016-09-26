@@ -418,9 +418,9 @@ HoughLinesConfig::GroupDescription<HoughLinesConfig::DEFAULT, HoughLinesConfig> 
 //#line 280 "/home/caros/ros/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator_catkin.py"
       __default__.hough_type = 0;
 //#line 280 "/home/caros/ros/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator_catkin.py"
-      Default.abstract_parameters.push_back(HoughLinesConfig::AbstractParamDescriptionConstPtr(new HoughLinesConfig::ParamDescription<int>("hough_type", "int", 0, "Hough Line Methods", "{'enum_description': 'An enum for Hough Transform Mehtods', 'enum': [{'srcline': 42, 'description': 'Standard Hough Line', 'srcfile': '/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/opencv_apps/cfg/HoughLines.cfg', 'cconsttype': 'const int', 'value': 0, 'ctype': 'int', 'type': 'int', 'name': 'Standard_Hough_Transform'}, {'srcline': 43, 'description': 'Probabilistic Hough Line', 'srcfile': '/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/opencv_apps/cfg/HoughLines.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'Probabilistic_Hough_Transform'}]}", &HoughLinesConfig::hough_type)));
+      Default.abstract_parameters.push_back(HoughLinesConfig::AbstractParamDescriptionConstPtr(new HoughLinesConfig::ParamDescription<int>("hough_type", "int", 0, "Hough Line Methods", "{'enum_description': 'An enum for Hough Transform Mehtods', 'enum': [{'srcline': 42, 'description': 'Standard Hough Line', 'srcfile': '/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/opencv_apps/cfg/HoughLines.cfg', 'cconsttype': 'const int', 'value': 0, 'ctype': 'int', 'type': 'int', 'name': 'Standard_Hough_Transform'}, {'srcline': 43, 'description': 'Probabilistic Hough Line', 'srcfile': '/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/opencv_apps/cfg/HoughLines.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'Probabilistic_Hough_Transform'}]}", &HoughLinesConfig::hough_type)));
 //#line 280 "/home/caros/ros/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator_catkin.py"
-      __param_descriptions__.push_back(HoughLinesConfig::AbstractParamDescriptionConstPtr(new HoughLinesConfig::ParamDescription<int>("hough_type", "int", 0, "Hough Line Methods", "{'enum_description': 'An enum for Hough Transform Mehtods', 'enum': [{'srcline': 42, 'description': 'Standard Hough Line', 'srcfile': '/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/opencv_apps/cfg/HoughLines.cfg', 'cconsttype': 'const int', 'value': 0, 'ctype': 'int', 'type': 'int', 'name': 'Standard_Hough_Transform'}, {'srcline': 43, 'description': 'Probabilistic Hough Line', 'srcfile': '/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/opencv_apps/cfg/HoughLines.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'Probabilistic_Hough_Transform'}]}", &HoughLinesConfig::hough_type)));
+      __param_descriptions__.push_back(HoughLinesConfig::AbstractParamDescriptionConstPtr(new HoughLinesConfig::ParamDescription<int>("hough_type", "int", 0, "Hough Line Methods", "{'enum_description': 'An enum for Hough Transform Mehtods', 'enum': [{'srcline': 42, 'description': 'Standard Hough Line', 'srcfile': '/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/opencv_apps/cfg/HoughLines.cfg', 'cconsttype': 'const int', 'value': 0, 'ctype': 'int', 'type': 'int', 'name': 'Standard_Hough_Transform'}, {'srcline': 43, 'description': 'Probabilistic Hough Line', 'srcfile': '/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/opencv_apps/cfg/HoughLines.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'Probabilistic_Hough_Transform'}]}", &HoughLinesConfig::hough_type)));
 //#line 280 "/home/caros/ros/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator_catkin.py"
       __min__.threshold = 50;
 //#line 280 "/home/caros/ros/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator_catkin.py"
@@ -550,9 +550,9 @@ HoughLinesConfig::GroupDescription<HoughLinesConfig::DEFAULT, HoughLinesConfig> 
     return statics;
   }
 
-//#line 42 "/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/opencv_apps/cfg/HoughLines.cfg"
+//#line 42 "/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/opencv_apps/cfg/HoughLines.cfg"
       const int HoughLines_Standard_Hough_Transform = 0;
-//#line 43 "/home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/opencv_apps/cfg/HoughLines.cfg"
+//#line 43 "/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/opencv_apps/cfg/HoughLines.cfg"
       const int HoughLines_Probabilistic_Hough_Transform = 1;
 }
 

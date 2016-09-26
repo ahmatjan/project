@@ -67,8 +67,8 @@ set(qt_gui_cpp_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(qt_gui_cpp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/ros/qt_gui_core/qt_gui_cpp)
-  set(qt_gui_cpp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/devel_isolated/qt_gui_cpp)
+  set(qt_gui_cpp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/qt_gui_core/qt_gui_cpp)
+  set(qt_gui_cpp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/qt_gui_cpp)
   set(qt_gui_cpp_INSTALL_PREFIX "")
   set(qt_gui_cpp_PREFIX ${qt_gui_cpp_DEVEL_PREFIX})
 else()

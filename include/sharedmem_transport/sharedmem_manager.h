@@ -10,15 +10,13 @@ namespace sharedmem_transport {
 
 typedef std::set<std::string>::iterator iterator;
 
-const uint32_t MANAGER_LOOP_TIME_SEC = 30; // Loop time, sec
-const uint32_t MANAGER_EXECUTE_TIMEOUT_SEC = 5; // Execute timeout, sec
+const uint32_t MANAGER_LOOP_TIME_SEC = 2; // Loop time, sec
+const uint32_t MANAGER_EXECUTE_TIMEOUT_SEC = 2; // Execute timeout, sec
 
 const std::string MANAGER_SHELL_ROSTOPIC_LIST = "rostopic list";
 const std::string MANAGER_SHM_NAME = "sharedmem_manager";
 const std::string MANAGER_SHM_REGISTER_SERVICE = "register_segment";
 const std::string MANAGER_SHM_LOCAL_TOPIC_TMP_FILE = "/tmp/local_topic_list";
-
-static jmp_buf s_env_alarm_topic_list;
 
 class SharedMemoryManager {
 public:
@@ -104,21 +102,11 @@ private:
      */
     void compare_block_waiting_time(std::string topic_name);
 
-    /**
-     * \brief Recive get_master_topic_list() alarm signal
-     *
-     */
-    static void sig_alarm_master_topic_list(int signo) {
-        ROS_WARN("==== Get master_topic_list timeout ====");
-        siglongjmp(s_env_alarm_topic_list, 0);
-    }
-
 private:
     boost::mutex _main_mutex;
     std::set<std::string> _local_topic_set;
     std::map<std::string, std::string> _master_topic_map;
     std::map<std::string, std::string>::iterator _master_topic_map_it;
-
 };
 
 } // namespace sharedmem_transport
