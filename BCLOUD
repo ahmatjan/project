@@ -1,1 +1,0 @@
-BUILD_SUBMITTER -x -m baidu/adu/caros-binary -c "cd baidu/adu/caros-binary && bash build.sh" -u . -e ADU
