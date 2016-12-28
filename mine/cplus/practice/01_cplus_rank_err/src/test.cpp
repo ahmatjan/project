@@ -1,3 +1,5 @@
+#include "test.h"
+
 #include <iostream>  
 #include <type_traits>  
   
@@ -40,9 +42,9 @@ int main() {
         myfunc1(m1, m2);  
 	// http://en.cppreference.com/w/cpp/types/rank
         std::cout << std::rank<int[1][2][3][4]>::value << std::endl;  
-        //std::cout << std::rank<int[1][2][3]>::value << std::endl;  
-        //std::cout << std::rank<int[1][2]>::value << std::endl;  
-        //std::cout << std::rank<int[1]>::value << std::endl;  
-        //std::cout << std::rank<int>::value << std::endl;  
+        std::cout << std::rank<int[1][2][3]>::value << std::endl;  
+        std::cout << std::rank<int[1][2]>::value << std::endl;  
+        std::cout << std::rank<int[1]>::value << std::endl;  
+        std::cout << std::rank<int>::value << std::endl;  
 	std::cout << "hello" << std::endl;
 }  
