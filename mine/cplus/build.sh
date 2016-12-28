@@ -68,21 +68,21 @@ function check_track() {
 }
 
 function caffe_install() {
-    sudo apt-get install libatlas-base-dev
-    sudo apt-get install libprotobuf-dev
-    sudo apt-get install libleveldb-dev
-    sudo apt-get install libsnappy-dev
-    sudo apt-get install libopencv-dev
-    sudo apt-get install libboost-all-dev
-    sudo apt-get install libhdf5-serial-dev
-    sudo apt-get install libgflags-dev
-    sudo apt-get install libgoogle-glog-dev
-    sudo apt-get install liblmdb-dev
-    sudo apt-get install protobuf-compiler
-    sudo apt-get install cmake
     CUR_LIB_NAME="caffe"
     CUR_LIB_SOURCE="https://github.com/bvlc/caffe.git"
     CMAKE_OPTION="-DCPU_ONLY=ON"
+    sudo apt-get install libatlas-base-dev && \
+    sudo apt-get install libprotobuf-dev && \
+    sudo apt-get install libleveldb-dev && \
+    sudo apt-get install libsnappy-dev && \
+    sudo apt-get install libopencv-dev && \
+    sudo apt-get install libboost-all-dev && \
+    sudo apt-get install libhdf5-serial-dev && \
+    sudo apt-get install libgflags-dev && \
+    sudo apt-get install libgoogle-glog-dev && \
+    sudo apt-get install liblmdb-dev && \
+    sudo apt-get install protobuf-compiler && \
+    sudo apt-get install cmake && \
     cmake_install && \
     mkdir -p "${CUR_LIB_LIB_PATH}/include/caffe/proto/" && \
     /usr/bin/protoc --cpp_out=${CUR_LIB_LIB_PATH}/include/caffe/proto/ -I ${CUR_LIB_SRC_PATH}/src/caffe/proto/ ${CUR_LIB_SRC_PATH}/src/caffe/proto/caffe.proto
@@ -96,26 +96,26 @@ function opencv_install() {
 }
 
 function pcl_install() {
-    sudo apt-get install g++    
-    sudo apt-get install cmake cmake-gui    
-    sudo apt-get install doxygen      
-    sudo apt-get install mpi-default-dev openmpi-bin openmpi-common      
-    sudo apt-get install libflann-dev    
-    sudo apt-get install libeigen3-dev    
-    sudo apt-get install libboost-all-dev  libboost-system1.55.0  
-    sudo apt-get install libvtk5.8-qt4 libvtk5.8 libvtk5-dev libvtk-java python-vtk
-    sudo apt-get install libqhull*    
-    sudo apt-get install libusb-dev    
-    sudo apt-get install libgtest-dev    
-    sudo apt-get install git-core freeglut3-dev pkg-config    
-    sudo apt-get install build-essential libxmu-dev libxi-dev     
-    sudo apt-get install libusb-1.0-0-dev graphviz mono-complete    
-    sudo apt-get install qt-sdk openjdk-7-jdk openjdk-7-jre    
-    sudo apt-get install phonon-backend-gstreamer    
-    sudo apt-get install phonon-backend-vlc    
     CUR_LIB_NAME="pcl"
     CUR_LIB_SOURCE="https://github.com/PointCloudLibrary/pcl.git"
     CMAKE_OPTION=""
+    sudo apt-get install g++ && \
+    sudo apt-get install cmake cmake-gui && \
+    sudo apt-get install doxygen && \
+    sudo apt-get install mpi-default-dev openmpi-bin openmpi-common && \
+    sudo apt-get install libflann-dev && \
+    sudo apt-get install libeigen3-dev && \
+    sudo apt-get install libboost-all-dev libboost-system1.55.0 && \
+    sudo apt-get install libvtk5.8-qt4 libvtk5.8 libvtk5-dev libvtk-java python-vtk && \
+    sudo apt-get install libqhull* && \
+    sudo apt-get install libusb-dev && \
+    sudo apt-get install libgtest-dev && \
+    sudo apt-get install git-core freeglut3-dev pkg-config && \
+    sudo apt-get install build-essential libxmu-dev libxi-dev && \
+    sudo apt-get install libusb-1.0-0-dev graphviz mono-complete    
+    sudo apt-get install qt-sdk openjdk-7-jdk openjdk-7-jre && \
+    sudo apt-get install phonon-backend-gstreamer && \
+    sudo apt-get install phonon-backend-vlc && \
     cmake_install
 }
 

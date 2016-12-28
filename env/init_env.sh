@@ -98,28 +98,26 @@ function step_profile() {
 function step_tools() {
 	sudo apt-get install vim && \
 	sudo apt-get install openssh-server && \
-	sudo apt-get install lrzsz && \
-	sudo ps -e | grep ssh
+	sudo apt-get install lrzsz
 }
 
 function step_libs() {
-        sudo apt-get install autoconf automake libtool curl make g++ unzip
-        sudo apt-get install libgflags-dev 
-        sudo apt-get install libgoogle-glog-dev
-        sudo apt-get install libgtest-dev
-        sudo apt-get install libeigen3-dev
+        sudo apt-get install autoconf automake libtool curl make g++ unzip && \
+        sudo apt-get install libgflags-dev && \
+        sudo apt-get install libgoogle-glog-dev && \
+        sudo apt-get install libgtest-dev && \
+        sudo apt-get install libeigen3-dev && \
         sudo apt-get install libflann-dev
 }
 
 function step_git() {
-        sudo apt-get install git
-	git config --global user.email yangck0410672@163.com
-	git config --global user.name yangkai04
+        sudo apt-get install git && \
+	git config --global user.email yangck0410672@163.com && \
+	git config --global user.name yangkai04 && \
 	#git clone https://github.com/yangkai04/project.git ~/project
 	#git add xxx
 	#git commit -m"xxx"
 	#git push
-
 	mkdir -p ~/.ssh
 	cp -r .ssh/* ~/.ssh/
 	chmod 755 ~
