@@ -82,12 +82,15 @@ function step_source() {
 	sudo apt-get update  
 }
 function step_profile() {
+	grep 'export PATH=$PATH:~/bin' ~/.bashrc
+	if [[ $? -ne 0 ]]; then
+		echo -e 'export PATH=$PATH:~/bin\n' >> ~/.bashrc
+	fi
 	BASH_PROFILE=~/.bash_profile
 	if [[ ! -f "${BASH_PROFILE}" ]]; then
 		touch ${BASH_PROFILE}
 		echo -e "if [ -f ~/.bashrc ]; then\n. ~/.bashrc\nfi\n" > ${BASH_PROFILE}
 		echo -e "if [ -f ~/.bash_order ]; then\n. ~/.bash_order\nfi\n" >> ${BASH_PROFILE}
-		echo -e 'export PATH=$PATH:~/bin\n' >> ${BASH_PROFILE}
 	fi
 	echo "source ${BASH_PROFILE}"
 }
@@ -112,7 +115,17 @@ function step_git() {
         sudo apt-get install git
 	git config --global user.email yangck0410672@163.com
 	git config --global user.name yangkai04
-	git clone https://github.com/yangkai04/project.git ~/project
+	#git clone https://github.com/yangkai04/project.git ~/project
+	#git add xxx
+	#git commit -m"xxx"
+	#git push
+
+	mkdir -p ~/.ssh
+	cp -r .ssh/* ~/.ssh/
+	chmod 755 ~
+	chmod 700 ~/.ssh
+	chmod 600 ~/.ssh/*
+	git clone ssh://yangkai04@icode.baidu.com:8235/baidu/adu/perception ~/project/baidu/adu/perception
 }
 
 ##! @TODO: 运行所有处理函数
@@ -126,6 +139,7 @@ function run_all_step() {
 	step_profile
 	step_tools
 	step_libs
+	step_git
         "
 
     local FN_ALL_STEPS=${ALL_STEPS}
