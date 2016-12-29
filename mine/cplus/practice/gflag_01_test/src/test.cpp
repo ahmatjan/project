@@ -4,7 +4,11 @@
 
 DEFINE_string(mystr, "hello world~!", "my words");
 
-int main(int argc, char *argv[]) {  
+#ifndef UNIT_TEST
+int main(int argc, char *argv[]) {
+#else
+int inner_main(int argc, char *argv[]) {
+#endif
     //google::ParseCommandLineFlags(&argc, &argv, true);
     //argc和argv想必大家都很清楚了，说明以下第三个参数的作用：
     //如果设为true，则该函数处理完成后，argv中只保留argv[0]，argc会被设置为1。

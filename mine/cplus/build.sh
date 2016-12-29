@@ -28,14 +28,26 @@ THIRD_SRC_PATH="${THIRD_LIB_PATH}/src"
 function print_help() {
     echo -e "Usage: $0" >&2
     echo -e "    -h  print help message" >&2
+    echo -e "    -e  build environment" >&2
+    echo -e "    -b  build project" >&2
+    echo -e "    -c  clear project" >&2
     echo -e "    http://wiki.baidu.com/display/perception/Quick+Start" >&2
     return 0
 }
 
 function get_option() {
-    while getopts sohvc:t: OPTION; do
+    while getopts hebc OPTION; do
         case "${OPTION}" in
             h) print_help
+            exit 0
+            ;;
+            e) build_env
+            exit 0
+            ;;
+            b) build_pro
+            exit 0
+            ;;
+            c) clear_pro
             exit 0
             ;;
             *) print_help
@@ -243,10 +255,10 @@ function tool_check() {
     sudo apt-get install libgtest-dev
 }
 
-##! @TODO: 运行所有处理函数
+##! @TODO: 构建环境
 ##! @AUTHOR: yangkai04@baidu.com
 ##! @OUT: 0 => success; other => failed
-function run_all_step() {
+function build_env() {
     echo "${FUNCNAME} start."
     ALL_STEPS="
         tool_check
@@ -285,14 +297,67 @@ function run_all_step() {
     return 0
 }
 
+##! @TODO: 总体编译
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function build_pro() {
+    echo "${FUNCNAME} start."
+    CUR_PATH=`pwd`
+    while read -r line; do
+        SUB_PATH="${line%/*}"
+        SUB_NAME="${SUB_PATH##*/}"
+        if [[ "${SUB_NAME}" == "test" ]]; then
+            continue
+        fi
+        ABSOLUTE_PATH="${CUR_PATH}/${SUB_PATH}"
+        ABSOLUTE_RELEASE_PATH="${ABSOLUTE_PATH}/release"
+        echo ${ABSOLUTE_RELEASE_PATH}
+        mkdir -p ${ABSOLUTE_RELEASE_PATH} && \
+        cd ${ABSOLUTE_RELEASE_PATH} && \
+        cmake .. && \
+        make && \
+        cd -
+        if [[ $? -ne 0 ]]; then
+            exit 1
+        fi
+    done < <(find practice -name "CMakeLists.txt")
+
+    echo "${FUNCNAME} finished."
+    return 0
+}
+
+##! @TODO: 清空编译结果
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function clear_pro() {
+    echo "${FUNCNAME} start."
+    CUR_PATH=`pwd`
+    while read -r line; do
+        SUB_PATH="${line%/*}"
+        SUB_NAME="${SUB_PATH##*/}"
+        #if [[ "${SUB_NAME}" == "test" ]]; then
+        #    continue
+        #fi
+        ABSOLUTE_PATH="${CUR_PATH}/${SUB_PATH}"
+        ABSOLUTE_RELEASE_PATH="${ABSOLUTE_PATH}/release"
+        echo ${ABSOLUTE_RELEASE_PATH}
+        rm -rf ${ABSOLUTE_RELEASE_PATH}
+    done < <(find practice -name "CMakeLists.txt")
+    find . -name "tags" | xargs rm -rf
+
+    echo "${FUNCNAME} finished."
+    return 0
+}
+
 ##! @TODO: 程序入口.
 ##! @AUTHOR: yangkai04@baidu.com
 ##! @OUT: 0 => success; other => failed
 function frame_main() {
     get_option "$@"
-    echo "PROGRAM BEGIN."
-    run_all_step
-    echo "PROGRAM END."
+    #echo "PROGRAM BEGIN."
+    #run_all_step
+    #echo "PROGRAM END."
+    print_help
     return 0
 }
 

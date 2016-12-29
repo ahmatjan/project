@@ -36,7 +36,11 @@ struct Node {
     char rank = 0;  
 };  
   
-int main(int argc, char *argv[]) {  
+#ifndef UNIT_TEST
+int main(int argc, char *argv[]) {
+#else
+int inner_main(int argc, char *argv[]) {
+#endif
     Node* m1 = new Node;  
     Node* m2 = new Node;  
     myfunc1(m1, m2);  
