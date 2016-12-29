@@ -47,7 +47,7 @@ set cinoptions={0,1s,t0,n-2,p2s,(03s,=.5s,>1s,=1s,:1s     "设置C/C++语言的�
 "set backspace=2    " 设置退格键可用
 set showmatch        " 设置匹配模式，显示匹配的括号
 set linebreak        " 整词换行
-set whichwrap=b,s,<,>,[,] " 光标从行首和行末时可以跳到另一行去
+"set whichwrap=b,s,<,>,[,] " 光标从行首和行末时可以跳到另一行去
 "set hidden " Hide buffers when they are abandoned
 set mouse=a            " Enable mouse usage (all modes)    "使用鼠标
 set number            " Enable line number    "显示行号

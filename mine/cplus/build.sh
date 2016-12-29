@@ -148,6 +148,13 @@ function glog_install() {
     cmake_install
 }
 
+function gtest_install() {
+    CUR_LIB_NAME="gtest"
+    CUR_LIB_SOURCE="https://github.com/google/googletest.git"
+    CMAKE_OPTION=""
+    cmake_install
+}
+
 function change_cmake_version() {
     CUR_CMAKELISTS_PATH="${CUR_LIB_SRC_PATH}/CMakeLists.txt"
     sed '/cmake_minimum_required/I s/VERSION[^)]*/VERSION 2.8/I' ${CUR_CMAKELISTS_PATH} > ${CUR_CMAKELISTS_PATH}.new
@@ -249,6 +256,7 @@ function run_all_step() {
         opencv_install
         pcl_install
         caffe_install
+        gtest_install
         "
 
     local FN_ALL_STEPS=${ALL_STEPS}
