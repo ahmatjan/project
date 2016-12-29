@@ -1,0 +1,2 @@
+/usr/bin/ar cr libdemo_proto.a  CMakeFiles/demo_proto.dir/people.pb.cc.o
+/usr/bin/ranlib libdemo_proto.a
