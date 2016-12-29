@@ -2,7 +2,7 @@
 
 #include <iostream>  
 
-int foo(int a, int b) {
+int MyClass::foo(int a, int b) {
     if (a == 0 || b == 0) {
         throw "don't do that";
     }
@@ -18,7 +18,8 @@ int main(int argc, char *argv[]) {
 #else
 int inner_main(int argc, char *argv[]) {
 #endif
-    std::cout << foo(4, 10) << std::endl;
-    std::cout << foo(30, 18) << std::endl;
+    MyClass myclass;
+    std::cout << myclass.foo(4, 10) << std::endl;
+    std::cout << myclass.foo(30, 18) << std::endl;
     return 0;
 }  
