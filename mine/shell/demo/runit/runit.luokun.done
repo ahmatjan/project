@@ -1,0 +1,308 @@
+#!/bin/bash
+
+#
+# Copyright (c) 2016 Baidu.com, Inc. All Rights Reserved
+#
+# Author: luokun
+# Date: 2016/01/07
+# Brief:
+#   a procees manager
+#   Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]
+# Globals:
+#   DEFAULT_PROFILE    | defualt process file
+#   DEFAULT_ENV        | defualt envierment file
+#   PORT               | defualt process port
+#   COLORS             | process log color array
+#   COLORS_LENGTH      | log color array length
+#   BLACK              | defualt log color
+#   RED                | error log color
+# Arguments:
+#   -h                 | echo usage
+#   -c                 | check process file and envierment file
+#   -f                 | set process file
+#   -e                 | set envierment file
+# Returns:
+#   succ:0
+#   fail:1
+
+declare -r WORK_DIR=$(pwd)
+declare -r DEFAULT_PROFILE=${WORK_DIR}/procfile
+declare -r DEFAULT_ENV=${WORK_DIR}/.env
+declare PORT=8080
+declare -ar COLORS=(32 33 34 35 36 37)
+declare -r BLACK=30
+declare -r RED=31
+declare -r COLORS_LENGTH=${#COLORS[@]}
+declare ALL_PID=""
+
+
+function usage() {
+    echo "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]"
+}
+
+#######################################
+# Brief:
+#   check process file and envierment file
+# Globals:
+#   None
+# Arguments:
+#   $1 procees file
+#   $2 envierment file
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function verify() {
+    local profile_file="$1"
+    local env_file="$2"
+    
+    varify_file_with_saparator "${profile_file}" ":"
+    if [[ $? -ne 0 ]]; then 
+        return 1
+    fi
+
+    varify_file_with_saparator "${env_file}" "="
+    if [[ $? -ne 0 ]]; then 
+        return 1
+    fi
+    return 0    
+}
+
+#######################################
+# Brief:
+#   varify file with saparator
+# Globals:
+#   None
+# Arguments:
+#   $1 file
+#   $2 saparator
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function varify_file_with_saparator() {
+    local file_path="$1"
+    local saprator="$2"
+    local invalide_flag=0
+    if [[ ! -f ${file_path} ]]; then 
+        return 0
+    fi
+    
+    # split file
+    while read line; do
+        # check with saparator
+        if [[ ! "${line}" =~ ^[^${saprator}]+${saprator}.+$ ]]; then
+            log ${RED} "ERROR" "invalide line at [${file_path}] : ${line} " 
+            invalide_flag=1
+            continue
+        fi
+        local param_name="${line%%${saprator}*}"
+        local param_value="${line#*${saprator}}"
+        # check param_name
+        if [[ ! "${param_name}" =~ ^[a-zA-Z0-9_]+$ ]]; then
+            log ${RED} "ERROR" "invalide name at [${file_path}] : ${line} "
+            invalide_flag=1
+            continue
+        fi
+        # check param_value
+        if [[ "${saprator}" == "=" && "${param_value}" =~ ^.*[[:space:]].*$ ]]; then
+            log ${RED} "ERROR" "invalide value at [${file_path}] : ${line} "
+            invalide_flag=1
+            continue
+        fi
+    done < <(grep -vE "^[[:space:]]*#.*$|^$" ${file_path})
+    return ${invalide_flag}    
+}
+
+
+#######################################
+# Brief:
+#   print colored info and no colored message 
+# Globals:
+#   None
+# Arguments:
+#   $1 color index
+#   $2 info to be colored
+#   $3 message to be no colored
+# Returns:
+#   succ:0
+#######################################
+function cecho() {
+    local default_msg="No message passed."
+    local message="${3:-${default_msg}}"
+    local color_index=${1:-${BLACK}}
+    local pinfo="$2"
+    echo -e "\033[${color_index};47m ${pinfo}\t| \033[0m\c"
+    echo "${message}"
+    return 0
+}
+
+#######################################
+# Brief:
+#   print colorful log with message or pipline
+# Globals:
+#   None
+# Arguments:
+#   $1 color index
+#   $2 info to be colored
+#   $3 message to be no colored
+# Returns:
+#   succ:0
+#######################################
+function log() {
+    local log_color=$1
+    local pinfo="$2"
+    local message="$3"
+    if [[ ! -z "${message}" ]]; then
+        cecho ${log_color} "${pinfo}" "${message}"
+    else
+        while read line; do
+            cecho ${log_color} "${pinfo}" "${line}"
+        done
+    fi
+}
+
+#######################################
+# Brief:
+#   run command by command name and print command log 
+# Globals:
+#   ALL_PID
+# Arguments:
+#   $1 procees name
+#   $2 procees command
+#   $3 procees color index
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function run_command() {
+    local cmd_name="$1"
+    local cmd="$2"
+    local log_color=$3
+    local cmd_time="$(date +"%H:%M:%S")"
+    local pinfo="${cmd_time} ${cmd_name}"
+    eval "${cmd} | log ${log_color} \"${pinfo}\" &"
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+    local cmd_pid="$(jobs -p %%)"
+    ALL_PID="${ALL_PID} ${cmd_pid}"
+    local message="${cmd} started with pid ${cmd_pid}"
+    message="$(eval echo ${message})" 
+    log ${log_color} "${pinfo}" "${message}"
+    return 0
+}
+
+#######################################
+# Brief:
+#   load procees envierment file
+# Globals:
+#   None
+# Arguments:
+#   $1 envierment file
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function load_env_file() {
+    local env_file="$1"
+    if [[ -f ${env_file} ]]; then
+        source "${env_file}"
+        if [[ $? -ne 0 ]]; then
+            return 1
+        fi
+    fi
+    return 0
+}
+
+#######################################
+# Brief:
+#   excute command in procees file
+# Globals:
+#   PORT
+# Arguments:
+#   $1 procees file
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function run_procfile() {
+    local proc_file="$1"
+    local cmd_name=""
+    local cmd=""
+    local color_index=0
+    if [[ ! -f ${proc_file} ]]; then
+        return 0
+    fi
+    while read line; do
+        # get cmd_name and cmd
+        cmd_name="${line%%:*}"
+        cmd="${line#*:}"
+        # run cmd
+        local log_color=${COLORS[$color_index]}
+        run_command "${cmd_name}" "${cmd}" ${log_color}
+        if [[ $? -ne 0 ]]; then
+            return 1
+        fi
+        color_index=$((($color_index+1) % $COLORS_LENGTH))
+        if echo $cmd | grep -q "^.*\$PORT.*$"; then
+            ((PORT+=1))
+        fi
+    done < <(grep -vE "^[[:space:]]*#.*$|^$" ${proc_file})
+    return 0
+}
+
+function main() {
+    local profile_file="${DEFAULT_PROFILE}"
+    local env_file="${DEFAULT_ENV}"
+    local check_flag=0
+    while getopts :cf:e:h option; do
+        case "${option}" in
+            c)
+                check_flag=1
+                ;;
+            f)
+                profile_file="${OPTARG}"
+                ;;
+            e)  
+                env_file="${OPTARG}"
+                ;;
+            h)
+                usage
+                exit 0
+                ;;
+            *)
+                usage
+                echo "runit: unknown option "
+                exit 1
+                ;;
+        esac
+    done
+    
+    # verify file
+    verify "${profile_file}" "${env_file}"
+    if [[ $? -ne 0 ]]; then
+        exit 1
+    fi 
+    if [[ ${check_flag} -eq 1 ]]; then 
+        exit 0
+    fi
+    
+    #load file
+    load_env_file "${env_file}"
+    if [[ $? -ne 0 ]]; then
+        exit 1
+    fi 
+
+    #run command
+    run_procfile "${profile_file}"
+    if [[ $? -ne 0 ]]; then
+        exit 1
+    fi
+    
+    # exit by SIGINT and SIGTERM
+    trap "kill ${ALL_PID} 1>/dev/null 2>&1" SIGINT SIGTERM
+    wait
+}
+
+main "$@"

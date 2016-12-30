@@ -1,0 +1,560 @@
+#!/bin/bash
+##! @TODO: shell good coder result 
+##! @VERSION: 1.0
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @FILEIN: 
+##! @FILEOUT: 
+##! @DEP: 
+##! @PREV: 
+##! @NEXT: 
+##! @CREATE TIME : Sun 31 Jan 2016 02:15:45 PM CST
+##! 
+
+trap "rm -rf *out *end *start; kill_subproc; exit 0" SIGINT SIGTERM
+
+#------------------- library ------------------
+set -o pipefail
+
+#--------------- global variable --------------
+OK=0
+ERR=1
+VERIFY=0
+PROC_FILE=""
+ENV_FILE=""
+RUN_PROC_FILE=0
+LOAD_ENV_FILE=0
+
+export PORT=8080
+export DATE_FORMAT='+%Y-%m-%d|%H:%M:%S'
+
+#------------------ function ------------------
+
+##! @TODO: print usage 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: 
+##! @OUT: 
+##! @CREATE_TIME: Sun 31 Jan 2016 02:43:48 PM CST
+function usage() {
+	echo -e "Usage: `basename $0` [-c] [-f procfile|Procfile] [-e envfile|.env]"
+	echo -e "    -h|help"
+	echo -e "    -c|check procfile and envfile validity"
+	echo -e "    -f|run procfile"
+	echo -e "    -e|load envfile"
+	return "${OK}"
+}
+
+##! @TODO: check key validity 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: key 
+##! @OUT: [OK|ERR]
+##! @CREATE_TIME: Sun 31 Jan 2016 06:01:51 PM CST
+function check_key_validity() {
+	local key=$1
+	
+	if [[ "${key}" =~ "^[a-zA-Z0-9_]+$" ]]
+	then
+		return "${OK}"
+	else
+		return "${ERR}"
+	fi
+}
+
+##! @TODO: check splitter validity 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: key, splitter 
+##! @OUT: [OK|ERR] 
+##! @CREATE_TIME: Sun 31 Jan 2016 06:02:41 PM CST
+function check_splitter_validity() {
+	local key="$1"
+	local splitter="$2"
+
+	for (( i=0; i<=${#key}-1; i++ )); do
+		if [[ ${key:i:1} = ${splitter} ]]; then
+			return "${OK}"
+		fi
+	done
+
+	return "${ERR}"
+}
+
+##! @TODO: check value validity 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: value 
+##! @OUT: [OK|ERR] 
+##! @CREATE_TIME: Sun 31 Jan 2016 06:03:09 PM CST
+function check_value_validity() {
+	local value=$1
+
+	if [[ -z "${value}" ]]; then
+		return $ERR
+	elif [[ "${value}" =~ " " ]]; then
+		return "${ERR}"
+	else
+		return "${OK}"
+	fi
+}
+
+##! @TODO: verify env and proc file validity 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: verify model, verify file 
+##! @OUT: [OK|ERR]
+##! @CREATE_TIME: Sun 31 Jan 2016 02:42:27 PM CST
+function verify() {
+	local verify_model="$1"
+	local verify_file="$2"
+	local output_line=""
+	local illegal=0
+	local flag=0
+
+	## check proc file
+	if [[ ${verify_model} = "proc" ]]; then
+		while read line; do
+			local key=${line%%:*}
+			local value=${line#*:}
+			
+			## check key illegal or not
+			check_key_validity "${key}"
+			local check_status1=$?
+
+			## check split char exit or not
+			check_splitter_validity "${line}" ":"
+			local check_status2=$?
+
+			if [[ ${check_status1} -eq 1 ]]; then
+				if [[ ${flag} -eq 0 ]]; then
+					output_line=${line}
+				else
+					output_line=${output_line}"\n"${line}
+				fi
+				illegal=1
+				flag=1
+			elif [[ ${check_status2} -eq 1 ]]; then
+				if [[ ${flag} -eq 0 ]]; then
+					output_line=${line}
+				else
+					output_line=${output_line}"\n"${line}
+				fi
+				illegal=1
+				flag=1
+			fi
+		done < "${verify_file}"
+
+	## check env file
+	elif [[ ${verify_model} = "env" ]]; then
+		while read line; do
+			local firt_wd=${line:0:1}
+
+			if [[ -z ${firt_wd} ]]; then
+				continue
+			elif [[ ${firt_wd} = "#" ]]; then
+				continue
+			fi
+
+			local key=${line%%=*}
+			local value=${line#*=}
+
+			## check key illegal or not
+			check_key_validity "${key}"
+			local check_status1=$?
+
+			## check split char exit or not
+			check_splitter_validity "${line}" "="
+			local check_status2=$?
+
+			## check value illegal or not
+			check_value_validity "${value}"
+			local check_status3=$?
+
+			if [[ ${check_status1} -eq 1 ]]; then
+				if [[ ${flag} -eq 0 ]]; then
+					output_line=${line}
+				else
+					output_line=${output_line}"\n"${line}
+				fi
+				illegal=1
+				flag=1
+			elif [[ ${check_status2} -eq 1 ]]; then
+				if [[ ${flag} -eq 0 ]]; then
+					output_line=${line}
+				else
+					output_line=${output_line}"\n"${line}
+				fi
+				illegal=1
+				flag=1
+			elif [[ ${check_status3} -eq 1 ]]; then
+				if [[ ${flag} -eq 0 ]]; then
+					output_line=${line}
+				else
+					output_line=${output_line}"\n"${line}
+				fi
+				illegal=1
+				flag=1
+			fi
+		done < "${verify_file}"
+	fi
+
+	if [[ ${illegal} -eq 1 ]]; then
+		echo -e "${output_line}"
+		return "${ERR}"
+	else
+		return "${OK}"
+	fi
+
+	return "${OK}"
+}
+
+##! @TODO: print log 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: color, proc_name, proc_content, pid 
+##! @OUT: [OK|ERR] 
+##! @CREATE_TIME: Sun 31 Jan 2016 02:42:55 PM CST
+function log() {
+	local para="$1"
+
+	if [ $# -ne 4 -a $# -ne 3 ]; then
+		return "${ERR}"
+	fi
+
+	if [[ $# -eq 3 ]]; then
+		local format_cmd="$3"
+
+		## write green log
+		if [[ $para -eq 1 ]]; then
+			echo -e "\e[32;40m$( date +%T ) $2    | \
+			"${format_cmd}"\e[m"
+		## write yellow log
+		elif [[ $para -eq 2 ]]; then
+			echo -e "\e[33;40m$( date +%T ) $2    | \
+			"${format_cmd}"\e[m"
+		## write cyan log
+		elif [[ $para -eq 3 ]]; then
+			echo -e "\e[36;40m$( date +%T ) $2    | \
+			"${format_cmd}"\e[m"
+		## write red log
+		elif [[ $para -eq 4 ]]; then
+			echo -e "\e[31;40m$( date +%T ) $2    | \
+			"${format_cmd}"\e[m"
+		## write black log
+		elif [[ $para -eq 5 ]]; then
+			echo -e "\e[30;47m$( date +%T ) $2    | \
+			"${format_cmd}"\e[m"
+		## write blue log
+		elif [[ $para -eq 6 ]]; then
+			echo -e "\e[34;40m$( date +%T ) $2    | \
+			"${format_cmd}"\e[m"
+		## write meganta log
+		elif [[ $para -eq 7 ]]; then
+			echo -e "\e[35;40m$( date +%T ) $2    | \
+			"${format_cmd}"\e[m"
+		## write white log
+		elif [[ $para -eq 8 ]]; then
+			echo -e "\e[37;40m$( date +%T ) $2    | \
+			"${format_cmd}"\e[m"
+		## write normal log
+		else
+			echo -e "$( date +%T ) $2    | \
+			"${format_cmd}""
+		fi
+	fi
+
+	## choose print color according to input parameter
+	## write green log
+	if [[ $# -eq 4 ]]; then
+		local format_cmd=$(eval "echo "$(echo "$3")"")
+
+		if [[ $para -eq 1 ]]; then
+			echo -e "\e[32;40m$( date +%T ) $2    | \
+			"${format_cmd}" started with pid $4\e[m" 
+		## write yellow log
+		elif [[ $para -eq 2 ]]; then
+			echo -e "\e[33;40m$( date +%T ) $2    | \
+			"${format_cmd}" started with pid $4\e[m"
+		## write cyan log
+		elif [[ $para -eq 3 ]]; then
+			echo -e "\e[36;40m$( date +%T ) $2    | \
+			"${format_cmd}" started with pid $4\e[m"
+		## write red log
+		elif [[ $para -eq 4 ]]; then
+			echo -e "\e[31;40m$( date +%T ) $2    | \
+			"${format_cmd}" started with pid $4\e[m"
+		## write black log
+		elif [[ $para -eq 5 ]]; then
+			echo -e "\e[30;47m$( date +%T ) $2    | \
+			"${format_cmd}" started with pid $4\e[m"
+		## write blue log
+		elif [[ $para -eq 6 ]]; then
+			echo -e "\e[34;40m$( date +%T ) $2    | \
+			"${format_cmd}" started with pid $4\e[m"
+		## write meganta log
+		elif [[ $para -eq 7 ]]; then
+			echo -e "\e[35;40m$( date +%T ) $2    | \
+			"${format_cmd}" started with pid $4\e[m"
+		## write white log
+		elif [[ $para -eq 8 ]]; then
+			echo -e "\e[37;40m$( date +%T ) $2    | \
+			"${format_cmd}" started with pid $4\e[m"
+		## write normal log
+		else
+			echo -e "$( date +%T ) $2    | \
+			"${format_cmd}" started with pid $4"
+		fi
+	fi
+	return "${OK}"
+}
+
+##! @TODO: parser parameters 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: -c -f -e -h parameters 
+##! @OUT: [OK|ERR]
+##! @CREATE_TIME: Sun 31 Jan 2016 02:45:00 PM CST
+function run_command() {
+	while getopts ":cf:e:h" optname; do
+		case "${optname}" in
+			c)
+				VERIFY=1
+				;;
+			f)
+				RUN_PROC_FILE=1
+				PROC_FILE="${OPTARG}"
+				;;
+			e)
+				LOAD_ENV_FILE=1
+				ENV_FILE="${OPTARG}"
+				;;
+			h)
+				usage
+				;;
+			*)
+				usage
+				;;
+		esac
+	done
+
+	if [ $# -eq 0 ]; then
+		if [ -e ".env" ]; then
+			LOAD_ENV_FILE=1
+			ENV_FILE=".env"
+		fi
+
+		if [ -e "Procfile" ]; then
+			RUN_PROC_FILE=1
+			PROC_FILE="Procfile"
+		fi
+	fi
+
+	return "${OK}"
+}
+
+##! @TODO: load env file 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: env file
+##! @OUT: [OK|ERR]
+##! @CREATE_TIME: Sun 31 Jan 2016 02:45:17 PM CST
+function load_env_file() {
+	local env_stream=$(cat "$1")
+
+	while read line; do
+		local firt_wd=${line:0:1}
+
+		if [[ -z ${firt_wd} ]]; then
+			continue
+		elif [[ ${firt_wd} = "#" ]]; then
+			continue
+		else
+			export eval "${line%=*}=${line#*=}"
+		fi
+	done < <(echo "${env_stream}")
+
+	return "${OK}"
+}
+
+##! @TODO: execute command 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: proc_cmd, proc_name, color
+##! @OUT: [OK|ERR]
+##! @CREATE_TIME: Sun 31 Jan 2016 02:55:17 PM CST
+function exec_cmd() {
+	local proc_cmd="$1"
+	local proc_name="$2"
+	local color="$3"
+	local format_cmd=$(eval "echo "$(echo "$proc_cmd")"")
+
+	if [[ ${proc_cmd} =~ "<" ]]; then
+		format_cmd=${format_cmd}" < "${proc_cmd##*<}
+	fi
+
+	touch "${proc_name}.start"
+	bash -c "${format_cmd}" 1>"${proc_name}.out" 2>&1 &
+	local pid=$!
+
+	echo $pid >> "pid"
+	log "${color}" "${proc_name}" "${proc_cmd}" "${pid}"
+	wait "${pid}"
+
+	if [[ $? -eq 0 ]]; then
+		touch "${proc_name}.end"
+	fi
+	
+	return "${OK}"
+}
+
+##! @TODO: write log 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: proc_name, proc_log, color
+##! @OUT: [OK|ERR]
+##! @CREATE_TIME: Sun 31 Jan 2016 02:56:28 PM CST
+function write_log() {
+	local proc_name="$1"
+	local proc_log="$2"
+	local color="$3"
+
+	if [ -e "${proc_log}" ]; then
+		read line < "${proc_log}"
+		local is_eof=$?		
+	else
+		touch "${proc_log}"
+		read line < "${proc_log}"
+		local is_eof=$?
+	fi
+
+	while [ "${is_eof}" -eq 0 -o ! -e "${proc_name}.end" ]; do
+		read line
+		local is_eof=$?
+		if [[ "${is_eof}" -eq 0 ]]; then
+			usleep 500
+			log "${color}" "${proc_name}" "${line}"
+		fi
+	done < "${proc_log}"
+
+	return "${OK}"
+}
+
+##! @TODO: run procfile 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: proc_file
+##! @OUT: [OK|ERR]
+##! @CREATE_TIME: Sun 31 Jan 2016 02:45:41 PM CST
+function run_procfile() {
+	local proc_stream=$(cat "$1")
+	local cnt=0
+	local color=0
+	local port_num=0
+
+	while read line; do
+		local firt_wd=${line:0:1}
+
+		if [[ -z ${line} ]]; then
+			continue
+		elif [[ -z ${firt_wd} ]]; then
+			continue
+		elif [[ ${firt_wd} = "#" ]]; then
+			continue
+		fi
+
+		local proc_name=${line%%:*}
+		local proc_command=${line#*:}
+		cnt=$[ $cnt + 1 ]
+		color=$[ $cnt % 8 + 1 ]
+		
+		if [[ ${line} =~ "PORT" ]]; then
+			(( port_num += 1 ))
+			if [[ ${port_num} -gt 1 ]]; then
+				(( PORT += 1 ))
+			fi
+		fi
+		
+		echo ${proc_name} >> "proc.out"
+		exec_cmd "${proc_command}" "${proc_name}" "${color}" &
+		echo $! >> "pid"
+		write_log "${proc_name}" "${proc_name}.out" "${color}" &
+		echo $! >> "pid"
+
+		sleep 0.5s
+	done < <(echo "${proc_stream}")
+	return "${OK}"
+}
+
+##! @TODO: kill subproc 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: pid file
+##! @OUT: NULL
+##! @CREATE_TIME: Sun 31 Jan 2016 02:50:41 PM CST
+function kill_subproc() {
+
+	while read line; do
+		kill -9 $line
+	done < "pid"
+
+	rm -rf "pid"
+}
+
+
+##------------------- main -------------------
+##! @TODO: main function 
+##! @AUTHOR: xiehongwei01@baidu.com
+##! @VERSION: 
+##! @IN: $@
+##! @OUT: [OK|ERR]
+##! @CREATE_TIME: Sun 31 Jan 2016 02:45:52 PM CST
+function main() {
+
+	## Step1: parse parameter
+	run_command "$@"
+
+	## Step2: verify proc file and env file if -c command is set
+	if [[ ${VERIFY} -eq 1 ]]; then
+		if [[ -f "${PROC_FILE}" ]]; then
+			verify "proc" "${PROC_FILE}"
+
+			local proc_check_res=$?
+			if [ ${proc_check_res} -eq 1 ]; then
+				return "${ERR}"
+			fi
+		fi
+
+		if [[ -f "${ENV_FILE}" ]]; then
+			verify "env" "${ENV_FILE}"
+
+			local env_check_res=$?
+			if [ ${env_check_res} -eq 1 ]; then
+				return "${ERR}"
+			fi
+		fi
+	fi
+
+	## Step3: load env file
+	if [[ ${LOAD_ENV_FILE} -eq 1 ]]; then
+		load_env_file "${ENV_FILE}"
+	fi
+
+	## Step4: run procfile
+	if [[ ${RUN_PROC_FILE} -eq 1 ]]; then
+		run_procfile "${PROC_FILE}"
+	fi
+
+	## Step5: kill sub progress first if SIGINT or SIGTERM signal is triggered
+	if [ -e "proc.out" ]; then
+		while read line; do
+			if [ ! -e "${line}.end" ]; then
+				wait
+			fi
+		done < "proc.out"
+	fi
+	rm -rf *out *end *start pid
+
+	return "${OK}"
+}
+
+main "$@"

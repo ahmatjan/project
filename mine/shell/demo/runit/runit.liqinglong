@@ -1,0 +1,212 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Baidu.com, Inc. All Rights Reserved
+#
+# Author: liqinglong@baidu.com
+# Date: 2016/05/11
+# Brief:
+#   Perform hot backups of Oracle databases.
+# Globals:
+#   PORT DATE_FORMAT COLOR_BASE COLOR_RANGE
+# Arguments:
+#   -h help
+# Returns:
+#   succ:0
+#   fail:1
+
+envfile='./.env'
+procfile='./Procfile'
+
+PORT=8080
+DATE_FORMAT='+%Y-%m-%d|%H:%M:%S'
+readonly COLOR_BASE=32
+readonly COLOR_RANGE=5
+color_now=0
+lock_file="$0.lock"
+check_model=0
+
+# usage
+function usage() {
+    echo "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]
+    Options:
+        -c        check if procfile and the default is right
+        -f        procfile file ,and the default is ./Procfile
+        -e        env file ,and the default is ./.env
+        -h        help information":
+}
+
+#######################################
+# Brief:
+#   Verify envfile and procfile
+# Globals:
+#   envfile procfile
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function verify() {
+    local envfile_status="$(grep -vnP '(^[a-zA-Z_][a-zA-Z_0-9]*=[^=\s]+$|^$|^\s*#)' ${envfile})"
+    local procfile_status="$(grep -vnP '(^[a-zA-Z_][a-zA-Z_0-9]*:.+$|^$|^\s*#)' ${procfile})"
+
+    if [[ -n "${envfile_status}" ]]; then
+        log "[Syntax Error][${envfile}]" "${envfile_status}"
+        exit 1
+    fi
+
+    if [[ -n "${procfile_status}" ]]; then
+        log "[Syntax Error][${procfile}]" "${procfile_status}"
+        exit 1
+    fi
+
+    return
+}
+
+#######################################
+# Brief:
+#   Print log.
+# Globals:
+#   COLOR_RANG COLOR_BASE
+# Arguments:
+#   $1 fn_name
+#   $2 fn_cmd
+# Returns:
+#   None
+#######################################
+function log() {
+    local fn_date=$(date +"%H:%M:%S")
+    local fn_color=$((${COLOR_BASE} + ${color_now}%${COLOR_RANGE}))
+    local fn_name="$1"
+    local fn_cmd="$2"
+    echo -e "\e[1;${fn_color}m${fn_date} ${fn_name}\e[0m\t| ${fn_cmd}"
+    ((++color_now))
+}
+
+# log_process
+function log_process() {
+    local fn_name="$1"
+    while read -r line; do 
+        log "${fn_name}" "${line}"
+    done
+}
+
+#######################################
+# Brief:
+#   Load and run procfile.
+# Globals:
+#   procfile
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function run_procfile() {
+    local fn_proc_path="${procfile%/*}"
+    local fn_proc_file="${procfile##*/}"
+    cd ${fn_proc_path} >/dev/null
+    while read -r line; do
+        if [[ -z "${line}" || "${line}" =~ "^[ ·]*#.*" ]]; then
+            continue
+        fi
+        local fn_name=${line%%:*}
+        local fn_value=${line#*:}
+        local fn_cmd=${fn_value%% *}
+        local fn_param=${fn_value#* }
+        eval "fn_param=\"${fn_param}\""
+        run_command "${fn_name}" "${fn_cmd} ${fn_param}"
+        if [[ $? -ne 0 ]]; then
+            cd - >/dev/null
+            return 1
+        fi
+        if [[ "${fn_value}" =~ ".*PORT.*" ]]; then
+            ((PORT+=1))
+        fi
+    done < <(grep -v '^[ ]*#' ${fn_proc_file})
+    cd - >/dev/null
+    return 
+}
+
+#######################################
+# Brief:
+#   Load envfile and export.
+# Globals:
+#   envfile 
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function load_env_file() {
+    if [[ -z "${envfile}" ]]; then
+        return
+    fi
+    
+    while read -r line; do 
+        export "${line}"
+    done < <(cat "${envfile}" | grep -v "^$\|.*=.*\s\|\s*#\|?!=\|(\|)" )
+}
+
+#######################################
+# Brief:
+#   Run command.
+# Globals:
+#   None
+# Arguments:
+#   $1 fn_name
+#   $2 fn_cmd
+# Returns:
+#   0,success 1,fail
+#######################################
+function run_command() {
+    local fn_name="$1"
+    local fn_cmd="$2"
+    eval "${fn_cmd} 2>&1 | log_process ${fn_name} &"
+    local fn_pid="$(jobs -p %%)"
+    log "${fn_name}" "${fn_cmd} started with pid ${fn_pid}"
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+    subid_list="${fn_pid} ${subid_list}"
+    return 0
+}
+
+#######################################
+# Brief:
+#   kill sub process and wait to quit
+# Globals:
+#   subid_list
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function quit_all() {
+    local fn_cmd="kill ${subid_list} >/dev/null 2>&1"
+    trap "${fn_cmd}" INT SIGTERM
+    wait
+}
+
+function main() {
+    while getopts chf:e: options; do
+        case "${options}" in
+            f) procfile="${OPTARG}" ;;
+            e) envfile="${OPTARG}" ;;
+            c) check_model=1 ;;
+            h) usage && exit 0 ;;
+            *) usage && exit 0 ;;
+        esac
+    done
+
+    verify
+    if [[ "${check_model}" == "check" ]]; then
+        exit 0
+    fi
+    lockfile ${lock_file}
+    load_env_file
+    run_procfile
+    quit_all
+    rm -f ${lock_file}
+}
+
+main "$@"
+exit $?

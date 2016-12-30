@@ -1,0 +1,271 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Baidu.com, Inc. All Rights Reserved
+#
+# Author: lujun05
+# Date: 2016/1/22
+# Brief:
+#   run the commond from procfile
+# Arguments:
+#   -f : profile
+#   -e : envfile
+#   -c : check profile and env_file format
+#   -h : print the usage
+# Returns:
+#   succ:0
+#   fail:1
+#
+
+#for log, commed
+declare font_color_name=31
+#for runing pid
+declare -a running_pids=()
+PORT=8080
+
+trap "exit_c" SIGINT SIGTERM
+
+###############################################################################
+# Brief:
+#  when exit main shell,kill all running_pids
+# Globals:
+#  use running_pids
+# Arguments:   
+# Returns:
+#  succ : 0
+#  fail : 1
+###############################################################################
+function exit_c() {
+    kill -TERM "${running_pids[@]}"
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+    return 0
+}
+
+# usage
+function print_help() {
+    echo "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]"
+    echo "Arguments:"
+    echo "    -f         commend procfile,defualt Procfile or procfile"
+    echo "    -e         envfile"
+    echo "    -c         check env_file and procfile format"
+    echo "    -h         Print Help (this message) and exit"
+}
+
+###############################################################################
+# Brief:
+#  check procfile style
+# Globals:
+# Arguments:   
+#  $procfile : profile dir
+# Returns:
+#  succ : 0
+#  fail : 1
+###############################################################################
+function check_procfile() {
+    local procfile="$1"
+    local res=0
+    if [[ -f "${procfile}" ]] ; then
+        while read line ; do
+            if [[ ! -z "$(echo ${line} | grep -v ':')" ]]; then
+                echo "file: ${envfile} line : \" ${line} \" : no_colon_commend"
+                res=1
+                continue
+            fi
+            if [[ ! -z "$(echo ${line} | grep -Ev '^[a-zA-z]+[^:]+:.*$')" ]]; then
+                echo "file: ${procfile} line : \" ${line} \" : invalid_char"
+                res=1
+                continue
+            fi
+            if [[ ! -z "$(echo ${line} | grep -Ev '^[a-zA-z_0-9]+:.*$')" ]]; then
+                echo "file: ${procfile} line : \" ${line} \" : invalid_char"
+                res=1
+                continue
+            fi
+
+        done < <(grep -vE "^[ \t\v]*#|^[ \t\v]*$" "${procfile}")
+
+        #if [[ 1 -eq ${res} ]]; then
+        #    exit 1
+        #fi
+    fi
+    return ${res}
+}
+
+###############################################################################
+# Brief:
+#  check envfile style
+# Globals:
+# Arguments:   
+#  $envfile : envfile dir
+# Returns:
+#  succ : 0
+#  fail : 1
+###############################################################################
+function check_envfile() {
+    local envfile="$1"
+    local res=0
+    
+    if [[ -f "${envfile}" ]] ; then
+        while read line ; do
+            [[ -z "$(echo ${line} | grep -Ev '^$|^#.*$')" ]] && continue
+            if [[ ! -z "$(echo ${line} | grep -v '=')" ]]; then
+                echo "file: ${envfile} line : \" ${line} \" : no_param_splittag"
+                res=1
+                continue
+            fi
+            #check envfile line-style like "key=value"
+            if [[ ! -z "$(echo ${line} | grep -Ev '^[^=]+=[^=]+$')" ]]; then
+                echo "file: ${envfile} line : \" ${line} \" : error_param_format"
+                res=1
+                continue
+            fi
+
+            # get key & value
+            key="${line%%=*}"
+            value="${line#*=}"
+            # check key
+            if [[ ! -z "$(echo ${key} | grep -Ev '^[A-Za-z]+.*$')" ]]; then
+                echo "name_not_start_with_char ${line}"
+                res=1
+                continue
+            else
+                if [[ ! -z "$(echo ${key} | grep -Ev '^[a-zA-Z_0-9]+$')" ]]; then
+                    echo "name_has_invalid_char ${line}"
+                    res=1
+                    continue
+                else
+                    if [[ ! -z "$(echo ${value} | grep -Ev '^[^ ]*$')" ]]; then
+                        echo "value_have_space ${line}"
+                        res=1
+                        continue
+                    fi
+                fi
+            fi
+
+            if [[ 1 -ne ${res} ]]; then
+                eval "${key}=\"${value}\""
+            fi
+
+        done < <(grep -vE "^[ \t\v]*#|^[ \t\v]*$" "${envfile}")
+    fi
+    return ${res}
+}
+
+###############################################################################
+# Brief:
+#  print log,with color style
+# Globals:
+# Arguments:   
+#  $name : cmd name
+#  $cmdstr: cmd line
+# Returns:
+#  succ : 0
+#  fail : 1
+###############################################################################
+function running_log() {
+    local name="$1"
+    local str="$2"
+    if [[ $# -ne 2 ]]; then
+        echo "func runing_log() error! no enough arguments"
+        return 1
+    fi
+    local log_time=`date '+%H:%M:%S'`
+    printf "\e[${font_color_name}m${log_time} %-7s |" "${name}"
+    echo -ne "\E[0m"
+    echo " ${str}"
+    ((font_color_name=30+(${font_color_name}-29)%7))
+    return 0
+}
+
+###############################################################################
+# Brief:
+#  run cmd line by line
+# Globals:
+# Arguments:   
+#  $commendfile : profile dir
+# Returns:
+#  succ : 0
+###############################################################################
+function run_commendfile() {
+    local commendfile="$1"
+    if [[ $# -ne 1 ]]; then
+        echo "func run_commendfile error! no commend file!"
+        return 1
+    fi
+    while read line ; do
+        if [[ -z "$(echo ${line} | grep -Ev '^[^:]+:.+$')" ]]; then
+            local commend_name="$(echo ${line%%:*})"
+            local commend_line="$(echo ${line#*:})"
+            
+            local port_tag="$(echo \"${commend_line}\" | grep '\$PORT')"
+            commend_line=$(eval "echo \"${commend_line}\"")
+
+            bash -c "${commend_line}" 2>&1 &
+            wait
+            
+            local pid="$!"
+            local real_cmd="$(eval echo \"${commend_line}\")"
+            running_log "${commend_name}" "${real_cmd} started with pid ${pid}"
+            if [[ ! -z "${port_tag}" ]]; then
+                    PORT=$((PORT+1))
+            fi
+            if [[ -z "${running_pids[@]:-}" ]]; then
+                running_pids=("${pid}")
+            else
+                running_pids=("${running_pids[@]}" "${pid}")
+            fi
+        fi
+    done < <(grep -vE "^[ \t\v]*#|^[ \t\v]*$" "${commendfile}")
+    wait
+    return 0
+}
+
+
+function main() {
+    local procfile="$(ls -a ./ | grep -i 'procfile')"
+    local envfile="$(ls -a ./ | grep -E '*.env$')"
+    local check_only=0
+
+    #input params
+    while getopts f:e:ch opt
+    do
+       case $opt in
+            f)
+                procfile="${OPTARG}"
+                ;;
+            e)
+                envfile="${OPTARG}"
+                ;;
+            c)
+                check_only=1
+                ;;
+            h)
+                print_help
+                exit 0
+                ;;
+            \?)
+                print_help
+                exit 0
+                ;;
+      esac
+    done
+    
+    # check file
+    check_procfile "${procfile}"
+    local checkfile_proc_res=$?
+    
+    check_envfile "${envfile}"
+    local checkfile_env_res=$?
+    
+    if [[ "${checkfile_proc_res}" -ne 0 || "${checkfile_env_res}" -ne 0 ]]; then
+        exit 1
+    fi
+
+    if [[ ${check_only} -ne 1 ]]; then
+        run_commendfile "${procfile}"
+    fi
+    exit 0
+}
+
+main "$@"

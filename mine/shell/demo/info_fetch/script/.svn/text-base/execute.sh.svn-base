@@ -1,0 +1,356 @@
+#!/bin/bash
+
+##! @TODO: 运行框架
+##! @VERSION: 1.0.0.0
+##! @AUTHOR: yangkai04@baidu.com
+
+# 强制管道命令出错退出
+set -o pipefail
+
+PID=$$
+SHELL_NAME="${0%.*}"
+VERSION="${SHELL_NAME}_1.0.0.0"
+CONF_PATH="../conf/conf_${SHELL_NAME}.sh"
+FUNC_PATH="./common_func.sh"
+DATA_DAY=`date +"%Y%m%d"`
+TRACK="./track.log"
+rm -f ${TRACK}
+
+##! @TODO: 打印帮助信息.
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function print_help()
+{
+    echo -e "Usage: $0" >&2
+    echo -e "    -c  config file path" >&2
+    echo -e "    -h  print help message" >&2
+    echo -e "    -v  print the version" >&2
+    echo -e "    -t  set the run_time of program" >&2
+    echo -e "        format is YYYYmmdd" >&2
+    echo -e "        if it's null, default is current time" >&2
+    return 0
+}
+
+##! @TODO: 打印版本号.
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function print_version()
+{
+    echo -e "${VERSION}" >&2
+    return 0
+}
+
+##! @TODO: 处理输入参数.
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function get_option()
+{
+    while getopts hvc:t: OPTION
+    do
+        case "${OPTION}" in
+            h) print_help
+            exit 0
+            ;;
+            v) print_version
+            exit 0
+            ;;
+            # 设置程序运行配置文件
+            c) CONF_PATH="${OPTARG}"
+            ;;
+            # 设置程序运行时间戳。格式为 : 20120321
+            t) DATA_DAY="${OPTARG}"
+            ;;
+            *) print_help
+            exit 1
+            ;;
+        esac
+    done
+    return 0
+}
+
+##! @TODO: 检查要加载的文件是否存在，若存在则加载，不存在则异常退出.
+##! @AUTHOR: yangkai04@baidu.com
+##! @IN: $1,需要加载的文件;
+##! @OUT: 0 => success; other => failed
+function source_file()
+{
+    local fn_TARGET=$1
+    if [ ! -f "${fn_TARGET}" ]
+    then
+        echo -e "file[${fn_TARGET}] not exist." >&2
+        exit 1
+    fi
+    source "${fn_TARGET}" >&2
+    if [ $? -ne 0 ]
+    then
+        echo -e "source file[${fn_TARGET}] error." >&2
+        exit 1
+    fi
+    return 0
+}
+source_file "${FUNC_PATH}"
+
+##! @TODO: 检查并创建track文件
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function init_track()
+{
+    if [ ! -z "${TRACK}" ]
+    then
+        check_file_path "${TRACK}"
+        touch ${TRACK}
+    fi
+    return 0
+}
+
+##! @TODO: 检查track文件中是否存在
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => not exist; other => exist
+function check_track()
+{
+    local FN_STR=$1
+    if [ ! -z "${TRACK}" -a -f ${TRACK} ]
+    then
+        grep "${FN_STR}" ${TRACK}
+        if [ $? -eq 0 ]
+        then
+            return 1
+        else
+            return 0
+        fi
+    fi
+    return 0
+}
+
+##! @TODO: 加载配置文件并检查所需配置项，创建路径等.若异常则退出.
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function init_conf()
+{
+    source_file "${CONF_PATH}"
+    check_conf_item "LOG_FILE"
+    check_file_path ${LOG_FILE}
+    check_conf_item "MAIL_LIST"
+    check_conf_item "FTP_INPUT_FILE"
+    check_conf_item "INPUT_FILE"
+    check_file_path "${INPUT_FILE}"
+    check_conf_item "MID_FILE_CRAWL_HTMLS"
+    check_file_path "${MID_FILE_CRAWL_HTMLS}"
+    check_conf_item "MID_FILE_ANALYSE_HTMLS"
+    check_file_path "${MID_FILE_ANALYSE_HTMLS}"
+    check_conf_item "MID_FILE_CRAWL_PICS"
+    check_file_path "${MID_FILE_CRAWL_PICS}"
+    check_conf_item "MID_FILE_ANALYSE_PICS"
+    check_file_path "${MID_FILE_ANALYSE_PICS}"
+    check_conf_item "OUTPUT_PATH"
+    rm -rf "${OUTPUT_PATH}"
+    check_path "${OUTPUT_PATH}"
+    check_conf_item "RESULT_TAR_FILE"
+    check_file_path "${RESULT_TAR_FILE}"
+    init_track
+    notice_log "${FUNCNAME} finished."
+    return 0
+}
+
+##! @TODO: 处理函数
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function step1_get_url_file()
+{
+    notice_log "${FUNCNAME} start."
+    wget ${FTP_INPUT_FILE} -O ${INPUT_FILE}
+    if [ $? -ne 0 ]
+    then
+        fatal_log "${FUNCNAME} error."
+        return 1
+    fi
+    notice_log "${FUNCNAME} finished."
+    return 0
+}
+
+function step2_crawl_all_htmls()
+{
+    notice_log "${FUNCNAME} start."
+    notice_log "${FUNCNAME} finished."
+    return 0
+}
+
+function step3_analyse_all_htmls()
+{
+    notice_log "${FUNCNAME} start."
+    notice_log "${FUNCNAME} finished."
+    return 0
+}
+
+function step4_crawl_all_pics()
+{
+    notice_log "${FUNCNAME} start."
+    notice_log "${FUNCNAME} finished."
+    return 0
+}
+
+function step5_analyse_all_pics()
+{
+    notice_log "${FUNCNAME} start."
+    notice_log "${FUNCNAME} finished."
+    return 0
+}
+
+function step6_final_format()
+{
+    notice_log "${FUNCNAME} start."
+    awk 'BEGIN {
+        FS = OFS = "\t";
+    }
+    {
+        #userid url webtype htmlpath analyseres picsrc picpath picinfo
+        userid = $1;
+        dict_htmlpath[userid] = $4;
+        dict_analyseres[userid] = $5;
+    }
+    END {
+        for (userid in dict_htmlpath)
+        {
+            print userid, dict_htmlpath[userid], dict_analyseres[userid];
+        }
+    }' ${MID_FILE_ANALYSE_PICS} > temp
+
+    cat temp | while read line
+    do
+        VAR=(`echo ${line} | sed "s/    / /g"`)
+        userid=${VAR[0]}
+        subdir=`expr ${userid} / 1000`
+        userpath="${OUTPUT_PATH}/${subdir}/${userid}"
+        mkdir -p ${userpath}
+        htmlpath=${VAR[1]}
+        check_file ${htmlpath}
+        analyseres=${VAR[2]}
+        check_file ${analyseres}
+        cp ${htmlpath} ${userpath}/web_content
+        cp ${analyseres} ${userpath}/web_content_analyse_res
+    done
+
+    awk 'BEGIN {
+        FS = OFS = "\t";
+    }
+    {
+        #userid url webtype htmlpath analyseres picsrc picpath picinfo
+        userid = $1;
+        subdir = int(userid / 1000);
+        if ($6 == "" && $7 == "")
+        {
+            next;
+        }
+        print $6,$8 >> "'${OUTPUT_PATH}'/"subdir"/"userid"/picinfo"
+    }
+    END {
+    }' ${MID_FILE_ANALYSE_PICS}
+
+    cat temp | while read line
+    do
+        VAR=(`echo ${line} | sed "s/    / /g"`)
+        userid=${VAR[0]}
+        subdir=`expr ${userid} / 1000`
+        userpath="${OUTPUT_PATH}/${subdir}/${userid}"
+
+        cd ${userpath}
+        if [ ! -f "picinfo" ]
+        then
+            continue
+        fi
+
+        awk 'BEGIN {
+            FS = OFS = "\t";
+            while (getline <"picinfo">0)
+            {
+                picinfo = $2;
+                gsub(" ", "\t", picinfo);
+                dict[$1] = picinfo;
+            }
+        }
+        {
+            if (0 == match($0,"IMG"))
+            {
+                print $0;
+                next;
+            }
+            pt = match($0,"src");
+            if (pt == 0)
+            {
+                pt = match($0,"lazyload=");
+            }
+            subline = substr($0,pt);
+            N = split(subline, array, "\"");
+            url = array[2];
+            if (url in dict)
+            {
+                newline = $0"\t"dict[url];
+            }
+            else
+            {
+                newline = $0"\twidth:\theight:\tformat:\tsize:\ttext:";
+            }
+            print newline;                     
+        }
+        END {
+        }' web_content_analyse_res > web_content_analyse_res.new
+        mv web_content_analyse_res.new web_content_analyse_res
+        rm "picinfo"
+        cd -
+    done
+
+    rm temp
+
+    notice_log "${FUNCNAME} finished."
+    return 0
+}
+
+##! @TODO: 运行所有处理函数
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function run_all_step()
+{
+    notice_log "start to ${FUNCNAME}."
+    local FN_ALL_STEP="step1_get_url_file step2_crawl_all_htmls step3_analyse_all_htmls 
+    step4_crawl_all_pics step5_analyse_all_pics step6_final_format"
+    for step in ${FN_ALL_STEP}
+    do
+        local FN_TRACK_MSG="${step}_${DATA_DAY}"
+        check_track "${FN_TRACK_MSG}"
+        if [ $? -ne 0 ]
+        then
+            notice_log "${FN_TRACK_MSG} already run, not to run again."
+            continue
+        fi
+        ${step}
+        if [ $? -ne 0 ]
+        then
+            fatal_log "${FN_TRACK_MSG} run error."
+            err_exit
+        else
+            echo -e "${FN_TRACK_MSG}" >> ${TRACK}
+        fi
+    done
+    notice_log "succ to ${FUNCNAME}."
+    return 0
+}
+
+##! @TODO: 程序入口.
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function frame_main()
+{
+    get_option "$@"
+    echo ${DATA_DAY}
+    init_conf
+    notice_log "PROGRAM BEGIN."
+    check_running_file
+    run_all_step
+    delete_running_file
+    notice_log "PROGRAM END."
+    return 0
+}
+
+frame_main "$@"
+exit $?
+

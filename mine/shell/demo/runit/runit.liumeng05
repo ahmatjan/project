@@ -1,0 +1,430 @@
+#!/bin/bash
+
+# Author: liumeng05@baidu.com
+# Date:    2016/10/28
+# Brief:
+#    To implement the management of the specified process
+# Globals:
+#   LOCAL_PATH : The current path
+#   DEFAULT_PROCFILE_PATH : The default path of procfile
+#   DEFAULT_ENV_PATH : The default path of env_file 
+#   FAIL_SIGN : The return value if error occur
+#   FRONT_COLOR_INIT : The first foreground color value of the log
+#   BACK_COLOR_INIT : Background color
+#   PORT
+# Arguments:
+#   [-c] [-f procfile|Procfile] [-e envfile|.env]
+# Returns:
+#   None : No return value
+
+declare -r LOCAL_PATH="$(pwd)"
+declare -r DEFAULT_PROCFILE_PATH="${LOCAL_PATH}/Procfile"
+declare -r DEFAULT_ENV_PATH="${LOCAL_PATH}/.env"
+declare -r PROCFILE_PATTERN="^([[:space:]]+#|#|$)"
+declare -r SUCC_SIGN=0
+declare -r FAIL_SIGN=1
+declare -i FRONT_COLOR_INIT=31
+declare -i BACK_COLOR_INIT=40
+declare -i PORT=8080
+DATE_FORMAT="+%Y-%m-%d|%H:%M:%S"
+
+# Usage
+function usage() {
+    echo "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]"
+    echo "Options:"
+    echo "    -h|--Help "
+    echo "    -f|--Specified procfile's  path is used record commands ...  "
+    echo "    -e|--Specifies the  file's path to save the environment variable "
+    echo "    -c|--Check the correctness of the file format"
+}
+
+#######################################
+# Brief:
+#   Print error log and  exit shell.
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+####################################### 
+err() {  
+    echo "errors: $@"
+    exit 1
+}
+
+#######################################
+# Brief:
+#   Check the correctness of Procfile format.
+# Globals:
+#   None
+# Arguments:
+#   procfile_path : The path of procfile
+#   check_res : The value of check successful return 
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function verify_profile() {
+    local procfile_path="$1"
+    local check_res=0
+    
+    OLD_IFS=$IFS 
+    
+    if [[ -f "${procfile_path}" ]]; then
+        while read procfile_line; do
+            if [[ "${procfile_line}" =~ ^$ ]]; then
+                echo "${procfile_line} errors : is null ..."
+                check_res=1
+            fi
+
+            IFS=":"
+
+            a_procfile_line=($procfile_line)
+            if [[ ${#a_procfile_line[@]} -ne 2 ]]; then
+                echo "${procfile_line} errors : Procfile format should be tow column..."
+                check_res=1
+            fi
+
+            #remove space
+            proname="$(echo ${a_procfile_line[0]//[[:space:]]/})"
+            cmd_command="$(echo ${a_procfile_line[1]//[[:space:]]/})"
+
+            #Whether there is any special characters
+            if [[ "${proname//[a-z0-9A-Z_]/}" =~ "\W" ]]; then
+                echo "${procfile_line} errors : process name should  be [a-zA-Z_0-9]..." 
+                check_res=1
+            fi
+                
+            #Command should begin with a letter
+            if [[ ! "${cmd_command}" =~ ^[a-zA-Z] ]]; then
+                echo "${procfile_line} errors : Command should start with the letter ..."
+                check_res=1
+            fi
+
+            #Command should not ended is &
+            if [[  "$(echo "${cmd_command}" | grep -E  ".*&$")" ]]; then
+                echo "${procfile_line} errors : Command should not end with the letter & ..."
+                check_res=1
+            fi
+        done <<< "$(grep -E -v "${PROCFILE_PATTERN}" "${procfile_path}")"
+    else 
+        echo "procfile_path : ${procfile_path} is not found"
+        check_res=1
+    fi
+
+    IFS=$OLD_IFS
+    
+    return "${check_res}" 
+}
+
+#######################################
+# Brief:
+#   Check the correctness of env_file file format.
+# Globals:
+#   None
+# Arguments:
+#   env_path : The path of env_file
+#   check_res : The value of check successful return 
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function verify_envfile() {
+    local env_path="$1"
+    local check_res=0
+    
+    OLD_IFS=$IFS 
+    
+    #check env file format
+    if [[ -e "${env_path}" ]]; then
+        while read env_line; do
+            #If there is a blank space on either side of the equal sign
+            if [[  $(echo "${env_line}" | grep -o -E "([[:space:]]+=|=[[:space:]]+)") ]]; then
+                echo "${env_line} errors: there is a blank space on either side of the equal sign"
+                check_res=1
+            fi
+        
+            IFS="="
+
+            a_env_line=($env_line)
+            env_name="${a_env_line[0]}"
+            env_value="${a_env_line[1]}"
+
+            #remove space
+            env_name="$(echo ${a_env_line[0]//[[:space:]]/})"
+
+            #How many of the equal sign 
+            if [[ ${#a_env_line[@]} -ne 2 ]]; then
+                echo " ${env_line} errors: env_file format should be tow columns..."
+                check_res=1
+            fi
+
+            #The variable name is made up of [A-Za-z_0-9]
+            if [[ "${env_name//[A-Za-z_0-9]/}" =~ "\W" ]]; then
+                echo "${env_line} errors: env_var_name must be UPPER letters or underscores..."
+                check_res=1
+            fi
+
+            #value have space is or not
+            if [[ $(echo "${env_value}" | grep -E "\w[[:space:]]+\w") ]]; then
+                echo "${env_line} errors: value have space..."
+                check_res=1
+            fi
+        done <<< "$(grep -E -v "^([[:space:]]+#|#|$)" "${env_path}")"
+    else
+        echo "env_file_path : ${env_path} is not found"
+        check_res=1
+    fi
+
+    IFS=$OLD_IFS
+    
+    return "${check_res}" 
+}
+
+#######################################
+# Brief:
+#   Repalce variables in a variable
+# Globals:
+#   None
+# Arguments:
+#   variable_part : The parts of incoming parameters
+#   variable_new : The value returned after substitution
+#   str_arrays : Incoming parameters
+# Returns:
+#   variable_new : The value returned after substitution
+#######################################
+function variable_substitute() {
+    local variable_part
+    local variable_new
+    local str_arrays="$1"
+
+    for variable_part in $str_arrays; do
+        if [[ "${variable_part}" =~ "\\$" ]]; then
+            variable_part="$(eval echo "${variable_part}")"
+            if [[ $? -ne 0 ]]; then
+                err "Replace variable is error..."
+            fi
+        fi
+        variable_new="$variable_new$variable_part "
+    done
+    echo "${variable_new}"
+}
+
+#######################################
+# Brief:
+#   Print  process  log 
+# Globals:
+#   None
+# Arguments:
+#   p_name : running process name
+#   p_command : cmd command
+#   p_id : shell process id 
+# Returns:
+#   None
+#######################################
+function log() {
+    local p_name="$1"
+    local p_command="$2"
+    local p_id="$3"
+    
+    print_p_command="$(variable_substitute "${p_command}")"
+    printf "%s %25s %s\n" "$(date ${DATE_FORMAT})" "${p_name}" "${print_p_command} started with pid ${p_id}"   
+    
+    #Redirect input from run_command
+    while read log_line; do
+        printf "%s %25s %s\n" "$(date $DATE_FORMAT)" "${p_name}" "${log_line}"
+    done  
+}
+
+#######################################
+# Brief:
+#   running cmd command backbround
+# Globals:
+#   None
+# Arguments:
+#   p_command:  cmd command 
+#   p_name : running process name
+# Returns:
+#   fail:1
+#   succ:0
+#######################################
+function run_command() {
+    local p_name="$1"
+    local p_command="$2"
+    
+    #Redirect $!  of  the  ${p_command}
+    bash -c "${p_command}" 2>&1 | log "${p_name}" "${p_command}" "$!" &
+
+}
+
+#######################################
+# Brief:
+#   Load env file and export environment variable
+# Globals:
+#   None
+# Arguments:
+#   env_path : the path of env file
+#   env_name : The name of the environment variable
+#   env_value : The vale of the environment variable
+#   export_res : The value returned if export variable sucessful
+# Returns:
+#   succ: 0
+#   fail: 1
+#######################################
+function load_env_file() {   
+    local env_name
+    local env_value
+    local export_res=0
+    local env_path="$1"
+    
+    if [[ -e "${env_path}" ]]; then
+        while read env_line; do       
+            env_name="${env_line%%=*}"
+            env_value="${env_line#*=}"
+            eval export "${env_name}"="${env_value}"
+
+            if [[ $? -ne 0 ]]; then
+               echo "export ${env_line} fail ..."
+               export_res=1
+            fi
+        done <<< "$(grep -E -v "^([[:space:]]+#|#|$)" "${env_path}")"
+    fi
+
+    return "${export_res}"
+}
+
+#######################################
+# Brief:
+#   run processes in the procfile.
+# Globals:
+#   PORT: PORT    
+#   FRONT_COLOR_INIT: Font color code
+# Arguments:
+#   procfile_path: path of process file
+# Returns:
+#   fail: 0
+#######################################
+function run_Procfile() {
+    local  procfile_path="$1"
+    
+    if [[ -f "${procfile_path}" ]]; then
+        while read p_line; do           
+            if [[ FRONT_COLOR_INIT -lt 37 ]]; then
+                FRONT_COLOR_INIT=$(($FRONT_COLOR_INIT + 1))
+            else
+                FRONT_COLOR_INIT=31
+            fi
+            
+            #clear space  of  then  cmd_command front 
+            cmd_command="$(echo  ${p_line#*:}  | grep -v -E '^[[:space:]]')"
+
+            p_name="$(echo ${p_line%%:*} | grep -E -v '^[[:space:]].*[[:space:]]$')"
+            p_name="$(echo -e "\033[${BACK_COLOR_INIT};${FRONT_COLOR_INIT}m${p_name} |\033[0m")"
+
+            #running cmd command 
+            run_command "${p_name}" "${cmd_command}"
+            
+            if [[ $? -ne 0 ]]; then
+                echo "cmd_command : ${cmd_command} exce error ..."
+                return "${FAIL_SIGN}"
+            else
+                #if $PORT is exists then PORT=PORT+1 
+                if [[ "$(echo ${cmd_command} | grep "\$PORT")" ]]; then
+                    PORT=$(($PORT + 1))
+                fi
+            fi
+        done <<< "$(grep -E -v "${PROCFILE_PATTERN}" "${procfile_path}")"
+    else 
+        err "procfile_path : ${procfile_path} is not found"
+    fi
+}
+
+#######################################
+# Brief:
+#   kill running jobs 
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function clean() {
+    for job in $(jobs -p -r);do
+        kill $job >/dev/null 2>&1
+    done
+}
+
+#######################################
+# Brief:
+#   The main function of the program
+# Globals:
+#   None
+# Arguments:
+#   is_c : Whether the need to check procfile and env_file
+#   procfile_path : The default path of procfile
+#   env_path : The default path of env_file
+#   procfile_check_result : The result of check procfile
+#   envfile_check_result : The result of check envfile 
+# Returns:
+#   None
+#######################################
+function main() {
+    local is_c
+    local procfile_check_result
+    local envfile_check_result
+    local procfile_path="${DEFAULT_PROCFILE_PATH}"
+    local env_path="${DEFAULT_ENV_PATH}"
+
+    while getopts "hcf:e:" opt; do
+        case "$opt" in
+            h)
+                usage
+                exit 0              
+                ;;
+            c)
+                is_c="verify"
+                ;;
+            f) 
+                procfile_path="$OPTARG"
+                ;;
+            e)  
+                env_path="$OPTARG"
+                ;;
+            \?)
+                usage
+                exit 1
+                ;;
+        esac
+    done
+    
+    trap  'echo "receive INT or TERM sign and  then kill running jobs";clean;exit'  INT TERM
+    
+    # env file and procfile format is needed to verify or not
+    if [[ "${is_c}" = "verify" ]]; then   
+        verify_profile "${procfile_path}"
+            procfile_check_result=$?
+
+        verify_envfile  "${env_path}"
+            envfile_check_result=$?
+
+        if [[ ! "${procfile_check_result}" = "0" ]] || [[ ! "${envfile_check_result}" = "0" ]]; then
+            err "check env file or procfile format is failed"
+        else
+            echo "check env file or procfile format is passed"
+            exit 0
+        fi     
+    fi
+    
+    #running  process
+    load_env_file "${env_path}"
+    if [[ $? -ne 0 ]]; then
+        err "load env file failed ..."
+    fi
+
+    run_Procfile "${procfile_path}"
+
+    wait
+}
+
+main "$@"

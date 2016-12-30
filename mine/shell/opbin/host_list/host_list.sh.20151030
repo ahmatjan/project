@@ -1,0 +1,790 @@
+i=0
+
+#bmq machines
+#alias bmq_master0='ssh yangkai04@yf-bmq-bgt0mas00.yf01'
+#alias bmq_slave0='ssh yangkai04@cq01-bmq-bgt0slv00.cq01'
+#alias bmq_slave1='ssh yangkai04@m1-bmq-bgt0slv01.m1'
+#alias bmq_brk0='ssh yangkai04@cq01-bmq-bgt0brk00.cq01'
+#alias bmq_brk1='ssh yangkai04@m1-bmq-bgt0brk01.m1'
+#alias bmq_brk2='ssh yangkai04@tc-bmq-bgt0brk02.tc'
+#charge machines
+#dsfcharge 0 
+#alias stdrd15='ssh rd@st01-sf-drd15.st01'
+#alias drd15='ssh rd@tc-sf-drd15.tc'
+#dsfcharge 1
+#alias drd17='ssh rd@tc-sf-drd17.tc'
+#dadcharge
+host[$i]=tc-sf-drd26.tc
+user[$i]=rd
+((i++))
+
+#dfstat-other
+host[$i]=tc-sf-drd27.tc
+user[$i]=rd
+((i++))
+
+#dsend-dst dsend-bd
+#alias drd28='ssh rd@tc-sf-drd28.tc'
+#alias drd31='ssh rd@tc-sf-drd31.tc'
+#dbdcharge
+#alias drd29='ssh rd@tc-sf-drd29.tc'
+#alias stdrd29='ssh rd@st01-sf-drd29.st01'
+#addclk
+host[$i]=tc-sf-drd30.tc
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-sf-drd25.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=st01-sf-drd25bak.st01
+user[$i]=rd
+((i++))
+
+#fc clk send
+#alias jxdrd02='ssh rd@jx-sf-drd02.jx'
+#bd clk send
+#alias drdbeidou01='ssh rd@st01-sf-drdbeidou01.st01'
+#tesla_policy
+#alias tesla_policy='ssh work@cq01-vs-health-as00.cq01'
+host[$i]=cq01-tesla-policy.cq01
+user[$i]=work
+((i++))
+
+host[$i]=cq02-tesla-policy.cq02
+user[$i]=work
+((i++))
+
+#alias tesla_collector1='ssh work@cq02-tesla-collector01.cq02'
+host[$i]=cq02-tesla-collector02.cq02
+user[$i]=work
+((i++))
+
+#budget server machines
+#bgt online/offline 0 main
+host[$i]=cq01-fc-bgt00.cq01
+user[$i]=rd
+((i++))
+
+#bgt online/offline 1 main
+host[$i]=cq01-fc-bgt01.cq01
+user[$i]=rd
+((i++))
+
+#bgt budget/click send main
+host[$i]=cq01-fc-bgt02.cq01
+user[$i]=rd
+((i++))
+
+#siva/qs budget server
+host[$i]=cq01-fc-bgt04.cq01
+user[$i]=rd
+((i++))
+
+#bgt online/offline 0 back
+host[$i]=st01-fc-bgt00.st01
+user[$i]=rd
+((i++))
+
+#bgt online/offline 1 back
+host[$i]=st01-fc-bgt01.st01
+user[$i]=rd
+((i++))
+
+#bgt budget/click send back
+host[$i]=st01-fc-bgt02.st01
+user[$i]=rd
+((i++))
+
+#siva/qs budget server back
+host[$i]=st01-fc-bgt04.st01
+user[$i]=rd
+((i++))
+
+#bgt tools
+host[$i]=st01-fc-bgt10.st01
+user[$i]=rd
+((i++))
+
+#offline bgt log
+host[$i]=cq01-fc-bgt-log00.cq01
+user[$i]=work
+((i++))
+
+host[$i]=st01-fc-bgt-log01.st01
+user[$i]=work
+((i++))
+
+host[$i]=cp01-sf-toadbk01.cp01
+user[$i]=work
+((i++))
+
+#msg center pri
+host[$i]=dbl-fc-bgt00.dbl01
+user[$i]=rd
+((i++))
+
+#msg center bak
+host[$i]=st01-fc-bgt03.st01
+user[$i]=rd
+((i++))
+
+#patrol
+#alias patrol_online='ssh rd@jx-fc-patrol00.jx'
+#dr-toad
+host[$i]=st01-sf-toadrcv00.st01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-sf-toadrcv00.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-sf-toadrcv00.tc
+user[$i]=rd
+((i++))
+
+host[$i]=m1-sf-toadrcv00.m1
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-sf-toadpolicy00-fc.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=st01-sf-toadpolicy00-fc.st01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-sf-toadpolicy00-fc.tc
+user[$i]=rd
+((i++))
+
+host[$i]=st01-sf-toadpolicy01-fc.st01
+user[$i]=rd
+((i++))
+
+#cq01-policy-fc01.cq01  cq01-sf-toadpolicy00-fc.cq01  cq02-policy-fc00.cq02  cq02-policy-fc01.cq02  st01-sf-toadpolicy00-fc.st01  st01-sf-toadpolicy01-fc.st01  tc-policy-fc01.tc  tc-sf-toadpolicy00-fc.tc 
+host[$i]=tc-sf-toadpolicy00-other.tc
+user[$i]=rd
+((i++))
+
+host[$i]=yf-sf-toadpolicy00-other.yf01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-sf-toadpolicy01-other.tc
+user[$i]=rd
+((i++))
+
+host[$i]=st01-sf-toadpolicy00-other.st01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-sf-charge02.cq01
+user[$i]=rd
+((i++))
+
+#备机
+#alias toad_dbget_bak='ssh rd@jx-sf-drd30.jx'
+host[$i]=st01-sf-drd21.st01
+user[$i]=rd
+((i++))
+
+#online charge log
+host[$i]=tc-sf-drd21.tc
+user[$i]=rd
+((i++))
+
+#offline charge log
+host[$i]=cq01-sf-chgrd00.cq01
+user[$i]=work
+((i++))
+
+#dformat
+host[$i]=tc-sf-drd22.tc
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-sf-drd00.cq01
+user[$i]=rd
+((i++))
+
+#apprecom
+host[$i]=st01-drd-recom00.st01
+user[$i]=rd
+((i++))
+
+host[$i]=yf-drd-recom00.yf01
+user[$i]=rd
+((i++))
+
+#wireless
+host[$i]=cq01-fc-wireless00.cq01
+user[$i]=work
+((i++))
+
+host[$i]=cq02-fc-wireless00.cq02
+user[$i]=work
+((i++))
+
+#uc
+#uc-nginx.DARWIN.all
+host[$i]=cq01-uc-nginx00.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=m1-uc-nginx00.m1
+user[$i]=rd
+((i++))
+
+host[$i]=st01-uc-nginx00.st01
+user[$i]=rd
+((i++))
+
+host[$i]=db-uc-nginx00.db01
+user[$i]=rd
+((i++))
+
+#uclogin2_async
+host[$i]=db-uc-login00.db01
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin102.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin203.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin104.cq01
+user[$i]=rd
+((i++))
+
+#uclogin2_default
+host[$i]=cq02-dr-uclogin100.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-uc-login00.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=yf-dr-uclogin01.yf01
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin103.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-ucweb00.cq01
+user[$i]=rd
+((i++))
+
+#alias uc_login2_default5='ssh rd@cq02-dr-uclogin204.cq02'
+host[$i]=db-dr-uclogin101.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-uclogin102.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-uclogin103.db01
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin201.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin202.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin101.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin102.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin103.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-uclogin100.db01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin100.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb04.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb05.tc
+user[$i]=rd
+((i++))
+
+#uclogin2_person
+host[$i]=cq02-dr-uclogin100.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-uc-login00.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=yf-dr-uclogin01.yf01
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin103.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-ucweb00.cq01
+user[$i]=rd
+((i++))
+
+#alias uc_login2_person5='ssh rd@cq02-dr-uclogin204.cq02'
+host[$i]=db-dr-uclogin101.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-uclogin102.db01
+user[$i]=rd
+((i++))
+
+#alias uc_login2_person8='ssh rd@cq02-dr-uclogin211.cq02'
+#uclogin2_machine
+host[$i]=cq02-dr-uclogin201.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin202.cq02
+user[$i]=rd
+((i++))
+
+#alias uc_login2_machine2='ssh rd@cq02-dr-uclogin212.cq02'
+host[$i]=cq01-dr-uclogin102.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin103.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-uclogin100.db01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin100.cq01
+user[$i]=rd
+((i++))
+
+#alias uc_login2_machine7='ssh rd@cq02-dr-uclogin213.cq02'
+#alias uc_login2_machine8='ssh rd@cq02-dr-uclogin214.cq02'
+#uclogin2_all
+host[$i]=cq02-dr-uclogin100.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-uc-login00.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=yf-dr-uclogin01.yf01
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin103.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-ucweb00.cq01
+user[$i]=rd
+((i++))
+
+#alias uc_login2_all5='ssh rd@cq02-dr-uclogin204.cq02'
+host[$i]=db-dr-uclogin101.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-uclogin102.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-uclogin103.db01
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin201.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin202.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin101.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin102.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin103.cq01
+user[$i]=rd
+((i++))
+
+#uclogin2_api
+host[$i]=db-dr-uclogin103.db01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin101.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb04.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb05.tc
+user[$i]=rd
+((i++))
+
+#alias uc_login2_api4='ssh rd@cq02-dr-uclogin205.cq02'
+#alias uc_login2_api5='ssh rd@cq02-dr-uclogin206.cq02'
+#alias uc_login2_api6='ssh rd@cq02-dr-uclogin207.cq02'
+#alias uc_login2_api7='ssh rd@cq02-dr-uclogin208.cq02'
+#alias uc_login2_api8='ssh rd@cq02-dr-uclogin209.cq02'
+#alias uc_login2_api9='ssh rd@cq02-dr-uclogin210.cq02'
+#uclogin2_small
+host[$i]=cq02-dr-uclogin100.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uclogin100.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=yf-dr-uclogin01.yf01
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin201.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin202.cq02
+user[$i]=rd
+((i++))
+
+#hhvm_small
+#alias uc_hhvm_small0='ssh rd@cq02-dr-uclogin213.cq02'
+host[$i]=cq01-dr-uclogin100.cq01
+user[$i]=rd
+((i++))
+
+#uclogin2static
+host[$i]=cq02-dr-uclogin100.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-uc-login00.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=yf-dr-uclogin01.yf01
+user[$i]=rd
+((i++))
+
+host[$i]=cq02-dr-uclogin103.cq02
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-ucweb00.cq01
+user[$i]=rd
+((i++))
+
+#alias uc_login2static5='ssh rd@cq02-dr-uclogin204.cq02'
+#ucloginapi_default
+host[$i]=db-dr-ucweb00.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-ucweb01.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-ucweb02.db01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb00.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb01.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb02.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb03.tc
+user[$i]=rd
+((i++))
+
+#ucloginapi_all
+host[$i]=db-dr-ucweb01.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-ucweb02.db01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb00.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb01.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb02.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb03.tc
+user[$i]=rd
+((i++))
+
+#ucloginapi_small
+host[$i]=db-dr-ucweb00.db01
+user[$i]=rd
+((i++))
+
+#uclogin80_default
+host[$i]=db-dr-ucweb00.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-ucweb01.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-ucweb02.db01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb00.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb01.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb02.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb03.tc
+user[$i]=rd
+((i++))
+
+#uclogin80_all
+host[$i]=db-dr-ucweb01.db01
+user[$i]=rd
+((i++))
+
+host[$i]=db-dr-ucweb02.db01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb00.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb01.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb02.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-dr-ucweb03.tc
+user[$i]=rd
+((i++))
+
+#uclogin80_small
+host[$i]=db-dr-ucweb00.db01
+user[$i]=rd
+((i++))
+
+#ucloginstatic
+host[$i]=tc-tg-static01.tc
+user[$i]=rd
+((i++))
+
+host[$i]=st01-tg-static01.st01
+user[$i]=rd
+((i++))
+
+host[$i]=st01-tg-static00.st01
+user[$i]=rd
+((i++))
+
+host[$i]=m1-tg-static01.m1
+user[$i]=rd
+((i++))
+
+host[$i]=m1-tg-static00.m1
+user[$i]=rd
+((i++))
+
+#uc_defensor
+#alias uc_defensor0='ssh rd@m1-dr-uccv03.m1'
+#alias uc_defensor1='ssh rd@tc-dr-uccv01.tc'
+#alias uc_defensor2='ssh rd@m1-dr-uccv00.m1'
+#alias uc_defensor3='ssh rd@m1-dr-uccv02.m1'
+#alias uc_defensor4='ssh rd@tc-dr-uccv00.tc'
+#uc_monitor
+host[$i]=cq02-dr-ucplatform.cq02
+user[$i]=rd
+((i++))
+
+#alias uc_monitor1='ssh rd@yf-dr-ucplatform.yf01'
+#uclogin2_preonline
+#alias u_clogin2_preonline='ssh rd@db-armor-ds03.db01'
+#alias uc_platform='ssh yangkai04@yf-dr-ucplatform.yf01'
+host[$i]=hz01-uc-hbase00.hz01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-dr-uccas102.cq01
+user[$i]=rd
+((i++))
+
+#alias uc_memcache='ssh rd@tc-sf-cache01.tc'
+host[$i]=hz01-uc-hbase00.hz01
+user[$i]=rd
+((i++))
+
+host[$i]=hz01-uc-hbase01.hz01
+user[$i]=rd
+((i++))
+
+#offline virtual machines
+#yangkai
+host[$i]=cq01-sf-vchgrd00.vm
+user[$i]=yangkai04
+((i++))
+
+#zhangjiewei
+#alias vchgrd01='ssh work@cq01-sf-vchgrd01.vm'
+#wangdaolong
+#alias vchgrd02='ssh work@cq01-sf-vchgrd02.vm'
+#baikai
+#alias vchgrd03='ssh work@cq01-sf-vchgrd03.vm'
+#houwen
+#alias vchgrd04='ssh work@cq01-sf-vchgrd04.vm'
+#lixiaoling
+#alias vchgrd05='ssh work@cq01-sf-vchgrd05.vm'
+#chengqinglian
+#alias vchgrd06='ssh work@cq01-sf-vchgrd06.vm'
+#bcmain
+host[$i]=cq01-sf-vchgrd07.vm
+user[$i]=yangkai04
+((i++))
+
+#zhangxiao
+#alias vchgrd08='ssh yangkai04@cq01-sf-vchgrd08.vm'
+#ganjia
+#alias vchgrd09='ssh work@cq01-sf-vchgrd09.vm'
+#sunhuajin
+#alias vchgrd10='ssh work@cq01-sf-vchgrd10.vm'
+#preonline
+host[$i]=hz01-drd-preonine05.vm
+user[$i]=work
+((i++))
+
+#alias preonline_root='ssh root@hz01-drd-preonine05.vm'
+#dashboard
+host[$i]=cp01-ecom-shifen01.cp01
+user[$i]=work
+((i++))
+
+host[$i]=cp01-ecom-shifen01.cp01
+user[$i]=root
+((i++))
+
+#alias dashboard='ssh work@st01-ecom-shifen01.st01'
+#chg213456
+#alias shifen02='ssh work@st01-ecom-shifen02.st01'
+#alias shifen08='ssh work@st01-ecom-shifen08.st01'
+host[$i]=cp01-ecom-shifen07.cp01
+user[$i]=work
+((i++))
+
+host[$i]=cp01-ecom-shifen07.cp01
+user[$i]=root
+((i++))
+
+#alias dashboard_bak='ssh work@st01-ecom-shifen07.st01'
+host[$i]=cp01-sf-toadbk00.cp01
+user[$i]=work
+((i++))
+
+#alias toadbklog0='ssh work@cq02-sf-toadbk00.cq02'
+#alias toadbklog0_root='ssh root@cq02-sf-toadbk00.cq02'
+host[$i]=cp01-sf-toadbk01.cp01
+user[$i]=work
+((i++))
+
+#alias toadbklog1='ssh work@cq02-sf-toadbk01.cq02'
+#alias toadbklog1_root='ssh root@cq02-sf-toadbk01.cq02'
+host[$i]=cp01-sf-toadbk02.cp01
+user[$i]=work
+((i++))
+
+#alias toadbklog2='ssh work@cq02-sf-toadbk02.cq02'
+#alias toadbklog2_root='ssh root@cq02-sf-toadbk02.cq02'
+host[$i]=cp01-sf-toadbk03.cp01
+user[$i]=work
+((i++))
+
+#alias toadbklog3='ssh work@cq02-sf-toadbk03.cq02'
+#alias toadbklog3_root='ssh root@cq02-sf-toadbk03.cq02'
+#cas srv hk集群
+#alias uc_hkcassrv0='ssh root@hk01-dr-uc00.hk01'
+#alias uc_hkcassrv1='ssh root@hk01-dr-uc01.hk01'
+#alias uc_hkcassrv2='ssh root@hk01-dr-uc02.hk01'
+#alias uc_hkcassrv3='ssh root@hk01-dr-uc03.hk01'
+#offline machines
+#anti213456
+#alias antitp00='ssh work@db-sf-antitp00.db01'
+#alias antitp02='ssh work@db-sf-antitp02.db01'
+#machine down
+#alias antitp03='ssh work@db-sf-antitp03.db01'
+#alias tc_remora01='ssh work@tc-sf-remora01.tc'
+#alias jx_remora04='ssh work@jx-sf-remora04.jx'
+#other peoples machine
+#alias hongling='ssh work@cq01-testing-ecom135.vm'
+#alias qa984='ssh work@yx-testing-ecom984.yx01'
+#alias zhangxiao='ssh zhangxiao01@cq01-rdqa-dev058.cq01'

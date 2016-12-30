@@ -1,0 +1,343 @@
+#!/bin/bash
+#
+# Copyright (c) 2015 Baidu.com, Inc. All Rights Reserved
+#
+# Author: yangkai04@baidu.com
+# Date: 2015/11/11
+# Brief:
+#   A manager of applications.
+# Globals:
+#   PORT : service port
+#   DATE_FORMAT : date format
+#   procfile : procfile path
+#   env_file : env_file path
+#   data_day : run date
+#   subid_list : sub process id list
+#   model : 1.normal 2.check
+#   lock_file : only run once
+# Arguments:
+#   -f  set procfile
+#   -e  set env_file
+#   -c  check procfile and env_file
+#   -h  print help message
+#   -t  set the run_time of program
+# Returns:
+#   succ:0
+#   fail:1
+
+#set -x # set -o xtrace
+#set -e # set -o errexit
+#set -u # set -o nounset
+set -o pipefail 
+
+readonly COLOR_BASE=32
+readonly COLOR_RANGE=5
+color_now=0
+
+PORT=8080
+DATE_FORMAT='+"%Y-%m-%d %H:%M:%S"'
+procfile="./prod/Procfile"
+env_file="./.env"
+data_day=$(date +"%Y%m%d")
+subid_list=""
+model="normal"
+lock_file="$0.lock"
+
+function usage() {
+    echo -e "Usage: ${0} [-c] [-f procfile|Procfile] [-e envfile|.env]"
+    echo -e "    -c  check procfile and envfile" 
+    echo -e "    -f  set procfile"
+    echo -e "    -e  set envfile"
+    echo -e "    -h  print help message"
+    echo -e "    -t  set the run_time of program"
+    echo -e "        format is YYYYmmdd"
+    echo -e "        if it's null, default is current time"
+}
+
+#######################################
+# Brief:
+#   get options from command line.
+# Globals:
+#   procfile
+#   env_file
+#   data_day
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function get_option() {
+    while getopts chf:e:t: flag; do
+        case "${flag}" in
+            c)
+                model="check"
+                ;;
+            h) 
+                usage
+                exit 0
+                ;;
+            f) 
+                procfile="${OPTARG}"
+                ;;
+            e) 
+                env_file="${OPTARG}"
+                ;;
+            t) 
+                data_day="${OPTARG}"
+                ;;
+            *) 
+                usage
+                exit 1
+                ;;
+        esac
+    done
+}
+
+#######################################
+# Brief:
+#   verify conf and file path
+# Globals:
+#   procfile
+#   env_file
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function verify() {
+    if [ -z "${procfile}" ]; then
+        echo "FATAL procfile empty error."
+        exit 1
+    fi
+    if [ ! -f "${procfile}" ]; then
+        echo "FATAL ${procfile} not exist error."
+        exit 1
+    fi
+    local fn_retvalue=0
+    while read -r line; do
+        if [ -z "${line}" -o ! -z "$(echo ${line} | sed -n '/^#.*$/p')" ]; then
+            continue
+        fi
+        if [ -z "$(echo ${line} | sed -n '/^[^:]*:.*$/p')" ]; then
+            echo "line[${line}] of ${procfile} error."
+            fn_retvalue=1
+            continue
+        fi
+        local fn_name=$(echo ${line} | sed -n 's/^\([^:]*\):\(.*\)$/\1/p')
+        local fn_cmd=$(echo ${line} | sed -n 's/^\([^:]*\):\(.*\)$/\2/p')
+        if [ -z "${fn_name}" -o -z "${fn_cmd}" ]; then
+            echo "line[${line}] of ${procfile} error."
+            fn_retvalue=1
+            continue
+        fi
+        if [ -z "$(echo ${fn_name} | sed -n '/^[_a-zA-Z0-9]*$/p')" ]; then
+            echo "line[${line}] of ${procfile} error."
+            fn_retvalue=1
+            continue
+        fi
+    done < <(cat ${procfile} | sed '$s/$/\n/')
+    if [ ${fn_retvalue} -ne 0 ]; then
+        exit ${fn_retvalue}
+    fi
+
+    if [ -z "${env_file}" ]; then
+        echo "FATAL env_file empty error."
+        exit 1
+    fi
+    if [ ! -f "${env_file}" ]; then
+        echo "FATAL ${env_file} not exist error."
+        exit 1
+    fi
+    while read -r line; do
+        if [ -z "${line}" -o ! -z "$(echo ${line} | sed -n '/^#.*$/p')" ]; then
+            continue
+        fi
+        if [ -z "$(echo ${line} | sed -n '/^[^=]*=[^=]*$/p')" ]; then
+            echo "line[${line}] of ${env_file} error."
+            fn_retvalue=1
+            continue
+        fi
+        local fn_name=$(echo ${line} | sed -n 's/^\([^=]*\)=\(.*\)$/\1/p')
+        local fn_value=$(echo ${line} | sed -n 's/^\([^=]*\)=\(.*\)$/\2/p')
+        if [ -z "${fn_name}" ]; then
+            echo "line[${line}] of ${env_file} error."
+            fn_retvalue=1
+            continue
+        fi
+        if [ -z "$(echo ${fn_name} | sed -n '/^[_a-zA-Z0-9]*$/p')" ]; then
+            echo "line[${line}] of ${env_file} error."
+            fn_retvalue=1
+            continue
+        fi
+        if [ ! -z "$(echo ${fn_value} | sed -n '/^[^ ]* [^ ]*$/p')" ]; then
+            echo "line[${line}] of ${env_file} error."
+            fn_retvalue=1
+            continue
+        fi
+    done < <(cat ${env_file} | sed '$s/$/\n/')
+    if [ ${fn_retvalue} -ne 0 ]; then
+        exit ${fn_retvalue}
+    fi
+}
+
+#######################################
+# Brief:
+#   source and check env_file
+# Globals:
+#   env_file
+#   PORT
+#   DATE_FORMAT
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function load_env_file() {
+    source ${env_file}
+    if [ $? -ne 0 ]; then
+        echo "FATAL source ${env_file} error."
+    fi
+    if [ -z "${PORT}" ]; then
+        echo "FATAL PORT empty error."
+        exit 1
+    fi
+    if [ -z "${DATE_FORMAT}" ]; then
+        echo "FATAL DATE_FORMAT empty error."
+        exit 1
+    fi
+}
+
+#######################################
+# Brief:
+#   load and run procfile
+# Globals:
+#   procfile
+# Arguments:
+#   none
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function run_procfile() {
+    local fn_proc_path="${procfile%/*}"
+    local fn_proc_file="${procfile##*/}"
+    cd ${fn_proc_path} >/dev/null
+    while read -r line; do
+        if [ -z "${line}" -o ! -z "$(echo ${line} | sed -n '/^#.*$/p')" ]; then
+            continue
+        fi
+        local fn_name=$(echo ${line} | sed -n 's/^\([^:]*\):\(.*\)$/\1/p')
+        local fn_cmd=$(echo ${line} | sed -n 's/^\([^:]*\):\(.*\)$/\2/p')
+        local fn_cmd_order=$(echo ${fn_cmd} | \
+                sed -n 's/^[ ]*\([^ ]*\)[ ]*\(.*\)$/\1/p')
+        local fn_cmd_param=$(echo ${fn_cmd} | \
+                sed -n 's/^[ ]*\([^ ]*\)[ ]*\(.*\)$/\2/p')
+        eval "fn_cmd_param=\"${fn_cmd_param}\""
+        run_command "${fn_name}" "${fn_cmd_order} ${fn_cmd_param}"
+        if [ $? -ne 0 ]; then
+            cd - >/dev/null
+            return 1
+        fi
+        if [ ! -z "$(echo ${fn_cmd} | sed -n '/^.*$PORT.*/p')" ]; then
+            ((PORT+=1))
+        fi
+    done < <(cat ${fn_proc_file} | sed '$s/$/\n/')
+    cd - >/dev/null
+    return 0
+}
+
+#######################################
+# Brief:
+#   run single command
+# Globals:
+#   subid_list
+# Arguments:
+#   $1(string): command name
+#   $2(string): command
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function run_command() {
+    local fn_name="$1"
+    local fn_cmd="$2"
+    eval "${fn_cmd} 2>&1 | log_process ${fn_name} &"
+    local fn_pid="$(jobs -p %%)"
+    log_print "${fn_name}" "${fn_cmd} started with pid ${fn_pid}"
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+    subid_list="${fn_pid} ${subid_list}"
+    return 0
+}
+
+#######################################
+# Brief:
+#   receive sub process log and print to console
+# Globals:
+#   none
+# Arguments:
+#   $1(string): command name
+# Returns:
+#   none
+#######################################
+function log_process() {
+    local fn_name="$1"
+    while read -r line; do 
+        log_print "${fn_name}" "${line}"
+    done
+}
+
+#######################################
+# Brief:
+#   print log to console with color
+# Globals:
+#   COLOR_BASE
+#   COLOR_RANGE
+#   color_now
+# Arguments:
+#   $1(string): command name
+#   $2(string): command
+# Returns:
+#   none
+#######################################
+function log_print() {
+    local fn_date=$(date +"%H:%M:%S")
+    local fn_color=$((${COLOR_BASE} + ${color_now}%${COLOR_RANGE}))
+    local fn_name="$1"
+    local fn_cmd="$2"
+    echo -e "\e[1;${fn_color}m${fn_date} ${fn_name}\e[0m\t| ${fn_cmd}"
+    ((++color_now))
+}
+
+#######################################
+# Brief:
+#   kill sub process and wait to quit
+# Globals:
+#   subid_list
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function quit_all() {
+    local fn_cmd="kill ${subid_list} >/dev/null 2>&1"
+    trap "${fn_cmd}" INT SIGTERM
+    wait
+}
+
+function main() {
+    get_option "$@"
+    verify
+    if [ "${model}" == "check" ]; then
+        exit 0
+    fi
+    load_env_file
+    lockfile ${lock_file}
+    run_procfile
+    quit_all
+    rm -f ${lock_file}
+}
+
+main "$@"
+exit $?

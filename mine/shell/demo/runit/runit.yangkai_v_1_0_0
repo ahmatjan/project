@@ -1,0 +1,243 @@
+#!/bin/bash
+#
+# Copyright (c) 2015 Baidu.com, Inc. All Rights Reserved
+#
+# Author: yangkai04@baidu.com
+# Date: 2015/11/11
+# Brief:
+#   A manager of applications.
+# Globals:
+#   procfile : procfile path
+#   env_file : env_file path
+#   log_file : log_file path
+#   data_day : run date
+# Arguments:
+#   -f  set procfile
+#   -e  set env_file
+#   -c  check procfile and env_file
+#   -h  print help message
+#   -t  set the run_time of program
+# Returns:
+#   succ:0
+#   fail:1
+
+#set -x # set -o xtrace
+set -e # set -o errexit
+set -u # set -o nounset
+set -o pipefail 
+shopt -s expand_aliases
+
+readonly COLOR_BASE=32
+readonly COLOR_RANGE=5
+
+procfile="./prod/Procfile"
+env_file="./.env"
+log_file="./log/${0}.log"
+data_day=$(date +"%Y%m%d")
+subid_list=""
+global_quit=0
+
+function usage() {
+    echo -e "Usage: ${0} [-c] [-f procfile|Procfile] [-e envfile|.env]" >&2
+    echo -e "            [-h] [-t]" >&2
+    echo -e "    -c  check procfile and envfile" >&2
+    echo -e "    -f  set procfile" >&2
+    echo -e "    -e  set envfile" >&2
+    echo -e "    -h  print help message" >&2
+    echo -e "    -t  set the run_time of program" >&2
+    echo -e "        format is YYYYmmdd" >&2
+    echo -e "        if it's null, default is current time" >&2
+}
+
+#######################################
+# Brief:
+#   get options from command line.
+# Globals:
+#   procfile
+#   env_file
+#   data_day
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function get_option() {
+    while getopts hf:e:t: flag; do
+        case "${flag}" in
+            h) 
+                usage
+                exit 0
+                ;;
+            f) 
+                procfile="${OPTARG}"
+                ;;
+            e) 
+                env_file="${OPTARG}"
+                ;;
+            t) 
+                data_day="${OPTARG}"
+                ;;
+            *) 
+                usage
+                exit 1
+                ;;
+        esac
+    done
+}
+
+#######################################
+# Brief:
+#   write log to log file.
+# Globals:
+#   log_file
+# Arguments:
+#   lineno : called lineno
+#   level : log level, eg : TRACE NOTICE WARNING FATAL
+#   msg : log message
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function write_log_() {
+    local fn_date=`date +"%m-%d %H:%M:%S"`
+    local fn_lineno=$1
+    local fn_level=$2
+    local fn_msg=$3
+    if [ ! -z "${log_file}" -a -d "${log_file%/*}" ]; then
+        if [ "${fn_level}" = "FATAL" -o "${fn_level}" = "WARNING" ]; then
+            echo -e "${fn_level}: ${fn_date}: [${0}:${fn_lineno}] [${fn_msg}]"\
+            >> ${log_file}.wf
+        else
+            echo -e "${fn_level}: ${fn_date}: [${0}:${fn_lineno}] [${fn_msg}]"\
+            >> ${log_file}
+        fi
+    else
+        echo -e "${fn_level}: ${fn_date}: [${0}:${fn_lineno}] [${fn_msg}]" >&2
+    fi
+    return 0
+}
+alias write_log='write_log_ ${LINENO}'
+
+#######################################
+# Brief:
+#   verify conf and file path
+# Globals:
+#   procfile
+#   env_file
+#   log_file
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function verify() {
+    if [ -z "${procfile}" ]; then
+        write_log "FATAL" "procfile empty error."
+        exit 1
+    fi
+    if [ ! -f "${procfile}" ]; then
+        write_log "FATAL" "${procfile} not exist error."
+        exit 1
+    fi
+    if [ -z "${env_file}" ]; then
+        write_log "FATAL" "env_file empty error."
+        exit 1
+    fi
+    if [ ! -f "${env_file}" ]; then
+        write_log "FATAL" "${env_file} not exist error."
+        exit 1
+    fi
+    local fn_log_path="${log_file%/*}"
+    if [ ! -d "${fn_log_path}" ]; then
+        mkdir -p ${fn_log_path}
+        if [ $? -ne 0 ]; then
+            write_log "FATAL" "mkdir log path[${fn_log_path}] error."
+            exit 1
+        fi
+    fi
+}
+
+#######################################
+# Brief:
+#   source and check env_file
+# Globals:
+#   env_file
+#   PORT
+#   DATE_FORMAT
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function load_env_file() {
+    source ${env_file}
+    if [ $? -ne 0 ]; then
+        write_log "FATAL" "source ${env_file} error."
+    fi
+    if [ -z "${PORT}" ]; then
+        write_log "FATAL" "PORT empty error."
+        exit 1
+    fi
+    if [ -z "${DATE_FORMAT}" ]; then
+        write_log "FATAL" "DATE_FORMAT empty error."
+        exit 1
+    fi
+}
+
+#######################################
+# Brief:
+#   load and run procfile
+# Globals:
+#   procfile
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function run_procfile() {
+    local fn_proc_path="${procfile%/*}"
+    local fn_proc_file="${procfile##*/}"
+    cd ${fn_proc_path} >/dev/null
+    while read -r line; do
+        local fn_name=$(echo "${line}" | cut -d":" -f 1)
+        local fn_cmd=$(echo "${line}" | cut -d":" -f 2)
+        run_command "${fn_name}" "${fn_cmd}"
+        ((PORT+=1))
+    done < ${fn_proc_file}
+    cd - >/dev/null
+}
+
+function run_command() {
+    local fn_name="$1"
+    local fn_cmd="$2"
+    echo_withcolor "${fn_name}" "${fn_cmd}"
+    eval "nohup ${fn_cmd} >/dev/null 2&>1 &"
+    subid_list="$! ${subid_list}"
+}
+
+function echo_withcolor() {
+    local fn_date=`date +"%H:%M:%S"`
+    local fn_color=$((${COLOR_BASE} + ${RANDOM}%${COLOR_RANGE}))
+    local fn_name="$1"
+    local fn_cmd="$2"
+    echo -e "\e[1;${fn_color}m${fn_date} ${fn_name}\e[0m\t| ${fn_cmd}"
+}
+
+function quit_all() {
+    local fn_cmd="global_quit=1 && kill ${subid_list} >/dev/null 2&>1 && wait"
+    trap "${fn_cmd}" INT SIGTERM
+    while [ ${global_quit} -ne 1 ]; do
+        sleep 1
+    done
+}
+
+function main() {
+    get_option "$@"
+    verify
+    load_env_file
+    run_procfile
+    quit_all
+}
+
+main "$@"
+exit $?

@@ -1,0 +1,327 @@
+#!/bin/bash
+##! @TODO: runit, run process in profile 
+##! @VERSION: 1.0
+##! @AUTHOR: zhouwei12@baidu.com
+##! @FILEIN: procfile£¬envfile
+##! @FILEOUT: None
+##! @CREATE TIME : 2016/02/03
+
+##! =========global variables================
+export OK=0
+export ERR=1
+export CHECK_ONLY=0
+
+##! default file and env
+export PROC_FILE="Procfile"
+export ENV_FILE=".env"
+export PORT=8080
+export DATE_FORMAT="'+%Y-%m-%d|%H:%M:%S'"
+
+COLORS=(red green blue yellow cyan purple gray white black)
+
+##!============ trap keyboard signal=============
+trap "kill -9 0; exit 0" SIGINT SIGTERM
+
+
+##! @TODO: show usage info
+function usage() {
+    echo "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]"
+    echo "Usage: runit [options]  "
+    echo "-h    show usage"
+    echo "-c    check procfile and env" 
+    return 0
+}
+
+##! @TODO: check the format profile and env_file
+function verify() {
+    res=0
+    check_profile $PROC_FILE
+    if [ $? -ne 0 ]
+    then
+        log "[ERROR]" "invalid profile"
+        res=1
+    else
+        log "[INFO]" "profile is OK!"
+    fi
+
+    check_envfile $ENV_FILE
+    if [ $? -ne 0 ]
+    then
+        log "[ERROR]" "invalid env_file"
+        res=1
+    else
+        log "[INFO]" "env_file is OK!"
+    fi
+    return $res
+}
+
+##! @TODO: parse input options
+function parse_options() {
+    while getopts "f:e:hc" opt
+    do
+        case $opt in
+            f)  PROC_FILE=$OPTARG
+                #echo $PROC_FILE
+                ;;
+            e)  ENV_FILE=$OPTARG
+                #echo $ENV_FILE
+                ;;
+            c)  CHECK_ONLY=1
+                ;;
+            h)  usage
+                exit 0
+                ;;
+            *)  usage
+                exit 0
+                ;;
+        esac
+    done
+    
+    return 0
+}
+
+##! @TODO:check the format of profile
+function check_profile() {
+    local input_file=$1
+    local res=0
+
+    while read line || [[ -n ${line} ]]
+    do
+        if [[ ${#line} -eq 0 ]]; then
+            continue
+        fi
+        if [[ $line =~ "^( |    )*#" ]] || [[ $line =~ "^( |    )+$" ]]; then
+            log "[COMENT]" "$line"
+            continue
+        fi
+        
+        if [[ $line =~ "^\w+:.+" ]]; then
+            :
+        else
+            log "[ERROR]" "invalid line format $line"
+            res=1
+            continue
+        fi
+            
+    done < $input_file
+
+    return $res
+}
+
+##! @TODO: check the format of enviroment file
+function check_envfile() {
+    local input_file=$1
+    if [ ! -f ${input_file} ]; then
+        return $OK
+    fi
+    
+    local res=0
+    while read line || [[ -n ${line} ]];
+    do
+        if [[ ${#line} -eq 0 ]]; then
+            continue
+        fi        
+        if [[ $line =~ "^( )*#" ]] || [[ $line =~ "^( )+$" ]]; then
+            log "[COMENT]" "$line"
+            continue
+        fi
+        
+        if [[ $line =~ "^\w+=[^ ]+$" ]]; then
+            :
+        else
+            log "[ERROR]" "invalid line format $line"
+            res=1
+            continue
+        fi
+        variable=${line%%=*}
+        value=${line#*=}
+        if [[ $variable =~ "^\w+$" ]]; then
+            if [ ${#value} -le 0 ] || [[ $value =~ " " ]]; then
+                log "[ERROR]" "[invalid value] $line"
+                res=1
+            fi
+        else
+            log "[ERROR]" "[invalid variable name] $line"
+            res=1
+        fi
+        
+    done < $input_file
+    return $res
+}
+
+##! @TODO: write normal log
+##! @CALL: log marker message
+##!     log "[ERROR]" "format invalid"
+function log() {
+    if [ $# -eq 2 ]
+    then
+        echo "$1: `date +%m-%d" "%T` $2"
+    fi
+    return $OK
+}
+
+##! @TODO: write color log
+##! @USAGE:color_log -color1 message1 -color2 message2 ...
+function color_log() {
+    while (($#!=0))
+    do
+            case $1 in
+                    -black)
+                            echo -ne "\033[30m";
+                    ;;
+                    -red)
+                            echo -ne "\033[31m";
+                    ;;
+                    -green)
+                            echo -ne "\033[32m";
+                    ;;
+                    -yellow)
+                            echo -ne "\033[33m";
+                    ;;
+                    -blue)
+                            echo -ne "\033[34m";
+                    ;;
+                    -purple)
+                            echo -ne "\033[35m";
+                    ;;
+                    -cyan)
+                            echo -ne "\033[36m";
+                    ;;
+                    -white|-gray) echo -ne "\033[37m";
+                    ;;
+                    -reset)
+                            echo -ne "\033[0m";
+                    ;;
+                    -h|-help|--help)
+                            echo "Usage: color_log -color1 message1 -color2 message2 ...";
+                            echo "eg:       cfont -red [ -blue message1 message2 -red ]";
+                    ;;
+                    *)
+                    echo -ne "$1"
+                    ;;
+            esac
+            shift
+    done
+    echo -ne "\033[0;1m"
+    echo ""
+}
+
+
+##! @TODO: start one process
+##! @CALL: run_process proc_name command color
+function run_process() {
+    local proc_name=$1
+    local proc_cmd=$2
+    local color=$3
+    #local format_cmd=$(eval "echo "$(echo "$proc_cmd")"")
+    local format_cmd=`eval "echo ${proc_cmd}"`
+    
+    if [[ ${proc_cmd} =~ "<" ]]; then
+        format_cmd=${format_cmd}" < "${proc_cmd##*<}
+    elif [[ ${proc_cmd} =~ ">" ]]; then
+        format_cmd=${format_cmd}" > "${proc_cmd##*>}
+    fi
+    
+    #echo -e "${proc_cmd}"
+    #echo -e "${format_cmd}"
+    
+    bash -c "${format_cmd}"  2>&1 | ( pid=$!; let "pid=pid-1"; 
+        log_info=$(echo -e `date +%T` $proc_name "\t|${format_cmd} start with pid ${pid}"); 
+        color_log -$color "${log_info}"; 
+        while read line; do 
+            log_info=$(echo -e `date +%T` $proc_name "\t| $line")
+            color_log -$color "${log_info}"
+        done 
+    ) &
+    
+ 
+    return $OK
+}
+
+##! @TODO: run command in procfile
+##! @CALL: run_procfile file_name
+function run_procfile(){
+    local input_file=$1
+    if [ ! -f ${input_file} ]; then
+        return 1
+    fi
+    
+    local cnt=0
+    while read line || [[ -n $line ]]; do
+        local first_char=${line:0:1}
+        if [[ -z ${line} ]]; then
+            continue
+        elif [[ -z ${first_char} ]]; then
+            continue
+        elif [[ ${first_char} = "#" ]]; then
+            continue
+        fi
+        
+        local proc_name=${line%%:*}
+        local proc_cmd=${line#*:}
+        
+        local idx=$[ $cnt % ${#COLORS[@]} ]
+        (( cnt+=1 ))
+
+        #color_log -blue "${proc_cmd}"
+        run_process "${proc_name}" "${proc_cmd}" "${COLORS[$idx]}" 
+        
+        sleep 0.5s
+        if [[ ${line} =~ "PORT" ]]; then
+            (( PORT += 1 ))
+        fi
+        
+    done < ${input_file}
+    
+    wait 
+    echo "hello"
+    return $OK
+}
+
+##! @TODO: load env variables
+##! @USAGE: load_env_file file_name
+function load_env_file() {
+    local input_file=$1
+    if [ ! -f ${input_file} ]; then
+        return 1
+    fi
+    while read line || [[ -n ${line} ]]; do
+        local firt_wd=${line:0:1}
+        if [[ -z ${firt_wd} ]]; then
+            continue
+        elif [[ ${firt_wd} = "#" ]]; then
+            continue
+        else
+            export eval "${line}"
+        fi
+    done < ${input_file} 
+    return "${OK}"
+}
+
+
+
+##! @TODO: main process
+function main() {
+
+    parse_options "$@"
+    
+    #check the format of config file
+    if [ $CHECK_ONLY -ge 1 ]; then
+        verify
+        local check_res=$?
+        if [ $check_res -ne 0 ]; then
+            exit 1
+        fi
+    fi
+    
+    #load env_file
+    load_env_file $ENV_FILE
+
+    #run profile
+    run_procfile $PROC_FILE
+    
+    return 0
+}
+
+main "$@"
+

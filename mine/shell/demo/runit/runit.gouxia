@@ -1,0 +1,324 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Baidu.com, Inc. All Rights Reserved
+#
+# Author: gouxia
+# Date: 2016/3/7
+# Brief:
+#   Shell GoodCoder test
+#
+set -e
+set -u
+set -o pipefail
+## work path
+declare -r WORK_PATH="$(pwd)"
+declare -r DEFAULT_FILE_PROC="${WORK_PATH}/Procfile"
+declare -r DEFAULT_FILE_ENV="${WORK_PATH}/.env"
+PORT=8080
+# color info: Red Green Yellow Blue ...
+COLOR_SWITCH='\e[0m'
+COLORS=('\e[0;31m' '\e[0;32m' '\e[0;33m' '\e[0;34m' '\e[0;35m' '\e[0;36m' '\e[0;37m')
+PROC_COLOR=()
+# Ctrl +C option
+trap "kill -SIGTERM 0" INT TERM
+# usage
+function usage() {
+    echo "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]
+Shell Goodcoder
+
+  -h print help and how to use runit
+  -c check the procfile and evnfile
+  -f specify the procfile
+  -e specify the envfile
+"
+}
+
+#######################################
+# Brief:
+#   printf log info
+# Globals:
+#   PROC_COLOR
+#   COLORS
+# Arguments:
+#   proc_name
+#   proc_cmd
+#   proc_pid
+# Returns:
+#   None
+#######################################
+function log_info() {
+    local proc_name="$1"
+    local proc_cmd="$2"
+    local proc_time="$(date +%H:%M:%S)"
+    local proc_pid="$3"
+    local color_id=$(($RANDOM%7))
+    local color_num="${#COLORS[@]}"
+    PROC_COLOR[${color_id}]="${COLORS[$((color_id % color_num))]}"
+    local proc_color="${PROC_COLOR[$color_id]}"
+    printf "${proc_color}  %s %-8s | ${COLOR_SWITCH}%s %s \n"\
+           "${proc_time}" "${proc_name}" "${proc_cmd}" "${proc_pid}"
+}
+
+#######################################
+# Brief:
+#   printf debug info
+#######################################
+
+function debug() {
+    printf "[runit] $1"
+}
+
+#######################################
+# Brief:
+#   Initialize the env file
+# Globals:
+#   FILE_ENV
+# Arguments:
+#   None
+# Returns:
+#   0 : succ
+#   1 : fail
+#######################################
+function init_env() {
+    local FILE_ENV="$1"
+    local ret=0
+
+    [[ -f "${FILE_ENV}" ]] || {
+        debug "file env ${FILE_ENV} is not exist,please check"
+        return 1
+    }
+
+    while IFS='' read -r line || [[ -n "${line}" ]]; do
+        [[ "${line}" =~ "^[ \t]*(#| *$)" ]] && {
+            continue
+        }
+        if [[ "${line}" =~ "^[ ]*([a-zA-Z_0-9]+)=([^ \t]+)$" ]]; then
+            continue
+        else
+            debug "parse envfile ${FILE_ENV} failed: ${line}"
+            ret=1
+        fi
+
+    done < "${FILE_ENV}"
+
+    return "${ret}"
+}
+
+#######################################
+# Brief:
+#   Load env file
+# Globals:
+#   FILE_ENV
+#   PORT
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function load_env_file() {
+    local FILE_ENV="$1"
+   set -a
+   if [[ -f "${FILE_ENV}" ]];then
+       source "${FILE_ENV}"
+    elif [[ -f ./.env ]];then
+       source ./.env
+    else
+        debug "${FILE_ENV} is not exist,please check"
+    fi
+    export PORT
+    set +a
+}
+
+#######################################
+# Brief:
+#   Initialize the proc file
+# Globals:
+#   FILE_PROC
+# Arguments:
+#   None
+# Returns:
+#   0 : succ
+#   1 : fail
+#######################################
+function init_proc() {
+    local FILE_PROC="$1"
+    local ret=0
+
+    [[ -f "${FILE_PROC}" ]] || {
+        debug "procfile ${FILE_PROC} is not exist"
+        return 1
+    }
+
+    while IFS='' read -r line || [[ -n "${line}" ]]; do
+        # comment line
+        [[ "${line}" =~ "^[ \t]*(#| *$)" ]] && {
+            continue
+        }
+        # command line
+        if [[ "${line}" =~ "^[ ]*([a-zA-Z_0-9]+)[ \t]*:[ \t]*(.+)$" ]]; then
+            continue
+        else
+            debug "parse procfile ${FILE_PROC} failed ${line}"
+            ret=1
+        fi
+
+    done < "${FILE_PROC}"
+
+    return "${ret}"
+}
+
+#######################################
+# Brief:
+#   Verify the env and procfile
+# Globals:
+#   FILE_ENV
+#   FILE_PROC
+# Arguments:
+#   None
+# Returns:
+#   0 : succ
+#   1 : fail
+#######################################
+function verify() {
+
+    local FILE_ENV="$1"
+    local FILE_PROC="$2"
+    init_env "${FILE_ENV}" || return 1
+    init_proc "${FILE_PROC}" || return 1
+}
+
+#######################################
+# Brief:
+#   Run the specific command
+# Globals:
+#   FILE_PROC
+#   FILE_ENV
+#   PORT
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function run_command() {
+    if [[ $# -ne 2 ]];then
+        debug "parameter less than 2"
+        exit 1
+    else
+        local proc_name="$1"
+        local proc_cmd="$2"
+    fi
+    bash -c "${proc_cmd}" 1> >(
+        while read line;do
+            log_info "${proc_name}" "${line}" ""
+        done
+    ) 2>&1 &
+    local proc_pid="$!"
+    local proc_end_cmd=$(eval "echo \"${proc_cmd}\"")
+    log_info "${proc_name}" "${proc_end_cmd}" "started with pid ${proc_pid}"
+
+    if echo "${proc_cmd}" | grep -q "\$PORT";then
+        PORT=$((PORT+1))
+    fi
+}
+
+#######################################
+# Brief:
+#   Run all commands in procfile
+# Globals:
+#   FILE_PROC
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function run_procfile() {
+    local FILE_PROC="$1"
+    [[ -f "${FILE_PROC}" ]] || {
+        debug "procfile ${FILE_PROC} is not exist"
+        return 0
+    }
+
+    while IFS='' read -r line || [[ -n "${line}" ]]; do
+        # comment line
+        [[ "${line}" =~ "^[ \t]*(#| *$)" ]] && {
+            continue
+        }
+        # command line
+        if [[ "${line}" =~ "^[ ]*([a-zA-Z_0-9]+)[ \t]*:[ \t]*(.+)$" ]]; then
+            local proc_name="${line%%:*}"
+            local proc_cmd="${line#*:}"
+            run_command "${proc_name}" "${proc_cmd}"
+        else
+            debug "parse procfile ${FILE_PROC} failed: ${proc_cmd}"
+            ret=1
+        fi
+
+    done < "${FILE_PROC}"
+    wait
+}
+
+# Brief:
+#    main
+# Globals:
+#   FILE_ENV
+#   FILE_PROC
+# Arguments:
+#   None
+# Returns:
+#   0 : succ
+#   1 : fail
+#######################################
+function main() {
+
+    local FILE_ENV="${DEFAULT_FILE_ENV}"
+    local FILE_PROC="${DEFAULT_FILE_PROC}"
+    local is_verify=0
+
+    while getopts 'cf:e:h' opt; do
+        case "${opt}" in
+            c)
+                is_verify=1
+            ;;
+            f)
+                FILE_PROC="${OPTARG}"
+            ;;
+            e)
+                FILE_ENV="${OPTARG}"
+            ;;
+            h)
+                usage
+                exit 0
+            ;;
+            ?)
+                usage
+                exit 1
+            ;;
+        esac
+    done
+
+    verify "${FILE_ENV}" "${FILE_PROC}" 
+    if [[ $? != 0 ]]; then
+        debug "${FILE_PROC} or ${FILE_ENV} is invalid"
+    exit 1
+    fi
+    #check is_verify ==1
+    if [[ "${is_verify}" == 1 ]]; then
+    exit 0
+    fi
+
+    load_env_file "${FILE_ENV}"
+    if [[ $? != 0 ]]; then
+        debug "load env file fail"
+    exit 1
+    fi
+    #run commond
+    run_procfile "${FILE_PROC}"
+    if [[ $? != 0 ]]; then
+        debug "run procfile fail"
+    exit 1
+    fi
+
+    return 0
+}
+
+main "$@"

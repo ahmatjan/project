@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# 日志路径
+LOG_FILE="../log/execute.log"
+# 报警邮件收件人,如果配置为空则不发报警邮件
+MAIL_LIST="yangkai04@baidu.com"
+#PHONE_LIST="13341075368"
+
+FTP_INPUT_FILE="ftp://cp01-fc-bqbak00.cp01/home/work/yanglinlin/policy/bin/Onstation/temp/users_mobile_urls.txt"
+
+#step1 result format: userid url webtype
+INPUT_FILE="../data/users_mobile_urls.txt"
+
+#step2 result format: userid url webtype htmlpath
+MID_FILE_CRAWL_HTMLS="../data/mid_file2_craw_html"
+
+#step3 result format: userid url webtype htmlpath analyseres picsrc
+MID_FILE_ANALYSE_HTMLS="../data/mid_file3_analyse_htmls"
+
+#step4 result format: userid url webtype htmlpath analyseres picsrc picpath
+MID_FILE_CRAWL_PICS="../data/mid_file4_crawl_pics"
+
+#step5 result format: userid url webtype htmlpath analyseres picsrc picpath picinfo
+MID_FILE_ANALYSE_PICS="../data/mid_file5_analyse_pics"
+
+OUTPUT_PATH="../result"
+RESULT_TAR_FILE="${OUTPUT_PATH}/analyse_result.tar.gz"

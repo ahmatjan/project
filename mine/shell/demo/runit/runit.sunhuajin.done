@@ -1,0 +1,360 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Baidu.com, Inc. All Rights Reserved
+#
+# Author: sunhuajin
+# Date: 2016/04/12
+# Brief:
+#   应用（application）启动管理工具。通过Procfile文件启动相应的进程。envfile是环境变量
+# Globals:
+#   
+# Arguments:
+#   
+# Returns:
+#   succ:0
+#   fail:1
+
+readonly RUNIT_VERSION=1.0.0
+
+readonly RUNIT_DEFAULT_PATH=$(dirname ${BASH_SOURCE[0]})
+readonly RUNIT_DEFAULT_PROFILE="${RUNIT_DEFAULT_PATH}/Procfile"
+readonly RUNIT_DEFAULT_ENV_FILE="${RUNIT_DEFAULT_PATH}/.env"
+
+SUCC=0;
+FAIL=1;
+
+readonly BLACK="\E[40;31m"
+readonly RED="\E[40;31m"
+readonly GREEN="\E[40;32m"
+readonly YELLOW="\E[40;33m"
+readonly BLUE="\E[40;34m"
+readonly MAGENTA="\E[40;35m"
+readonly CYAN="\E[40;36m"
+readonly WHITE="\E[40;37m"
+COLOR_ARRAY=("$BLACK" "$RED" "$GREEN" "$YELLOW" "$BLUE" "$MAGENTA" "$CYAN" "$WHITE")
+ARRAY_SIZE=${#COLOR_ARRAY[@]}
+
+PORT=8080
+
+function usage() {
+	echo -e "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]
+    Options:
+	    -h|--help
+	    -v|--version
+	    -c
+	    -f|--profile
+	    -e|--envfile"
+}
+
+
+
+#######################################
+# Brief:
+#   验证环境变量文件的合法性
+# Globals:
+#   
+# Arguments:
+#   $1:env_file
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function verify_env_file() {
+	local env_file=$1;
+	local errflag=0;
+
+	while read -r line 
+	do
+		#空行或者是注释行
+		if [[ -z "${line}" || "${line}" =~ "^[ ]*#.*" ]]; then
+			continue
+		fi
+		#匹配出 xx-xx的格式
+		if [[ ! "${line}" =~ "[^=]*=.*" ]]; then
+			errflag=1
+			echo "FATAL line[${line}] in file [${env_file}}]"
+			continue
+		fi
+
+		local name=${line%%=*}
+		local value=${line#*=}
+		
+		#命名的格式要求
+		if [[ ! "${name}" =~ "^[a-z0-9A-Z_]*$" ]]; then
+			errflag=1
+			echo "FATAL line[${line}] in file[${env_file}]"
+			continue
+		fi
+
+		#命令后的空格
+		if [[ "${value}" =~ ".*[ ].*" ]]; then 
+			errflag=1
+			echo "FATAL line[$line] in file[$env_file]"
+			continue
+		fi
+
+	done<"${env_file}"
+	
+	if [ "${errflag}" == "1" ] ;then
+		echo "Error format in ${env_file}"
+		exit $FAIL
+	fi
+}
+
+#######################################
+# Brief:
+#   校验程序文件的合法性
+# Globals:
+#   FAIL
+# Arguments:
+#   $1:profile
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function verify_profile() {
+	local profile=$1;
+	local errflag=0;
+	while read -r line; do  
+		if [[ -z "${line}" || "${line}" =~ "^[ ]*#.*" ]]; then
+			continue;
+		fi
+
+		if [[ ! "${line}" =~ "[^:]:.*" ]]; then
+			errflag=1
+			echo "FATAL line[$line] in file[${profile}]"
+			continue
+		fi
+		local proc_name="${line%%:*}"
+		if [[ ! "${proc_name}" =~ "^[a-zA-Z0-9_]*$" ]]; then
+			echo "ERR proc name[${proc_name}] in file[${profile}]"
+			errflag=1
+			continue	
+		fi	
+	done  <  "${profile}"
+
+	if [ "$errflag" == "1" ]; then
+		echo "ERROR format of profile $profile";
+		exit $FAIL;
+	fi	
+}
+
+#######################################
+# Brief:
+#   校验调度程序
+# Globals:
+#   FAIL
+# Arguments:
+#   $1: profile
+#   $2: envfile
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function verify() {
+	local runit_profile=$1
+	local runit_env=$2
+    	if [ ! -f "${runit_profile}" ]; then
+		echo "ERR: profile ${runit_profile} not exist"
+		exit  $FAIL;
+    	fi
+
+    	if [ ! -f "${runit_env}" ]; then
+    		echo "ERR: env [${runit_env}] not exist"
+		exit $FAIL;
+    	fi
+
+    	verify_profile "${runit_profile}"
+	if [[ $? -ne 0 ]]; then
+		print_err_msg "${runit_profile} verify failed";
+		exit $FAIL;
+	fi
+    	verify_env_file "${runit_env}"
+	if [[ $? -ne 0 ]]; then
+		print_err_msg "${runit_env} verify failed";
+		exit $FAIL;
+	fi
+}
+
+#######################################
+# Brief:
+#  打印带程序名、有颜色的消息
+# Globals:
+#   FAIL
+# Arguments:
+#   $1: procname
+#   $2: message
+#   $3: color
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function log() {
+ 
+	local procname=$1
+	local message=$2
+	local color="${3:-$BLACK}"
+	
+	time=`date +"%H:%M:%S"`	
+	echo -e "${color}${time} ${procname} | ${message} \E[0m"
+}
+
+#######################################
+# Brief:
+#   运行单个命令行
+# Globals:
+#   ARRAY_SIZE
+#   COLOR_ARRAY
+# Arguments:
+#   $1: procname
+#   $2: command
+#   $3: id
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function run_command() {
+	local procname=$1
+    	local command=$2
+	local id=$3
+	
+	local color_id=`expr $id \% $ARRAY_SIZE`
+	local color=${COLOR_ARRAY[$color_id]}
+	
+	eval "${command} 2>&1 | log_print \"${procname}\" \"${color}\" &"	
+	
+	local mypid="$(jobs -p)"
+	log "$procname" "${command} started with pid $mypid" "$color"
+}
+
+#######################################
+# Brief:
+#   打印消息
+# Globals:
+#   
+# Arguments:
+#   $1: profile
+#   $2: color
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function log_print() {
+	local procname=$1
+	local color=$2
+
+	while read -r line; do 
+		log "$procname" "${line}" "${color}"
+	done
+}
+
+#######################################
+# Brief:
+#   加载环境变量
+# Globals:
+#   
+# Arguments:
+#   $1: env_file
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function load_env_file() {
+	local env_file=$1
+	local env_name=""
+	local env_value=""
+	while read line; do
+		if [[ -z "${line}" || "${line}" =~ "^[ ]*#.*" ]]; then
+			continue;
+		fi
+		env_name=${line%%=*}
+		env_value=${line#*=}
+		eval "${env_name}"="${env_value}"
+	done < "${env_file}"
+}
+
+#######################################
+# Brief:
+#   运行程序文件
+# Globals:
+#   PORT
+# Arguments:
+#   $1: procfile
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function run_procfile() {
+    local procfile=$1
+
+    local cnt=1
+    while read -r line; do
+	    	
+	  if [[ -z "${line}" ]];then
+	  	continue;
+	  fi
+          local procname="${line%%:*}"
+          local command="${line#*:}"
+	  local cmd_name="${command%% *}"
+	  local cmd_value="${command#* }"
+	  eval "cmd_value=\"${cmd_value}\""
+	  if [[ "${command}" =~ ".*PORT.*" ]]; then
+	  	((PORT++))
+	  fi
+  	  run_command "$procname" "${cmd_name} ${cmd_value}" "${cnt}"
+          ((cnt++))
+    done < <(grep -v '^[ ]*#' "${procfile}")
+
+    trap "kill -9 0 " INT TERM
+    wait
+}
+
+function main() {
+
+	if [[ ! -f "${RUNIT_DEFAULT_PROFILE}" ]]; then
+		touch "${RUNIT_DEFAULT_PROFILE}"
+	fi
+	
+	if [[ ! -f "${RUNIT_DEFAULT_ENV_FILE}" ]]; then
+		touch "${RUNIT_DEFAULT_ENV_FILE}"
+	fi
+
+	runit_profile=${RUNIT_DEFAULT_PROFILE}
+	runit_env=${RUNIT_DEFAULT_ENV_FILE}
+	local verify_flag=0;
+	while getopts hvcf:e: runit_opt; do
+		case $runit_opt in 
+			h|help)
+				usage
+				exit 0
+				;;
+			v|version)
+				runit_version
+				exit 0
+				;;
+			c)
+				verify_flag=1
+				;;
+			f)
+				runit_profile=${OPTARG}
+				;;
+			e)
+				runit_env=${OPTARG}
+				;;
+			?)
+				usage
+				exit $FAIL;
+		esac
+	done
+
+	if [[ "${verify_flag}" -eq 1 ]]; then
+		verify "${runit_profile}" "${runit_env}"
+		exit $SUCC;
+	fi
+	
+	verify "${runit_profile}" "${runit_env}" 
+	load_env_file "${runit_env}"
+	run_procfile "${runit_profile}" 
+}
+
+main "$@"

@@ -1,0 +1,3 @@
+#!/bin/sh
+#nohup sh -x execute.sh >>../log/execute.log.trace 2>&1 &
+nohup sh -x execute.sh &

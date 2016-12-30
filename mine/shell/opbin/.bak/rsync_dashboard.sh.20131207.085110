@@ -1,0 +1,43 @@
+#!/bin/bash
+
+i=0
+user[$i]="work"
+host[$i]="cq01-sf-chgrd00.cq01"
+remote_dir[$i]='/home/work/dashboard/'
+local_dir[$i]='/home/yangkai04/shell/dashboard/cq01-sf-chgrd00.cq01'
+((i++))
+user[$i]="work"
+host[$i]="cq01-fc-bgt-log00.cq01"
+remote_dir[$i]='/home/work/dashboard/'
+local_dir[$i]='/home/yangkai04/shell/dashboard/cq01-fc-bgt-log00.cq01'
+((i++))
+user[$i]="work"
+host[$i]="st01-ecom-shifen01.st01"
+remote_dir[$i]='/home/work/dashboard/'
+local_dir[$i]='/home/yangkai04/shell/dashboard/st01-ecom-shifen01.st01'
+((i++))
+
+subfix_list=".sh .py .conf"
+for subfix in ${subfix_list}
+do
+	outter_idx=0
+	while [ ${outter_idx} -lt ${#host[*]} ]
+	do
+	
+		filenames=(`ssh ${user[$outter_idx]}@${host[$outter_idx]} "cd ${remote_dir[$outter_idx]} && find . -name \"*${subfix}\""`)
+	
+		idx=0
+		echo ${#filenames[*]}
+		while [ $idx -lt ${#filenames[*]} ]
+		do
+			echo $idx":"${filenames[$idx]}
+			file_path=${local_dir[$outter_idx]}/${filenames[$idx]%/*}
+			file_path_name_local=${local_dir[$outter_idx]}/${filenames[$idx]}
+			file_path_name_remote=${remote_dir[$outter_idx]}/${filenames[$idx]}
+			mkdir -p ${file_path}
+			eval "rsync --bwlimit=20480 -av ${user[$outter_idx]}@${host[$outter_idx]}:${file_path_name_remote} -p ${file_path_name_local}"
+			((idx++))
+		done
+		((outter_idx++))
+	done
+done

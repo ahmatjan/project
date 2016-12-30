@@ -1,0 +1,232 @@
+#!/bin/bash
+
+# Filename:    runit
+# Revision:    1.0
+# Date:        2015/01/18
+# Author:      hefan01
+# Email:       hefan01@baidu.com
+# Description: runit是一个应用（application）启动管理工具。通过Procfile文件启动相应的进程。
+
+#ON-OFF
+set -x
+set -o pipefail
+
+#default file
+PROCFILE="./Procfile"
+ENVFILE="./.env"
+TMP_FILE="./Tmp_file"
+
+#default variable
+PORT=8080
+CHECK_FLAG=0
+CUR_PID=$$
+
+#catch kill signal
+trap "kill 0" SIGINT SIGTERM
+
+###########################
+# Brief: 
+#   usage
+# Arguments: 
+#   None
+# Returns: 
+#   None
+###########################
+function usage() {
+    echo "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]"
+    echo "Usage: runit [-h]"
+    echo "-c: check procfile and env_file"
+    echo "-f: use procfile"
+    echo "-e: use envfile"
+    echo "-h: print help"
+}
+
+###########################
+# Brief: 
+#   get option
+# Arguments: 
+#   None
+# Returns: 
+#   None
+###########################
+function get_option(){
+    if [[ $# -eq 0 ]]; then
+        return 0
+    fi
+    while getopts "f:e:ch" opt; do
+        case "${opt}" in 
+            f)
+                PROCFILE="${OPTARG}"
+                ;;
+            c)
+                CHECK_FLAG=1
+                ;;
+            e)
+                ENVFILE="${OPTARG}"
+                ;;
+            h)
+                usage
+                exit 0
+                ;;
+            *)
+                usage
+                exit 1
+                ;;
+        esac
+    done
+}
+
+
+###########################
+# Brief: 
+#   check valid of procfile and envfile
+# Arguments: 
+#   procfile, envfile
+# Returns: 
+#   0 for success, 1 for fail
+###########################
+function verify() {
+    local procfile="$1"
+    local envfile="$2"
+    local valid_format=0
+    local procfile_status=""
+    local envfile_status=""
+    if [[ ! -s "${procfile}" ]]||[[ ! -s "${envfile}" ]]; then
+        echo -e "procfile or envfile does not exist, pls check!"
+        return 1
+    fi
+    procfile_status="$(grep -Env \
+        '^[a-zA-Z]\w*:.+$|^\s*#|^\s*$' $procfile)"
+    envfile_status="$(grep -Env \
+        '^[a-zA-Z]\w*=[^\s]+$|^\s*#|^\s*$' $envfile)"
+    if [[ -n "$procfile_status" ]]; then
+        echo -e "invalid format, procfile: ${procfile_status}"
+         valid_format=1
+    fi
+    if [[ -n "$envfile_status" ]]; then
+        echo -e "invalid format, envfile: ${envfile_status}"
+        valid_format=1
+    fi
+    if [[ "$valid_format" -eq 0 ]]&&[[ "$CHECK_FLAG" -eq 1 ]]; then
+        echo -e "check procfile and envfile ok"
+    fi
+    return $valid_format
+}
+
+###########################
+# Brief: 
+#   print log
+# Arguments:  
+#   proc_name, proc_cmd, color
+# Returns: 
+#   None
+###########################
+function log() {
+    local proc_name="$1"
+    local proc_cmd="$2"
+    local pid=$!
+    local color="$3"
+    local date=$(date +%T)
+    printf "\e[${color};40m%s %s | %s started with pid %s \e[0m\n" \
+           "${date}" "${proc_name}" "${proc_cmd}" "${pid}"
+    while read line; do
+        if [[ -n "${line}" ]]; then
+            printf "\e[${color};40m%s %s | %s\e[0m\n" \
+                "${date}" "${proc_name}" "${line}"
+        fi
+    done
+}
+
+###########################
+# Brief: 
+#   run one command
+# Arguments:  
+#   proc_name, proc_cmd, color
+# Returns: 
+#   None
+###########################
+function run_command() {
+    local proc_name="$1"
+    local proc_cmd="$2"
+    local color="$3"
+    export PORT
+    export DATE_FORMAT
+    proc_cmd=$(eval echo \"${proc_cmd}\")
+    bash -c "${proc_cmd}" 2>&1 | log \
+          "${proc_name}" "${proc_cmd}" ${color} & 
+}
+
+###########################
+# Brief: 
+#   load envfile to envirament variable
+# Arguments:
+#   None
+# Returns: 
+#   None
+###########################
+function load_env_file() {
+    source "$ENVFILE"
+    while read line; do
+        echo "${line}" | grep -qE "^\s*$" &>/dev/null
+        if [[ $? -eq 0 ]]; then
+            continue
+        fi
+        export $(eval echo "${line}")
+        if [[ $? -eq 1 ]]; then
+            exit 1
+        fi
+    done < "$ENVFILE"
+}
+
+###########################
+# Brief: 
+#   run commands in procfile
+# Arguments:
+#   None
+# Returns:
+#   None
+###########################
+function run_procfile() {
+    #filter comment and blank line
+    grep -vE "^\s*$|^\s*#" "$PROCFILE"  > "${TMP_FILE}" 2>/dev/null
+    local color_cnt=31
+    while read line;do
+        local proc_name="${line%%:*}"
+        local proc_cmd="${line#*:}"
+        if [[ "${color_cnt}" -gt 37 ]]; then
+            color_cnt=31
+        fi
+        run_command "${proc_name}" "${proc_cmd}" ${color_cnt}
+        echo "${proc_cmd}" | grep -q "PORT"
+        if [[ $? -eq 0 ]]; then 
+            PORT="$(expr $PORT + 1)"
+        fi
+        color_cnt="$(expr $color_cnt + 1)"
+    done < "${TMP_FILE}"
+    wait
+}
+
+###########################
+# Brief: 
+#   main function
+# Arguments:
+#   None
+# Returns:
+#   None
+###########################
+function main() {
+    get_option "$@"
+    if [[ "${CHECK_FLAG}" -eq 1 ]]; then
+        verify "$PROCFILE" "$ENVFILE"
+        if [[ $? -eq 1 ]]; then
+            exit 1
+        fi
+        exit 0
+    fi
+    verify "$PROCFILE" "$ENVFILE" || exit 1
+    load_env_file
+    run_procfile
+    exit 0
+}
+
+main "$@"

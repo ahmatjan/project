@@ -1,0 +1,366 @@
+#!/bin/bash
+
+# Copyright (c) 2016 Baidu.com, Inc. All Rights Reserved
+#
+# Author: lianxiaoyang
+# Date: 2016/3/9
+# Brief:
+#   runit: a process manager
+# Globals:
+#   PORT
+#   env_file
+#   proc_file
+#   cmd_arr
+#   color_arr
+#   RED
+#   GREEN
+#   YELLOW
+#   BLUE
+#   MAGENTA
+#   CYAN
+#   WHITE
+#   BLACK
+#   OUTPUT_PREFIX_LENGTH
+# Returns:
+#   succ:0
+#   fail:1
+
+# Globals
+env_file='./.env'
+proc_file='./Procfile'
+declare -a cmd_arr
+declare -a color_arr
+declare -r RED='\033[31m'
+declare -r GREEN='\033[32m'
+declare -r YELLOW='\033[33m'
+declare -r BLUE='\033[34m'
+declare -r MAGENTA='\033[35m'
+declare -r CYAN='\033[36m'
+declare -r WHITE='\033[37m'
+declare -r BLACK='\033[30m'
+declare -r OUTPUT_PREFIX_LENGTH=20
+PORT=8080
+
+#######################################
+# Brief:
+#   init: init color_arr and there is
+#   -c argument, it will check env
+#   and proc_file
+# Globals:
+#   color_arr
+# Arguments:
+#   $@
+# Returns:
+#   None
+#######################################
+function init() {
+    local is_check=0
+    while getopts ":hf:e:c" opt
+    do
+        case ${opt} in
+            h  ) usage; exit 0         ;;
+            f  ) proc_file="${OPTARG}" ;;
+            e  ) env_file="${OPTARG}"  ;;
+            c  ) is_check=1            ;;
+            \? ) usage; exit 1         ;;
+          esac
+    done
+    shift $(($OPTIND-1))
+
+    color_arr=("${RED}" "${GREEN}" "${YELLOW}" "${BLUE}" "${MAGENTA}" "${WHITE}" "${BLACK}")
+
+    if [[ 1 -eq ${is_check} ]]; then
+        verify
+    fi
+}
+
+#######################################
+# Brief:
+#   give a number output a color
+# Globals:
+#   color_arr
+# Arguments:
+#   $1: seed, a number
+# Returns:
+#   None
+#######################################
+function get_color() {
+    seed=${1}
+    max_color_num=${#color_arr[@]}
+    color_num=$((seed%max_color_num))
+    echo "${color_arr[$color_num]}"
+}
+
+#######################################
+# Brief:
+#   output usage
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function usage() {
+    echo "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]"
+}
+
+#######################################
+# Brief:
+#   verify env and Procfile
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   succ: 0
+#   fail: 1
+#######################################
+function verify() {
+    load_env_file
+    load_proc_file
+    exit 0
+}
+
+#######################################
+# Brief:
+#   read std, output message with colored
+#   prefix
+# Globals:
+#   OUTPUT_PREFIX_LENGTH
+# Arguments:
+#   $1: prefix message
+#   $2: color
+# Returns:
+#   None
+#######################################
+function log() {
+    while read input; do
+        cecho "${1}" "${2}"
+        len=${#1}
+        fixlen=$((OUTPUT_PREFIX_LENGTH - len))
+        printf "%-${fixlen}s | %s" " " "${input}"
+        echo
+    done
+}
+
+#######################################
+# Brief:
+#   output message with specified color
+# Globals:
+#   WHITE
+# Arguments:
+#   $1: message
+#   $2: color
+# Returns:
+#   None
+#######################################
+function cecho() {
+    local default_msg="No message passed."
+
+    message=${1:-$default_msg}
+    color=${2:-$WHITE}
+
+    echo -ne "${color}${message}\033[0m"
+}
+
+#######################################
+# Brief:
+#   give a command number, create a
+#   process and run the command
+# Globals:
+#   cmd_arr
+# Arguments:
+#   $1: command number
+# Returns:
+#   None
+#######################################
+function run_command() {
+    cmd_num=${1}
+    cmd_name=${cmd_arr[${cmd_num}]}
+    cmd=$(eval "echo \"\$${cmd_name}\"")
+    cmd=$(eval "echo \"${cmd}\"")
+
+    pid_file="/tmp/${cmd_name}.pid"
+    eval "${cmd_name}_pid_file=${pid_file}"
+
+    color=$(get_color ${cmd_num})
+
+    date_time=$(date "+%H:%M:%S")
+    prefix="${date_time} ${cmd_name}"
+
+    /bin/bash <(
+    echo "exec 2>&1"
+    echo 'pid=${$}'
+    echo 'echo "${pid}" > '"${pid_file}"
+    echo "echo \"${cmd} started with \${pid}\""
+    echo "exec ${cmd}"
+    ) | log "${prefix}" "${color}" &
+}
+
+#######################################
+# Brief:
+#   load Profile, and init cmd_arr
+# Globals:
+#   cmd_arr
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function load_proc_file() {
+    local has_error=0
+    if [[ -f "${proc_file}" ]] ; then
+        # read file
+        while read line ; do
+            # handle one line
+            if [[ "${line}" != *:* ]]; then
+                echo "no_colon_command: ${line}"
+                has_error=1
+            fi
+
+            # get key & value
+            key="${line%%:*}"
+            value="${line#*:}"
+            # check key
+            if [[ "${key}" != [a-zA-Z_]* ]]; then
+                echo "name_not_start_with_char ${line}"
+                has_error=1
+            fi
+
+            if [[ "${key}" == *[^a-zA-Z_0-9]* ]]; then
+                echo ${key}
+                echo "name_has_invalid_char ${line}"
+                has_error=1
+            fi
+
+            if [[ 1 -ne ${has_error} ]]; then
+                eval "${key}=\"\${value}\""
+                cmd_arr=("${cmd_arr[@]}" "${key}")
+            fi
+
+        done < <(grep -vE "^[ \t\v]*#|^[ \t\v]*$" "${proc_file}")
+
+        if [[ 1 -eq ${has_error} ]]; then
+            exit 1
+        fi
+    fi
+}
+
+#######################################
+# Brief:
+#   load env file, and init env variables
+# Globals:
+#   PORT
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function load_env_file() {
+    local has_error=0
+    if [[ -f "${env_file}" ]] ; then
+        # read file
+        while read line ; do
+            # handle one line
+            if [[ "${line}" != *=* ]]; then
+                echo "${line}"
+                has_error=1
+            fi
+
+            # get key & value
+            key="${line%%=*}"
+            value="${line#*=}"
+            # check key
+            if [[ "${key}" != [a-zA-Z]* ]]; then
+                echo "name_not_start_with_char ${line}"
+                has_error=1
+            fi
+
+            if [[ "${key}" == *[^a-zA-Z_0-9]* ]]; then
+                echo "name_has_invalid_char ${line}"
+                has_error=1
+            fi
+
+            # check value
+            if [[ "${value}" == *" "* ]]; then
+                echo "value_have_space ${line}"
+                has_error=1
+            fi
+
+            if [[ 1 -ne ${has_error} ]]; then
+                eval "${key}=\"${value}\""
+            fi
+
+        done < <(grep -vE "^[ \t\v]*#|^[ \t\v]*$" "${env_file}")
+
+        if [[ 1 -eq ${has_error} ]]; then
+            exit 1
+        fi
+    fi
+}
+
+
+#######################################
+# Brief:
+#   main function
+# Globals:
+#   cmd_arr
+#   PORT
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function main() {
+    # manage signals
+    trap clean SIGINT SIGTERM
+
+    # init
+    init "$@"
+    load_env_file
+    load_proc_file
+    for k in "${!cmd_arr[@]}"; do
+        # run every command
+        run_command "${k}"
+        # change PORT
+        cmd_name=${cmd_arr[${k}]}
+        cmd=$(eval "echo \"\$${cmd_name}\"")
+        if [[ "${cmd}" == *\$PORT* ]]; then
+            PORT=$((PORT+1))
+        fi
+    done
+
+    wait
+    clean 0
+}
+
+#######################################
+# Brief:
+#   trap function
+# Globals:
+#   cmd_arr
+# Arguments:
+#   $1: need_kill
+# Returns:
+#   None
+#######################################
+function clean() {
+    local need_kill=1
+    if [[ -n "${1}" ]]; then
+        need_kill="${1}"
+    fi
+    for k in "${!cmd_arr[@]}"; do
+        cmd_name="${cmd_arr[${k}]}"
+        pid_file=$(eval "echo \${${cmd_name}_pid_file}")
+        if [[ -f "${pid_file}" ]]; then
+            read pid < "${pid_file}"
+            if [[ 1 -eq ${need_kill} ]]; then
+                kill "${pid}" >/dev/null 2>&1
+            fi
+            rm -f "${pid_file}"
+        fi
+    done
+}
+
+main "$@"

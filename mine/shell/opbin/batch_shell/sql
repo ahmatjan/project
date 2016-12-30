@@ -1,0 +1,1 @@
+select concat(left(date, 16),':00'),count(*) from bgtserver_dashboard.add_status_bdbudget_cq_action_20131208 group by left(date,16);

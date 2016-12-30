@@ -1,0 +1,336 @@
+#!/bin/bash
+#
+# Copyright (c) 2015 Baidu.com, Inc. All Rights Reserved
+#
+# Author: yangkai04@baidu.com
+# Date: 2015/11/11
+# Brief:
+#   A manager of applications.
+# Globals:
+#   PORT : service port
+#   DATE_FORMAT : date format
+#   procfile : procfile path
+#   env_file : env_file path
+#   data_day : run date
+#   subid_list : sub process id list
+#   model : 1.normal 2.check
+#   lock_file : only run once
+# Arguments:
+#   -f  set procfile
+#   -e  set env_file
+#   -c  check procfile and env_file
+#   -h  print help message
+#   -t  set the run_time of program
+# Returns:
+#   succ:0
+#   fail:1
+
+#set -x # set -o xtrace
+#set -e # set -o errexit
+#set -u # set -o nounset
+set -o pipefail 
+
+readonly COLOR_BASE=32
+readonly COLOR_RANGE=5
+color_now=0
+
+PORT=8080
+DATE_FORMAT='+"%Y-%m-%d %H:%M:%S"'
+procfile="./prod/Procfile"
+env_file="./.env"
+data_day=$(date +"%Y%m%d")
+subid_list=""
+model="normal"
+lock_file="$0.lock"
+debug=1
+
+function usage() {
+    echo -e "Usage: ${0} [-c] [-f procfile|Procfile] [-e envfile|.env]"
+    echo -e "    -c  check procfile and envfile" 
+    echo -e "    -f  set procfile"
+    echo -e "    -e  set envfile"
+    echo -e "    -h  print help message"
+    echo -e "    -t  set the run_time of program"
+    echo -e "        format is YYYYmmdd"
+    echo -e "        if it's null, default is current time"
+}
+
+#######################################
+# Brief:
+#   get options from command line.
+# Globals:
+#   procfile
+#   env_file
+#   data_day
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function get_option() {
+    while getopts chf:e:t: flag; do
+        case "${flag}" in
+            c)
+                model="check"
+                ;;
+            h) 
+                usage
+                exit 0
+                ;;
+            f) 
+                procfile="${OPTARG}"
+                ;;
+            e) 
+                env_file="${OPTARG}"
+                ;;
+            t) 
+                data_day="${OPTARG}"
+                ;;
+            *) 
+                usage
+                exit 1
+                ;;
+        esac
+    done
+}
+
+#######################################
+# Brief:
+#   output debug log
+# Globals:
+#   debug
+# Arguments:
+#   msg to print
+# Returns:
+#   none
+#######################################
+function debug_log() {
+    local fn_msg="$1"
+    [[ ! -z "${debug}" && ${debug} -ne 0 ]] && echo -e "${fn_msg}"
+}
+
+#######################################
+# Brief:
+#   check file format
+# Globals:
+#   none
+# Arguments:
+#   $1(string) file name
+#   $2(string) separator
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function check_file() {
+    local fn_fname="$1"
+    local fn_separator="$2"
+    local fn_retvalue=0
+    if [[ -z "${fn_fname}" ]]; then
+        echo "FATAL file[${fn_fname}] name empty error."
+        return 1
+    fi
+    if [[ ! -f "${fn_fname}" ]]; then
+        echo "FATAL file[${fn_fname}] not exist error."
+        return 1
+    fi
+    while read -r line; do
+        if [[ -z "${line}" || "${line}" =~ "[ 	]*#.*" ]]; then
+            debug_log "[${line}] ignore"
+            continue
+        fi
+        if [[ ! "${line}" =~ "[^${fn_separator}]*${fn_separator}.*" ]]; then
+            echo "FATAL line[${line}] of file[${fn_fname}] error."
+            fn_retvalue=1
+            continue
+        fi
+        local fn_name=${line%%${fn_separator}*}
+        local fn_value=${line#*${fn_separator}}
+        debug_log "name[${fn_name}]\tvalue[${fn_value}]"
+        if [[ -z "${fn_name}" || -z "${fn_value}" ]]; then
+            echo "FATAL line[${line}] of file[${fn_fname}] error."
+            fn_retvalue=1
+            continue
+        fi
+    done < ${fn_fname}
+    return ${fn_retvalue}
+}
+ 
+#######################################
+# Brief:
+#   verify conf and file path
+# Globals:
+#   procfile
+#   env_file
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function verify() {
+    check_file "${procfile}" ":"
+    if [ $? -ne 0 ]; then
+        exit 1
+    fi
+
+    check_file "${env_file}" "="
+    if [ $? -ne 0 ]; then
+        exit 1
+    fi
+}
+
+#######################################
+# Brief:
+#   load and check env_file
+# Globals:
+#   env_file
+#   PORT
+#   DATE_FORMAT
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function load_env_file() {
+    local fn_separator="="
+    while read -r line; do
+        if [[ -z "${line}" || "${line}" =~ "[ 	]*#.*" ]]; then
+            debug_log "[${line}] ignore"
+            continue
+        fi
+        local fn_name=${line%%${fn_separator}*}
+        local fn_value=${line#*${fn_separator}}
+        eval "${fn_name}=${fn_value}"
+    done < ${env_file}
+}
+
+#######################################
+# Brief:
+#   load and run procfile
+# Globals:
+#   procfile
+# Arguments:
+#   none
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function run_procfile() {
+    local fn_separator=":"
+    local fn_proc_path="${procfile%/*}"
+    local fn_proc_file="${procfile##*/}"
+    cd ${fn_proc_path} >/dev/null
+    while read -r line; do
+        if [[ -z "${line}" || "${line}" =~ "[ 	]*#.*" ]]; then
+            debug_log "[${line}] ignore"
+            continue
+        fi
+        local fn_name=${line%%${fn_separator}*}
+        local fn_cmd=${line#*${fn_separator}}
+        run_command "${fn_name}" "${fn_cmd}"
+        if [[ $? -ne 0 ]]; then
+            cd - >/dev/null
+            return 1
+        fi
+        if [[ ! -z "$(echo ${fn_cmd} | sed -n '/^.*$PORT.*/p')" ]]; then
+            ((PORT+=1))
+        fi
+    done < ${fn_proc_file}
+    cd - >/dev/null
+    return 0
+}
+
+#######################################
+# Brief:
+#   run single command
+# Globals:
+#   subid_list
+# Arguments:
+#   $1(string): command name
+#   $2(string): command
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function run_command() {
+    local fn_name="$1"
+    local fn_cmd="$2"
+    eval "${fn_cmd} 2>&1 | log_process ${fn_name} &"
+    local fn_pid="$(jobs -p %%)"
+    log_print "${fn_name}" "${fn_cmd} started with pid ${fn_pid}"
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+    subid_list="${fn_pid} ${subid_list}"
+    return 0
+}
+
+#######################################
+# Brief:
+#   receive sub process log and print to console
+# Globals:
+#   none
+# Arguments:
+#   $1(string): command name
+# Returns:
+#   none
+#######################################
+function log_process() {
+    local fn_name="$1"
+    while read -r line; do 
+        log_print "${fn_name}" "${line}"
+    done
+}
+
+#######################################
+# Brief:
+#   print log to console with color
+# Globals:
+#   COLOR_BASE
+#   COLOR_RANGE
+#   color_now
+# Arguments:
+#   $1(string): command name
+#   $2(string): command
+# Returns:
+#   none
+#######################################
+function log_print() {
+    local fn_date=$(date +"%H:%M:%S")
+    local fn_color=$((${COLOR_BASE} + ${color_now}%${COLOR_RANGE}))
+    local fn_name="$1"
+    local fn_cmd="$2"
+    echo -e "\e[1;${fn_color}m${fn_date} ${fn_name}\e[0m\t| ${fn_cmd}"
+    ((++color_now))
+}
+
+#######################################
+# Brief:
+#   kill sub process and wait to quit
+# Globals:
+#   subid_list
+# Arguments:
+#   none
+# Returns:
+#   none
+#######################################
+function quit_all() {
+    local fn_cmd="kill ${subid_list} >/dev/null 2>&1"
+    trap "${fn_cmd}" INT SIGTERM
+    wait
+}
+
+function main() {
+    get_option "$@"
+    verify
+    if [[ "${model}" == "check" ]]; then
+        exit 0
+    fi
+    load_env_file
+    lockfile ${lock_file}
+    run_procfile
+    quit_all
+    rm -f ${lock_file}
+}
+
+main "$@"
+exit $?

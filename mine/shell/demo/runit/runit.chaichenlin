@@ -1,0 +1,403 @@
+#!/bin/bash
+#######################################
+# Copyright (c) 2015 Baidu.com, Inc. All Rights Reserved
+#
+# Author: chaichenlin@baidu.com
+# Date: 2016/05/30
+# Brief:
+#   runit
+# Globals:
+#   PORT
+#	line_buffer
+#	max_idx
+# Arguments:
+#   runit [-c] [-f procfile|Procfile] [-e envfile|.env]
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+
+set -e # set -o errexit
+set -o pipefail 
+
+PORT=${PORT:-"8080"}
+line_buffer=()
+max_idx=0
+
+# usage
+function usage() {
+    echo -e "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]"
+}
+
+#######################################
+# Brief:
+#   read file line and filtter comments in line_buffer
+# Globals:
+#	line_buffer
+#	max_idx
+# Arguments:
+#   filename
+# Returns:
+#   None
+#######################################
+function read_file() {
+	#init the global value
+    line_buffer=()
+	max_idx=0
+    
+    local file="$1"
+    local line=""
+    while read line; do
+        line=${line%%#*}
+        line=${line##[ ]}
+        line=${line%%[ ]}
+        if [[ ${line} == "" ]]; then
+            continue
+        fi
+        line_buffer[${max_idx}]="${line}"
+        max_idx=$(( max_idx + 1 ))
+    done < ${file}
+    
+    #if the end line do not have '\n'
+    if [[ -n "${line}" ]]; then
+        line=${line%%#*}
+        line=${line##[ ]}
+        line=${line%%[ ]}
+        if [[ ${line} == "" ]]; then
+            continue
+        fi
+        line_buffer[${max_idx}]="${line}"
+        max_idx=$(( max_idx + 1 ))
+    fi
+}
+
+#######################################
+# Brief:
+#   valid name
+# Globals:
+#   None
+# Arguments:
+#   name
+# Returns:
+#   valid:1
+#   not valid:0
+#######################################
+function valid_name()
+{
+    local flag=1
+    local name="$1"
+    if [[ ${name} == "" ]]; then 
+        flag=0
+    elif [[ ${name/[ ]/} != ${name} ]]; then
+        flag=0 
+    elif [[ ${name//[a-zA-Z0-9_]/} != "" ]]; then
+        flag=0 
+    fi
+    echo $flag
+}
+
+#######################################
+# Brief:
+#   check environment file
+# Globals:
+#	line_buffer
+#	max_idx
+# Arguments:
+#   env_file
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function check_env_file() {
+    local env_file="$1"
+    local flag=0
+    local val=""
+    local line=""
+	local name=""
+    
+	read_file $env_file
+    for ((i=0; i<${max_idx}; i++)); do
+        line="${line_buffer[${i}]}"
+        
+		#check file format
+		if [[ ${line#*=} == ${line} ]]; then
+            echo -e "no_equal_mark:" "${line}"
+            flag=1
+            continue
+        elif [[ "${line/[()#\[\]\&]/}" != "${line}" ]]; then
+            echo -e "invalid_char:" "${line}"
+            flag=1
+            continue
+        fi
+        
+		# check name
+        name=${line%%=*}
+        if [[ `valid_name "${name}"` -eq 0 ]]; then
+            flag=1
+        fi
+        
+		# check value
+        val=${line#*=}
+        if [[ ${val} == "" ]]; then 
+            echo "no_value_is_ok:" "${val}"
+            flag=1
+        elif [[ ${val/[ ]/} != ${val} ]]; then
+            echo "value_have_space:" "${val}" 
+            flag=1
+        elif [[ ${val/[#\=\[\]]/} != ${val} ]]; then
+            echo "value_have_invalid_char:" "${val}" 
+        fi
+    done
+    return ${flag}
+
+}
+
+#######################################
+# Brief:
+#   check process file
+# Globals:
+#	line_buffer
+#	max_idx
+# Arguments:
+#   proc_file
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function check_proc_file() {
+    local proc_file="$1"
+    local flag=0
+    local line=""
+    local name=""
+
+    read_file "${proc_file}"   
+    for ((i=0; i<${max_idx}; i++)); do
+        line="${line_buffer[${i}]}"
+        
+		#check file format
+		if [[ ${line#*:} == ${line} ]]; then
+            echo -e "no_colon_command:" "${line}"
+            flag=1
+            continue
+        elif [[ ${line/[()#\[\]\&]/} != ${line} ]]; then
+            echo -e "invalid_char:" "${line}" 
+            flag=1
+            continue
+        fi
+        
+		#check process name
+        name=${line%%:*}
+        if [[ `valid_name "${name}"` -eq 0 ]]; then
+            flag=1
+            continue
+        fi
+    done
+    return ${flag}
+}
+
+#######################################
+# Brief:
+#   log
+# Globals:
+#   None
+# Arguments:
+#   name: process name
+#   color: process color
+# Returns:
+#   None
+#######################################
+function log() {
+    local name=${1:-"name"}
+    local color=${2:-"\E[3$(($$ % 8));40m"}
+    local line=""
+    while read line; do
+        printf "${color}""\033[1m%s %-7s|\033[0m " "$(date +%H:%M:%S)" "${name}"
+        echo ${line}
+    done
+}
+
+#######################################
+# Brief:
+#   run command
+# Globals:
+#   Dependent env_file
+# Arguments:
+#   line: process "name: command"
+#   idx:  process index "0, 1, 2"
+# Returns:
+#   None
+#######################################
+function run_command() {
+    local line=${1:-""}
+    local log_date=$(date "+%H:%M:%S")
+    local idx=${2:-0}
+    local color="\E[3$((($$ + idx) % 8));40m"
+	local name=${line%%:*}
+    local cmd=${line#*:}
+	
+	cmd=${cmd## }
+    if [[ ${cmd/\$/} != ${cmd} ]]; then
+        cmd=$(eval echo "${cmd}")
+    fi
+    
+	#check pipeline char "|"
+	local cmd_raw=${cmd}
+    if [[ ${cmd/\|/} != ${cmd} ]]; then
+        eval "${cmd_raw}" 2>&1 | log "${name}" "${color}" &
+    else
+        bash -c "${cmd}" 2>&1  | log "${name}" "${color}" &
+    fi
+	
+    local pid=$!
+    echo "${cmd} started with pid ${pid}" | log "${name}" "${color}"
+}
+
+
+#######################################
+# Brief:
+#   load enviroment file
+# Globals:
+#   Dependent env_file
+#	line_buffer
+#	max_idx
+# Arguments:
+#   env_file
+# Returns:
+#   None
+#######################################
+function load_env_file() {
+    local env_file="$1"
+    read_file "${env_file}"
+    for ((i=0; i<${max_idx}; i++)); do
+        line="${line_buffer[${i}]}"
+        eval "${line}"
+    done
+}
+
+#######################################
+# Brief:
+#   run process file
+# Globals:
+#   Dependent proc_file
+#	line_buffer
+#	max_idx
+# Arguments:
+#   proc_file
+# Returns:
+#   None
+#######################################
+function run_procfile() {
+    local proc_file="$1"
+    local line=""
+	
+	read_file "${proc_file}"
+    for ((i=0; i<${max_idx}; i++)); do
+        line="${line_buffer[${i}]}"
+        #run command
+        run_command "${line}" "${i}"
+        if [[ ${line/\$PORT/} != ${line} ]]; then
+            if [[ ${PORT} -lt 0 || ${PORT} -gt 65535 ]]; then
+                echo "invalid port ${PORT}"
+                exit 1
+            fi
+            PORT=$(( PORT + 1 ))
+        fi
+    done
+}
+
+#######################################
+# Brief:
+#   check file and safe call the function
+# Globals:
+#   None
+# Arguments:
+#   function_name: call function name
+#   file_name: process file
+# Returns:
+#   None
+#######################################
+function verify
+{
+    local function_name="$1"
+	local file_name="$2"
+    if [[ -n "${file_name}" && -f "${file_name}" ]]; then
+        ${function_name} "${file_name}"
+		if [[ $? != 0 ]]; then
+            exit 1
+        fi
+    fi 
+}
+
+#######################################
+# Brief:
+#   trap kill_pid
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function kill_pid() {
+    echo "sending SIGINT and SIGTERM to all processes"
+    for pid in $(jobs -p); do
+        kill -9 ${pid}
+    done
+}
+
+function main() {
+    local proc_file=''
+    local env_file=''
+	local flag=''
+    
+    # check file .env 
+    if [[ -f ".env" ]]; then 
+        env_file=${env_file:-".env"}
+    fi
+    
+    # check file Procfile
+    if [[ -f "Procfile" ]]; then 
+        proc_file=${proc_file:-"Procfile"}
+    fi
+    
+    # getopts
+    while getopts 'chf:e:' opt; do
+        case "${opt}" in
+            c)  
+                flag='true'
+                ;;
+            h) 
+                usage
+                flag='true'
+                ;;
+            f)  
+                proc_file="${OPTARG}"
+                ;;
+            e)  
+                env_file="${OPTARG}"
+                ;;
+            *)
+                usage
+                echo "Unexpected option '${flag}'" >&2
+                exit 1
+                ;;
+        esac
+    done
+	
+    verify check_proc_file "${proc_file}"
+	verify check_env_file "${env_file}"
+	
+	if [[ ${flag} == 'true' ]]; then 
+        exit 0
+    fi
+	
+    verify load_env_file "${env_file}"
+    verify run_procfile "${proc_file}"
+
+    # trap action kill pid 
+    trap "kill_pid" SIGINT SIGTERM
+    wait
+    exit 0
+}
+
+main "$@"

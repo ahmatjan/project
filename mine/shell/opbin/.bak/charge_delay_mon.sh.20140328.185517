@@ -1,0 +1,40 @@
+#!/bin/sh
+THRESHOLD=60
+DELAY_TIME=300
+CYCLE_SECOND=900
+CURRENT_SECOND=`date +%s`
+RIGHT_NOW=`date +%Y%m%d-%H:%M`
+RIGHT_NOW_YMD=`date -d"1970-01-01 GMT +$CURRENT_SECOND sec" +%Y%m%d`
+PROCESS_SECOND=$((CURRENT_SECOND - 300))
+PROCESS_YMD=`date -d"1970-01-01 GMT +$(expr $(expr ${PROCESS_SECOND} / ${CYCLE_SECOND}) \* ${CYCLE_SECOND}) sec" +%Y%m%d`
+PROCESS_YMD_HH_MM=`date -d"1970-01-01 GMT +$(expr $(expr ${PROCESS_SECOND} / ${CYCLE_SECOND}) \* ${CYCLE_SECOND}) sec" +%Y%m%d-%H%M`
+
+if [ ${RIGHT_NOW_YMD} != ${PROCESS_YMD} ];then
+	CHARGE_DELAY_YMD=${RIGHT_NOW_YMD}
+	CHARGE_DELAY_YMD_HH_MM="${RIGHT_NOW_YMD}-0000"
+else
+	CHARGE_DELAY_YMD=${PROCESS_YMD}
+	CHARGE_DELAY_YMD_HH_MM=${PROCESS_YMD_HH_MM}
+fi
+
+delay=`tail -n 1 /home/work/var/result_log/${CHARGE_DELAY_YMD}/result.${CHARGE_DELAY_YMD_HH_MM}.log | awk -F"\t" '{clkt=$29;chgt=$30;gsub("[;:]"," ",clkt);ct=mktime(clkt);gsub("[;:]"," ",chgt);gt=mktime(chgt);print gt-ct}'`
+
+echo "bd_charge_delay:${delay}"
+
+
+LINE="tail -n 1 /home/work/var/watch_log/dbdcharge_db.${PROCESS_YMD}.wth"
+DB_BD3306_R=`$LINE|awk '{ if($2!=0)printf "%d\n",$3/$2;else printf "0\n"}'`
+DB_BD3306_W=`$LINE|awk '{ if($4!=0)printf "%d\n",$5/$4;else printf "0\n"}'`
+DB_FN6608_R=`$LINE|awk '{ if($38!=0)printf "%d\n",$39/$38;else printf "0\n"}'`
+DB_FN6608_W=`$LINE|awk '{ if($40!=0)printf "%d\n",$41/$40;else printf "0\n"}'`
+DB_FN6607_R=`$LINE|awk '{ if($42!=0)printf "%d\n",$43/$42;else printf "0\n"}'`
+DB_FN6607_W=`$LINE|awk '{ if($44!=0)printf "%d\n",$45/$44;else printf "0\n"}'`
+
+echo "DB_BD3306_R:$DB_BD3306_R"
+echo "DB_BD3306_W:$DB_BD3306_W"
+echo "DB_FN6608_R:$DB_FN6608_R"
+echo "DB_FN6608_W:$DB_FN6608_W"
+echo "DB_FN6607_R:$DB_FN6607_R"
+echo "DB_FN6607_W:$DB_FN6607_W"
+
+echo "BDEOF"

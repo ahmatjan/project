@@ -1,0 +1,320 @@
+#!/bin/bash
+#
+# Copyright (c) 2015 Baidu.com, Inc. All Rights Reserved
+#
+# Author: qukuilin
+# Date: 2015/11/09
+# Brief:
+#   Process manager - shell cooder.
+# Globals:
+#   RED NEUTRAL Print color text in command line. 
+#   b_verify_switch Switch to running check file about procfile and env if value is true(1).
+#   f_procfile Path of procfile
+#   f_envfile Path of env
+# Arguments:
+#    -c       Check the content which in procfile and envfile.
+#    -f [arg] Path of procfile.
+#    -e [arg] Path of envfile.
+#    -h Help
+# Returns:
+#   succ:0
+#   fail:1
+
+#set -x
+declare -r RED="\033[0;31m"
+declare -r NEUTRAL="\033[0m"
+declare -i b_verify_switch=0
+declare run_dir=$(pwd)'/prod'
+declare local_path=''
+
+
+if [[ ! -d ${run_dir} ]]; then
+    run_dir=$(pwd)
+fi
+declare f_procfile=${run_dir}'/Procfile'
+declare f_envfile=${run_dir}'/.env'
+declare pid_pool=""
+
+#######################################
+# Brief:
+#   error message
+# Globals:
+#   RED NEUTRAL
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function errormsg () {
+    echo -e "${RED}[!!][ERROR]:  $1${NEUTRAL}"
+}
+
+function usage() {
+    echo <<EOF "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]
+
+Options:
+    -c       Check the content which in procfile and envfile.
+    -f [arg] Path of procfile.
+    -e [arg] Path of envfile.
+
+    -h Help
+
+version:
+    1.0.0
+"
+EOF
+}
+
+#######################################
+# Brief:
+#   check exist
+# Globals:
+#   None
+# Arguments:
+#   $1 {string} The file need to check
+# Returns:
+#   0: success
+#   1: fail
+#######################################
+function check_file() {
+    if [[ -z $1 || ! -f $1 ]]; then
+        echo "Not exists procfiles, pls check again."
+        return 1
+    fi
+    return 0
+}
+
+#######################################
+# Brief:
+#   verify check file about procfile and env
+# Globals:
+#   f_envfile
+#   f_procfile
+# Arguments:
+#   None
+# Returns:
+#   0: succuss
+#   1: fail
+#######################################
+function verify() {
+    local errno=0
+    local error_msg_p=""
+    local error_msg_e=""
+
+    error_msg_p=$(check_file $f_procfile)
+    if [[ $? -ne 0 ]]; then
+        return 1 
+    fi
+    error_msg_e=$(check_file $f_envfile)
+    if [[ $? -ne 0 ]]; then
+        return 1 
+    fi
+
+    while read e_line; do
+        if [[ "${e_line}" =~ ^[[:space:]]*[0-9a-zA-Z_]*[\(\)]+= ]]; then
+            error_msg_e="${error_msg_e}[invalid_char]"
+            errno=1
+        fi
+        if [[ "${e_line}" =~ ^[[:space:]]*[0-9a-zA-Z_]*=[a-zA-Z0-9]*?[[:space:]]+ ]]; then
+            error_msg_e="${error_msg_e}[value_have_space]"
+            errno=1
+        fi
+        if [[ ! "${e_line}" =~ [=] ]]; then
+            error_msg_e="${error_msg_e}[no_equal_mark]"
+            errno=1
+        fi
+    done < ${f_envfile}
+
+    while read p_line; do
+        if [[ ! "${p_line}" =~ [\:] ]]; then
+            error_msg_p="${error_msg_p}[no_colon_command]"
+            errno=1
+        fi
+        if [[ "${p_line}" =~ ^[[:space:]]*[a-zA-Z0-9\_]*[\(\)]+\: ]]; then
+            error_msg_p="${error_msg_p}[invalid_char]"
+            errno=1
+        fi
+    done < ${f_procfile}
+
+    # wc not exists in builtin
+
+    if [[ ${errno} -eq 1 ]]; then
+        errormsg "Procfile error: ${error_msg_p} \nEnvfile error: ${error_msg_e}"
+        return 1
+    else
+        return 0
+    fi
+}
+
+#######################################
+# Brief:
+#   Echo Msg when it's done.
+# Globals:
+#   NEUTRAL
+# Arguments:
+#   $1 {String} Name of process
+#   $2 {String} Contains pid of process and command by process
+# Returns:
+#   None
+#######################################
+function log() {
+    local echo_color=$(( 10#$1 % 6 + 32 ))
+    local log_date=$(date +%T)
+    # local LEN_CNT=${#2}
+    # You could will to get the max length of content if it's important for you.
+    while read -r pipe_data; do
+        printf "\033[0;${echo_color}m$log_date %-7s|${NEUTRAL} %s \n" "$2" "${pipe_data}"
+    done
+}
+
+#######################################
+# Brief:
+#   Load env file.
+# Globals:
+#   run_dir
+#   pid_pool
+# Arguments:
+#   $1 {String} command line text in file
+#   $2 {String} seed of changing color.
+# Returns:
+#   0: success
+#   1: fail
+#######################################
+function run_command() {
+    cd ${run_dir}
+    #local random_c=$(date +%N)
+    local random_c=$(( $3 % 7 ))
+    local process_name=$1
+    local process_cmd=$2
+    local proc_pid=0
+    # It would not started in background if it's value was web.
+    process_cmd="$(eval echo \"${process_cmd}\")"
+    bash -c "${process_cmd/\|/\\|}" 2>&1 | log ${random_c} "${process_name}" & 
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+    local last_run_pid=$!
+    proc_pid="$(jobs -p %%)"
+    pid_pool="${pid_pool} ${proc_pid} ${last_run_pid}"
+    echo "$(eval echo \"${process_cmd}\")  started by pid ${proc_pid}" \
+        | log ${random_c} "${process_name}"
+    #if [[ "$2" =~ \$PORT ]]; then
+    if [[ $(echo $2|grep -c "\$PORT") -gt 0 ]]; then
+        PORT=$(( $PORT + 1 ))
+    fi
+    return 0
+}
+
+#######################################
+# Brief:
+#   Load env file.
+# Globals:
+#   f_envfile
+# Arguments:
+#   None
+# Returns:
+#   0: success
+#   1: fail
+#######################################
+function load_env_file() {
+    source ${f_envfile}
+    if [[ $? -ne 0 ]]; then
+        # errormsg "Syntax error found at $line"
+        return 1
+    fi
+    return 0 
+}
+
+#######################################
+# Brief:
+#   Kill process.
+# Globals:
+#   pid_pool
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function kill_process() {
+    trap "kill ${pid_pool};exit" SIGINT SIGTERM SIGKILL
+    wait ${pid_pool}
+}
+
+#######################################
+# Brief:
+#   Run proc file.
+# Globals:
+#   f_procfile
+# Arguments:
+#   None
+# Returns:
+#   0: success
+#   1: fail if procfile has nothing
+#######################################
+function run_procfile() {
+    local random=1
+    # fixed like dos2unix
+    local loop_index=1
+    local loop_count=$(grep -c '' ${f_procfile})
+    if [[ ${loop_count} -le 0 ]]; then
+        return 1
+    fi
+    grep '' ${f_procfile} | while read n_line; do
+        if [[ ! "${n_line}" =~ ^[[:space:]]*\# && \
+            "${n_line}" =~ ^[[:space:]]*[0-9a-zA-Z\_]+\:[^\&]* ]]; then
+            run_command "${n_line%%\:*}" "${n_line#*\:}" "${random}"
+            if [[ $? -ne 0 ]]; then
+                continue
+            fi
+            random=$((${random} + 1))
+        fi
+        if [[ ${loop_index} -eq ${loop_count} ]]; then
+            kill_process
+        fi
+        loop_index=$(( ${loop_index} + 1 ))
+    done
+    return 0
+}
+
+function main() {
+    while getopts ":e:f:hc" option; do
+        case ${option} in
+            c)
+                b_verify_switch=1
+                ;;
+            f)
+                f_procfile=${OPTARG}
+                ;;
+            e)
+                f_envfile=${OPTARG}
+                # ~= execute main at last.
+                ;;
+            h)
+                usage
+                exit 0
+                ;;
+            \?)
+                # errormsg "Unknown options..."
+                # errormsg "Try only '-h' option for more information.."
+                usage
+                exit 1
+                ;;
+        esac
+    done
+    if [[ ${b_verify_switch} -eq 1 ]]; then
+        verify
+        if [[ $? -ne 0 ]]; then
+            exit 1
+        fi
+    fi
+    load_env_file
+    if [[ $? -ne 0 ]]; then
+        exit 1
+    fi
+    run_procfile
+    if [[ $? -ne 0 ]]; then
+        exit 1
+    fi
+}
+
+main "$@"

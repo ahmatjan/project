@@ -1,0 +1,239 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Baidu.com, Inc. All Rights Reserved
+#
+# Author: yuyimiao
+# Date: 2016/2/24
+# Brief:
+#   run processes in Procfile
+# Globals:
+#   proc_file env_file PORT DATE_FORMAT
+# Arguments:
+#   [-c] [-f procfile|Procfile] [-e envfile|.env]
+# Returns:
+#   succ:0
+#   fail:1
+
+proc_file='Procfile'
+env_file='.env'
+PORT=8080
+color_index=0
+color='31'
+
+declare -a array_pids
+
+trap 'clean' INT TERM
+
+# usage
+function usage() {
+    echo "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]"
+    return 0
+}
+
+# verify proc file and env file
+function verify() {
+    :
+    local b_valid='true'
+    check_file_exist ${proc_file}
+    check_file_exist ${env_file}
+    while read proc_line || [[ -n "${proc_line}" ]]; do
+        if ! check_proc_line_valid "${proc_line}"; then
+            b_valid='false'
+        fi
+    done <${proc_file}
+    while read env_line || [[ -n "${env_line}" ]]; do
+        if ! check_env_line_valid "${env_line}"; then
+            b_valid='false'
+        fi
+    done <${env_file}
+    if [[ 'false' == ${b_valid} ]]; then
+        exit 1
+    fi
+    return 0
+}
+
+# kill all subprocess started in this
+function clean() {
+    for pid in ${array_pids[*]}; do
+        kill -9 $pid 2>/dev/null
+    done
+    return 0
+}
+
+# check file exist
+function check_file_exist() {
+    local file=$1
+    if [[ -z "${file}" || ! -a "${file}" ]]; then
+        echo "${file} is not exist"
+        exit 1
+    fi
+}
+
+# check if line of proc file is valid
+function check_proc_line_valid() {
+    local delim=":"
+    local proc_line="$1"
+    proc_line=$(filter_line "${proc_line}")
+    if [[ ! $? -eq 0 ]]; then
+        return 2
+    fi
+    if ! is_substr "${proc_line}" "${delim}"; then
+        echo "no_colon_command: ${proc_line}"
+        return 1
+    fi
+    local proc_name="${proc_line//"${delim}"*}"
+    local cmd_str="${proc_line/*"${delim}"}"
+    if ! check_str "${proc_name}" "[a-zA-Z0-9_]*"; then
+        echo "invalid_char: ${proc_name}"
+        return 1
+    fi
+    return 0
+}
+
+# check if line of env file is valid
+function check_env_line_valid() {
+    local delim="="
+    local env_line="$1"
+    env_line=$(filter_line "${env_line}")
+    if [[ ! $? -eq 0 ]]; then
+        return 0
+    fi
+    if ! is_substr "${env_line}" "${delim}"; then
+        echo "no_equal_mark: ${env_line}"
+        return 1
+    fi
+    local var_name=${env_line#"${delim}"*}
+    local var_val=${env_line#*"${delim}"}
+    if ! check_str "${var_name}" "[a-zA-Z0-9_]*"; then
+        echo "invalid_char: ${var_name}"
+        return 1
+    fi
+    if is_substr "${var_val}" " "; then
+        echo "value_have_space: ${var_val}"
+        return 1
+    fi
+    return 0
+}
+
+# filter comments in line
+function filter_line() {
+    local line="$1"
+    line="${line/"#"*}"
+    if check_str "${line}" "[ ]*"; then
+        return 1
+    fi
+    echo "${line}"
+    return 0
+}
+
+# check if $substr is substr of $string
+function is_substr() {
+    local string="$1"
+    local substr="$2"
+    if [[ "${string}" == ${string/"${substr}"/} ]]; then 
+        return 1 
+    else 
+        return 0
+    fi 
+    return 0
+}
+
+# check if $string match $regex only
+function check_str() {
+    local string="$1"
+    local regex="$2"
+    if [[ "${string}" == $(echo "${string}" | grep -Eo "${regex}") ]]; then
+        return 0
+    else
+        return 1
+    fi
+    return 0
+}
+
+# print to screan with color
+function log() {
+    :
+    local SYSTEM_TIME=$(date '+%T')
+    local message="$1"
+    printf "\033[1;%sm%s %s\033[0m\n" "${color}" "${SYSTEM_TIME}" "${message}"
+    return 0
+}
+
+# change font color
+function change_color() {
+    color_index=$(( color_index + 1 ))
+    color="3$(( color_index % 7 + 1 ))"
+    return 0
+}
+
+#######################################
+# Brief:
+#   Run a command.
+# Globals:
+#   array_pids PORT
+# Arguments:
+#   proc_line
+# Returns:
+#   succ:0 fail:1
+#######################################
+function run_command() {
+    :
+    local delim=":"
+    local proc_line=$1
+    if ! check_proc_line_valid "${proc_line}"; then
+        return 1;
+    fi
+    proc_line=$(filter_line "$1")
+    local proc_name="${proc_line/"${delim}"*/}"
+    local cmd_str="${proc_line#*"${delim}"}"
+    eval ${cmd_str}& 2>/dev/null
+    log_str=$(echo "echo -e \"${proc_name}\t|\t${cmd_str}\"")
+    local c_pid=$!
+    c_pid=$(( c_pid + 2 ))
+    array_pids=(${array_pids[*]} ${c_pid})
+    log "$(eval ${log_str}) started with pid ${c_pid}"
+    change_color
+    if is_substr "${cmd_str}" '$PORT' || is_substr "${cmd_str}" '${PORT}'; then
+        $(( PORT += 1 )) 2>/dev/null
+    fi
+    return 0
+}
+
+# load env file
+function load_env_file() {
+    source ${env_file} 2>/dev/null
+    return 0
+}
+
+# run commands in proc file
+function run_procfile() {
+    :
+    load_env_file
+    while read proc_line || [[ -n "${proc_line}" ]]; do
+        if ! run_command "${proc_line}"; then
+            continue
+        fi
+    done <${proc_file}
+    wait
+    return 0
+}
+
+function main() {
+    local is_verify='false'
+    while getopts "hcf:e:" opt; do
+        case ${opt} in
+            h) usage ;;
+            c) is_verify='true' ;;
+            f) proc_file=${OPTARG} ;;
+            e) env_file=${OPTARG} ;;
+            ?) usage ;;
+        esac
+    done
+
+    [[ 'true' == ${is_verify} ]] && verify;
+
+    run_procfile
+    return 0
+}
+
+main "$@"

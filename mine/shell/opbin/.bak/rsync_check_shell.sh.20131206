@@ -1,0 +1,137 @@
+#!/bin/bash
+
+i=0
+
+user[$i]="rd"
+host[$i]="tc-sf-drd26.tc"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/tc-sf-drd26.tc/'
+
+((i++))
+user[$i]="rd"
+host[$i]="tc-sf-drd27.tc"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/tc-sf-drd27.tc/'
+
+((i++))
+user[$i]="rd"
+host[$i]="tc-sf-drd28.tc"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/tc-sf-drd28.tc/'
+
+((i++))
+user[$i]="rd"
+host[$i]="tc-sf-drd30.tc"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/tc-sf-drd30.tc/'
+
+((i++))
+user[$i]="rd"
+host[$i]="jx-sf-drd02.jx"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/jx-sf-drd02.jx/'
+
+((i++))
+user[$i]="rd"
+host[$i]="tc-sf-drd21.tc"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/tc-sf-drd21.tc/'
+
+((i++))
+user[$i]="rd"
+host[$i]="cq01-fc-bgt00.cq01"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/cq01-fc-bgt00.cq01/'
+
+((i++))
+user[$i]="rd"
+host[$i]="cq01-fc-bgt01.cq01"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/cq01-fc-bgt01.cq01/'
+
+((i++))
+user[$i]="rd"
+host[$i]="cq01-fc-bgt02.cq01"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/cq01-fc-bgt02.cq01/'
+
+((i++))
+user[$i]="rd"
+host[$i]="st01-fc-bgt00.st01"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/st01-fc-bgt00.st01/'
+
+((i++))
+user[$i]="rd"
+host[$i]="st01-fc-bgt01.st01"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/st01-fc-bgt01.st01/'
+
+((i++))
+user[$i]="rd"
+host[$i]="st01-fc-bgt02.st01"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/st01-fc-bgt02.st01/'
+
+((i++))
+user[$i]="rd"
+host[$i]="st01-fc-bgt10.st01"
+remote_dir[$i]='/home/rd/'
+local_dir[$i]='/home/yangkai04/shell/online_check/st01-fc-bgt10.st01/'
+
+((i++))
+user[$i]="work"
+host[$i]="db-sf-antitp00.db01"
+remote_dir[$i]='/home/work/shifen/'
+local_dir[$i]='/home/yangkai04/shell/online_check/db-sf-antitp00.db01/'
+
+((i++))
+user[$i]="work"
+host[$i]="cq01-sf-chgrd00.cq01"
+remote_dir[$i]='/home/work/yangkai/shell_report'
+local_dir[$i]='/home/yangkai04/shell/shell_report/charge_report/'
+
+((i++))
+user[$i]="work"
+host[$i]="cq01-fc-bgt-log00.cq01"
+remote_dir[$i]='/home/work/fc-shark/shell_report/'
+local_dir[$i]='/home/yangkai04/shell/shell_report/shark_report/'
+
+((i++))
+user[$i]="work"
+host[$i]="cq01-fc-bgt-log00.cq01"
+remote_dir[$i]='/home/work/yangkai/shell_report/'
+local_dir[$i]='/home/yangkai04/shell/shell_report/shark_report/'
+
+((i++))
+user[$i]="work"
+host[$i]="cq01-fc-bgt-log00.cq01"
+remote_dir[$i]='/home/work/yangkai/check/'
+local_dir[$i]='/home/yangkai04/shell/shell_check/'
+
+((i++))
+user[$i]="work"
+host[$i]="cq01-fc-bgt-log00.cq01"
+remote_dir[$i]='/home/work/opbin/'
+local_dir[$i]='/home/yangkai04/shell/online_opbin/cq01-fc-bgt-log00.cq01/'
+
+outter_idx=0
+while [ ${outter_idx} -lt ${#host[*]} ]
+do
+
+	filenames=(`ssh ${user[$outter_idx]}@${host[$outter_idx]} "cd ${remote_dir[$outter_idx]} && find . -name \"*.sh\""`)
+
+	idx=0
+	echo ${#filenames[*]}
+	while [ $idx -lt ${#filenames[*]} ]
+	do
+		echo $idx":"${filenames[$idx]}
+		file_path=${local_dir[$outter_idx]}/${filenames[$idx]%/*}
+		file_path_name_local=${local_dir[$outter_idx]}/${filenames[$idx]}
+		file_path_name_remote=${remote_dir[$outter_idx]}/${filenames[$idx]}
+		mkdir -p ${file_path}
+		eval "rsync --bwlimit=20480 -av ${user[$outter_idx]}@${host[$outter_idx]}:${file_path_name_remote} -p ${file_path_name_local}"
+		((idx++))
+	done
+	((outter_idx++))
+done

@@ -1,0 +1,259 @@
+i=0
+
+#bmq machines
+#alias bmq_master0='ssh yangkai04@yf-bmq-bgt0mas00.yf01'
+#alias bmq_slave0='ssh yangkai04@cq01-bmq-bgt0slv00.cq01'
+#alias bmq_slave1='ssh yangkai04@m1-bmq-bgt0slv01.m1'
+#alias bmq_brk0='ssh yangkai04@cq01-bmq-bgt0brk00.cq01'
+#alias bmq_brk1='ssh yangkai04@m1-bmq-bgt0brk01.m1'
+#alias bmq_brk2='ssh yangkai04@tc-bmq-bgt0brk02.tc'
+#charge machines
+#dsfcharge 0 
+#alias stdrd15='ssh rd@st01-sf-drd15.st01'
+#alias drd15='ssh rd@tc-sf-drd15.tc'
+#dsfcharge 1
+#alias drd17='ssh rd@tc-sf-drd17.tc'
+#dadcharge
+host[$i]=tc-sf-drd26.tc
+user[$i]=rd
+((i++))
+
+#dfstat-other
+host[$i]=tc-sf-drd27.tc
+user[$i]=rd
+((i++))
+
+#dsend-dst dsend-bd
+host[$i]=tc-sf-drd28.tc
+user[$i]=rd
+((i++))
+
+host[$i]=tc-sf-drd31.tc
+user[$i]=rd
+((i++))
+
+#dbdcharge
+host[$i]=tc-sf-drd29.tc
+user[$i]=rd
+((i++))
+
+host[$i]=st01-sf-drd29.st01
+user[$i]=rd
+((i++))
+
+#addclk
+host[$i]=tc-sf-drd30.tc
+user[$i]=rd
+((i++))
+
+#fc clk send
+#alias jxdrd02='ssh rd@jx-sf-drd02.jx'
+#bd clk send
+#alias drdbeidou01='ssh rd@st01-sf-drdbeidou01.st01'
+#budget server machines
+#bgt online/offline 0 main
+host[$i]=cq01-fc-bgt00.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=m1-sf-rcvbak00.m1
+user[$i]=rd
+((i++))
+
+#bgt online/offline 1 main
+host[$i]=cq01-fc-bgt01.cq01
+user[$i]=rd
+((i++))
+
+#bgt budget/click send main
+host[$i]=cq01-fc-bgt02.cq01
+user[$i]=rd
+((i++))
+
+#siva/qs budget server
+host[$i]=cq01-fc-bgt04.cq01
+user[$i]=work
+((i++))
+
+#bgt online/offline 0 back
+host[$i]=st01-fc-bgt00.st01
+user[$i]=rd
+((i++))
+
+#bgt online/offline 1 back
+host[$i]=st01-fc-bgt01.st01
+user[$i]=rd
+((i++))
+
+#bgt budget/click send back
+host[$i]=st01-fc-bgt02.st01
+user[$i]=rd
+((i++))
+
+#siva/qs budget server back
+host[$i]=st01-fc-bgt04.st01
+user[$i]=work
+((i++))
+
+#bgt tools
+host[$i]=st01-fc-bgt10.st01
+user[$i]=rd
+((i++))
+
+#offline bgt log
+host[$i]=cq01-fc-bgt-log00.cq01
+user[$i]=work
+((i++))
+
+host[$i]=st01-fc-bgt-log01.st01
+user[$i]=rd
+((i++))
+
+#msg center pri
+host[$i]=dbl-fc-bgt00.dbl01
+user[$i]=rd
+((i++))
+
+#msg center bak
+host[$i]=st01-fc-bgt03.st01
+user[$i]=rd
+((i++))
+
+#patrol
+#alias patrol_online='ssh rd@jx-fc-patrol00.jx'
+#dr-toad
+host[$i]=st01-sf-toadrcv00.st01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-sf-toadrcv00.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-sf-toadrcv00.tc
+user[$i]=rd
+((i++))
+
+host[$i]=m1-sf-toadrcv00.m1
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-sf-toadpolicy00-fc.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=st01-sf-toadpolicy00-fc.st01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-sf-toadpolicy00-fc.tc
+user[$i]=rd
+((i++))
+
+host[$i]=st01-sf-toadpolicy01-fc.st01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-sf-toadpolicy00-other.tc
+user[$i]=rd
+((i++))
+
+host[$i]=yf-sf-toadpolicy00-other.yf01
+user[$i]=rd
+((i++))
+
+host[$i]=tc-sf-toadpolicy01-other.tc
+user[$i]=rd
+((i++))
+
+host[$i]=st01-sf-toadpolicy00-other.st01
+user[$i]=rd
+((i++))
+
+host[$i]=cq01-sf-charge02.cq01
+user[$i]=rd
+((i++))
+
+host[$i]=st01-sf-drd21.st01
+user[$i]=rd
+((i++))
+
+#online charge log
+host[$i]=tc-sf-drd21.tc
+user[$i]=rd
+((i++))
+
+#offline charge log
+host[$i]=cq01-sf-chgrd00.cq01
+user[$i]=work
+((i++))
+
+#apprecom
+host[$i]=st01-drd-recom00.st01
+user[$i]=rd
+((i++))
+
+host[$i]=yf-drd-recom00.yf01
+user[$i]=rd
+((i++))
+
+#offline virtual machines
+#yangkai
+host[$i]=cq01-sf-vchgrd00.vm
+user[$i]=yangkai04
+((i++))
+
+#zhangjiewei
+#alias vchgrd01='ssh work@cq01-sf-vchgrd01.vm'
+#wangdaolong
+#alias vchgrd02='ssh work@cq01-sf-vchgrd02.vm'
+#baikai
+#alias vchgrd03='ssh work@cq01-sf-vchgrd03.vm'
+#houwen
+#alias vchgrd04='ssh work@cq01-sf-vchgrd04.vm'
+#lixiaoling
+#alias vchgrd05='ssh work@cq01-sf-vchgrd05.vm'
+#chengqinglian
+#alias vchgrd06='ssh work@cq01-sf-vchgrd06.vm'
+#bcmain
+host[$i]=cq01-sf-vchgrd07.vm
+user[$i]=yangkai04
+((i++))
+
+#zhangxiao
+#alias vchgrd08='ssh yangkai04@cq01-sf-vchgrd08.vm'
+#ganjia
+#alias vchgrd09='ssh work@cq01-sf-vchgrd09.vm'
+#sunhuajin
+#alias vchgrd10='ssh work@cq01-sf-vchgrd10.vm'
+#dashboard
+host[$i]=st01-ecom-shifen01.st01
+user[$i]=work
+((i++))
+
+host[$i]=st01-ecom-shifen07.st01
+user[$i]=work
+((i++))
+
+host[$i]=cq02-sf-toadbk02.cq02
+user[$i]=work
+((i++))
+
+#offline machines
+host[$i]=db-sf-antitp00.db01
+user[$i]=work
+((i++))
+
+host[$i]=db-sf-antitp02.db01
+user[$i]=work
+((i++))
+
+host[$i]=db-sf-antitp03.db01
+user[$i]=work
+((i++))
+
+#alias tc_remora01='ssh work@tc-sf-remora01.tc'
+#alias jx_remora04='ssh work@jx-sf-remora04.jx'
+#other peoples machine
+#alias hongling='ssh work@cq01-testing-ecom135.vm'
+#alias qa984='ssh work@yx-testing-ecom984.yx01'

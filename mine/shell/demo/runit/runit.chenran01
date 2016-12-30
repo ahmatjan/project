@@ -1,0 +1,304 @@
+#!/bin/bash
+
+# Copyright (c) 2016 Baidu.com, Inc. All Rights Reserved
+#
+# Author: chenran01
+# Date: 2016/6/26
+# Brief:
+#   runit: a process manager
+# Globals:
+#   OUTPUT_PREFIX_LENGTH
+#   colors
+#   env_file
+#   proc_file
+#   PROT
+# Arguments:
+#   None
+# Returns:
+#   succ:0
+#   fail:1
+
+declare -r OUTPUT_PREFIX_LENGTH=20
+declare -a colors
+env_file='./.env'
+proc_file='./Procfile'
+PORT=8080
+
+#######################################
+# Brief:
+#   output usage
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function usage() {
+    echo "Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]"
+}
+
+#######################################
+# Brief:
+#   verify env and procfile
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   succ: 0
+#   fail: 1
+#######################################
+function verify() {
+    load_env_file
+    run_procfile
+    exit 0
+}
+
+#######################################
+# Brief:
+#   output message with colors
+# Globals:
+#   OUTPUT_PREFIX_LENGTH
+# Arguments:
+#   $1: message
+#   $2: color
+# Returns:
+#   None
+#######################################
+function log() {
+    local msg="${1}"
+    local color="${2}"
+    while read input; do
+        echo -ne "${color}${msg}\033[0m"
+        
+        local fixlen="$((OUTPUT_PREFIX_LENGTH - ${#1}))"
+        printf "%-${fixlen}s | %s" " " "${input}"
+        echo
+    done
+}
+
+#######################################
+# Brief:
+#   create a process and run the command
+#   for the given command number
+# Globals:
+#   cmd_list
+# Arguments:
+#   $1: command number
+# Returns:
+#   None
+#######################################
+function run_command() {
+    local cmd_num="${1}"
+    local cmd_name="${cmd_list[${cmd_num}]}"
+    local cmd
+    cmd="$(eval "echo \"\$${cmd_name}\"")"
+    cmd="$(eval "echo \"${cmd}\"")"
+
+    local pid_file="/tmp/${cmd_name}.pid"
+    eval "${cmd_name}_pid_file=\"${pid_file}\""
+
+    local color_max_num="${#colors[@]}"
+    local color_idx="$((${cmd_num}%color_max_num))"
+    local color="${colors[${color_idx}]}"
+
+    local date_time="$(date "+%H:%M:%S")"
+    local prefix="${date_time} ${cmd_name}"
+
+    log "${prefix}" "${color}" < <(
+        /bin/bash <(
+            echo "exec 2>&1"
+            echo "pid=\${$}"
+            echo "echo \${pid} > ${pid_file}"
+            echo "echo \"${cmd} started with \${pid}\""
+            echo "exec ${cmd}"
+        )
+    ) &
+}
+
+#######################################
+# Brief:
+#   load env file, init env variables
+# Globals:
+#   PORT
+# Arguments:
+#   None
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function load_env_file() {
+    local is_err=0
+    local param_name
+    local param_value
+    if [[ -f "${env_file}" ]]; then
+        while read line; do
+            if [[ "${line}" != *=* ]]; then
+                echo ${line}
+                is_err=1
+            fi
+
+            # env param verify
+            param_name="${line%%=*}"
+            param_value="${line#*=}"
+            if [[ "${param_name}" == *[^a-zA-Z_0-9]* ]]; then
+                echo "wrong param name at line ${line}"
+                is_err=1
+            fi
+
+            # no space in param value
+            if [[ "${param_value}" == *" "* ]]; then
+                echo "wrong param value at line ${line}"
+                is_err=1
+            fi
+
+            if [[ ${is_err} != 1 ]]; then
+                eval "${param_name}=\"${param_value}\""
+            fi
+
+        done < <(grep -vE "^[ \t\v]*#|^[ \t\v]*$" "${env_file}")
+
+        if [[ ${is_err} == 1 ]]; then
+            exit 1
+        fi
+    fi
+}
+
+#######################################
+# Brief:
+#   load Procfile, init cmd_list
+# Globals:
+#   cmd_list
+#   proc_file
+# Arguments:
+#   None
+# Returns:
+#   succ:0
+#   fail:1
+#######################################
+function run_procfile() {
+    local is_err=0
+    local cmd_name
+    local cmd_value
+    if [[ -f "${proc_file}" ]]; then
+        while read line; do
+            if [[ "${line}" != *:* ]]; then
+                echo "wrong command at line ${line}"
+                is_err=1
+            fi
+
+            # proc param verify
+            cmd_name="${line%%:*}"
+            cmd_value="${line#*:}"
+            if [[ "${cmd_name}" == *[^a-zA-Z_0-9]* ]]; then
+                echo "wrong command name at line ${line}"
+                is_err=1
+            fi
+
+            # replace $PORT
+            while [[ "${cmd_value}" == *\$PORT* ]]; do
+                cmd_value="${cmd_value/"\$PORT"/${PORT}}"
+                (( PORT++ ))
+            done
+
+            if [[ ${is_err} != 1 ]]; then
+                eval "${cmd_name}=\"\${cmd_value}\""
+                cmd_list=("${cmd_list[@]}" "${cmd_name}")
+            fi
+
+        done < <(grep -vE "^[ \t\v]*#|^[ \t\v]*$" "${proc_file}")
+
+        if [[ ${is_err} == 1 ]]; then
+            exit 1
+        fi
+    else
+        echo "no proc file found."
+        exit 1
+    fi
+}
+
+#######################################
+# Brief:
+#   trap function
+# Globals:
+#   cmd_list
+# Arguments:
+#   $1: is_kill
+# Returns:
+#   None
+#######################################
+function clean() {
+    local is_kill=1
+    local pid_file
+    local pid
+
+    if [[ -n "${1}" ]]; then
+        is_kill="${1}"
+    fi
+
+    for cmd_name in "${cmd_list[@]}"; do
+        pid_file="$(eval "echo \${${cmd_name}_pid_file}")"
+        if [[ -f "${pid_file}" ]]; then
+            read pid < "${pid_file}"
+            if [[ ${is_kill} == 1 ]]; then
+                kill "${pid}" >/dev/null 2>&1
+            fi
+            rm -f "${pid_file}"
+        fi
+    done
+}
+
+#######################################
+# Brief:
+#   main function
+# Globals:
+#   cmd_list
+#   PORT
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function main() {
+    trap clean SIGINT SIGTERM
+    exec 2>/dev/null
+
+    #init
+    local is_chk=0
+    local cmd_name
+    local cmd
+
+    while getopts ":hf:e:c" opt; do
+        case "${opt}" in
+            h ) usage; exit 0 ;;
+            f ) proc_file="${OPTARG}" ;;
+            e ) env_file="${OPTARG}" ;;
+            c ) is_chk=1 ;;
+            \? ) usage; exit 1 ;;
+        esac
+    done
+    shift $(($OPTIND-1))
+
+    if [[ ${is_chk} == 1 ]]; then
+        verify
+    fi
+
+    # form colors
+    for color_num in 31 32 33 34 35 36 37; do
+        colors=("${colors[@]}" "\033[${color_num}m")
+    done
+
+    load_env_file
+    run_procfile
+    for cmd_idx in "${!cmd_list[@]}"; do
+        run_command "${cmd_idx}"
+        cmd_name="${cmd_list[${cmd_idx}]}"
+        cmd="$(eval "echo \"\$${cmd_name}\"")"
+    done
+
+    wait
+    clean 0
+}
+
+main "$@"

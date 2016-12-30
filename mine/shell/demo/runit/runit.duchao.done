@@ -1,0 +1,251 @@
+#!/bin/bash -
+#Shell Good Coder
+#作者 杜超
+
+VALIDATE_FILE=0
+ENVFILE=""
+PROCFILE="Procfile"
+_PORT=8080
+_DATE_FORMAT="'+%Y-%m-%d|%H:%M:%S'"
+
+function usage() {
+    echo "Usage: $0 [-c] [-f procfile|Procfile] [-e envfile|.env]";
+}
+
+function verify() {
+
+    CURR_PARAM="$1"
+
+    if [ -z "${CURR_PARAM}" ]; then
+        return
+    fi
+
+    if [ "${CURR_PARAM:0:1}" != "-" ]; then
+        usage
+        exit 1
+    fi
+
+    while [ "${CURR_PARAM:0:1}" == "-" ]; do
+
+        case "${CURR_PARAM}" in
+            "-c")
+                VALIDATE_FILE=1
+                shift 1
+            ;;
+            "-e")
+
+                ENVFILE="$2"
+
+                #if [ -z "${ENVFILE}" ] || [ "${#ENVFILE}" -lt 4 -o "${#ENVFILE}" -eq 4 ]; then
+                #    usage
+                #    exit 1
+                #fi
+
+                #if [ "${ENVFILE}" != "envfile" ] && [ "${ENVFILE:0-4}" != ".env" ]; then
+                #    usage
+                #    exit 1
+                #fi
+
+                check_file_type ${ENVFILE}
+
+                shift 2
+            ;;
+            "-f")
+
+                PROCFILE="$2"
+                
+                if [ -z "${PROCFILE}" ]; then
+                    usage
+                    exit 1
+                fi
+
+                #if [ "${PROCFILE}" != "procfile" ] && [ "${PROCFILE}" != "Procfile" ]; then
+                #    usage
+                #    exit 1
+                #fi
+
+                check_file_type ${PROCFILE}
+
+                shift 2
+            ;;
+            "-h")
+                usage
+                shift 1
+            ;;
+            *)
+                usage
+                exit 1
+            ;;
+        esac
+        CURR_PARAM="$1"
+    done
+
+}
+
+function log() {
+    echo "$1"
+}
+
+function run_command() {
+
+    CURR_TIME=$(date '+%H:%M:%S')
+
+    if [ -n "${ENVFILE}" ]; then
+        bash -c "source ${ENVFILE}; $2" > "./$1" &
+    else
+        bash -c "$2" > "./$1" &
+    fi
+
+    PID="$!"
+
+    echo -e "\033[$3m$CURR_TIME $1 | \033[0m$2 started with pid $PID"
+
+    sleep 0.01s
+
+    FINISH=$(jobs -pr | grep $PID)
+
+    if [[ -z "$FINISH" ]]; then
+        while read line 
+        do
+            echo -e "\033[$3m$CURR_TIME $1 |  \033[0m$line"
+        done < "./$1"
+    fi
+
+    rm -f "./$1"
+}
+
+function load_env_file() {
+
+    if [ -n "${ENVFILE}" ]; then
+
+        if [[ "${VALIDATE_FILE}" = "1" ]]; then
+
+            CHECK_ENVFILE_OUTPUT=$(check_envfile "${ENVFILE}")
+
+            if [[ -n "${CHECK_ENVFILE_OUTPUT}" ]]; then
+                echo $CHECK_ENVFILE_OUTPUT
+                exit 1
+            fi
+        fi
+
+        source "${ENVFILE}"
+    fi
+
+    if [ -n "${PORT}" ]; then
+        _PORT=${PORT}
+    fi
+
+    if [ -n "${DATE_FORMAT}" ]; then
+        _DATE_FORMAT="'${DATE_FORMAT}'"
+    fi
+
+    #echo $_DATE_FORMAT
+    #echo $_PORT
+}
+
+function run_procfile() {
+
+    check_file_type ${PROCFILE}
+
+    if [[ "${VALIDATE_FILE}" = "1" ]]; then
+
+        CHECK_PROCFILE_OUTPUT=$(check_procfile)
+
+        if [[ -n "${CHECK_PROCFILE_OUTPUT}" ]]; then
+            echo $CHECK_PROCFILE_OUTPUT
+            exit 1
+        fi
+    fi
+
+    COLOR=32
+
+    trap "rm -f ./TEMP; for job in \`jobs -pr\`; do kill \$job; done; exit" 2 15
+
+    grep "^[^# & ^\s*#]\w*\:.*" ${PROCFILE} > ./TEMP
+
+    while read LINE 
+
+    do
+        LINE_COMMAND=${LINE#*:}
+        PROCESS_NAME=${LINE%%:*}
+
+        LINE_COMMAND=${LINE_COMMAND/"\$DATE_FORMAT"/$_DATE_FORMAT}
+        LINE_COMMAND=${LINE_COMMAND/"\$PORT"/$_PORT}
+
+    	run_command "${PROCESS_NAME}" "${LINE_COMMAND}" "$COLOR"
+
+        _PORT=`expr $_PORT + 1`
+        if [[ $COLOR = 37 ]]; then
+            COLOR=30
+        else 
+            COLOR=`expr $COLOR + 1`
+        fi
+    done < "./TEMP"
+
+    wait
+
+    rm -f "./TEMP"
+}
+
+function check_procfile() {
+
+    grep "^[^# & ^\s*#].*" ${PROCFILE} | while read LINE
+
+    do
+        LINE_COMMAND=${LINE#*:}
+        PROCESS_NAME=${LINE%%:*}
+
+        if [[ "${LINE_COMMAND}" = "${LINE}" ]] || [[ "${PROCESS_NAME}" = "${LINE}" ]]; then
+            echo -e "error procfile ${LINE} \n"
+            continue
+        fi
+
+        if [[ -n `echo "${PROCESS_NAME}" | grep "\W"` ]]; then
+            echo -e "error procfile ${LINE} \n"
+            continue
+        fi
+
+    done
+
+}
+
+function check_envfile() {
+
+    grep "^[^# & ^\s*#].*" $1 | while read LINE
+
+    do
+        ENV_VALUE=${LINE#*=}
+        ENV_KEY=${LINE%%=*}
+
+        if [[ "${ENV_KEY}" = "${LINE}" ]] || [[ "${ENV_VALUE}" = "${LINE}" ]]; then
+            echo -e "error env ${LINE}"
+            continue
+        fi
+
+        if [[ -n `echo "${ENV_KEY}" | grep "\W"` ]]; then
+            echo -e "error env ${LINE}"
+            continue
+        fi
+
+        if [[ -n "${ENV_VALUE}" ]] && [[ -n `echo "${ENV_VALUE}" | grep "\s"` ]]; then
+            echo -e "error env ${LINE}"
+            continue
+        fi
+    done
+
+}
+
+function check_file_type() {
+    if [ ! -f "$1" ]; then
+        echo "$1文件不存在或者$1不是文件类型"
+        exit 1
+    fi
+}
+
+function main() {
+    verify "$@"
+    load_env_file
+    run_procfile
+}
+
+main "$@"

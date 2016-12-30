@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ $# -ne 2 ]
+then
+    echo -e "useage:   $0 dir1 dir2"
+    exit 0
+fi
+
+dir1=$1
+dir2=$2
+
+cd $dir1
+find . -type f | xargs md5sum | awk '{print $2,$1;}' | sort > ~/.diff_dir1.md5
+cd -
+cd $dir2
+find . -type f | xargs md5sum | awk '{print $2,$1;}' | sort > ~/.diff_dir2.md5
+cd -
+
+vimdiff ~/.diff_dir1.md5 ~/.diff_dir2.md5

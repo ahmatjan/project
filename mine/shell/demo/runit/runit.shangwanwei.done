@@ -1,0 +1,373 @@
+#!/bin/env bash
+#==========================================================
+# Copyright (c) 2015 Baidu.com, Inc. All Rights Reserved
+#
+# Author: shangwanwei@baidu.com
+# Create_date: 2016/01/05
+# Latest_modify: 2016/01/06
+# Brief:
+#   for shell goodcoder
+#==========================================================
+
+#trap for int and term single
+trap 'kill_all; exit' INT TERM
+
+#usage function
+function usage() {
+    echo 'Usage: runit [-c] [-f procfile|Procfile] [-e envfile|.env]'
+    echo 'Options: '
+    echo '        -h|--help'
+    exit
+}
+
+#######################################
+# Brief:
+#   error message output function
+# Globals:
+#   None
+# Arguments:
+#   error message
+# Returns:
+#   None
+#######################################
+function err() {
+    local datetime=$(date +%H':'%M':'%S)
+    local message=${@}
+    echo "${datetime} ${message}" >&2
+}
+
+#######################################
+# Brief:
+#   normal message output function
+# Globals:
+#   None
+# Arguments:
+#   messages
+# Returns:
+#   None
+#######################################
+function msg() {
+    local datetime=$(date +%H':'%M':'%S)
+    local message=${@}
+    echo "${datetime} ${message}" 
+}
+    
+#######################################
+# Brief:
+#   format message output function
+# Globals:
+#   None
+# Arguments:
+#   processname color message
+# Returns:
+#   None
+#######################################
+function log() {
+    local datetime=$(date +%H':'%M':'%S)
+    local colorend='\033[0m'
+
+    local color=${1}
+
+    shift
+    local procname=${1}
+
+    shift
+    local message=${@}
+
+    if [[ ${procname} && ${color} ]]; then
+        printf "${color}%-8s %-7s ${colorend}| " ${datetime} ${procname} 
+        echo "${message}"
+    fi
+}
+
+#######################################
+# Brief:
+#   verify procfile and envfile format function
+# Globals:
+#   None
+# Arguments:
+#   envfile procfile
+# Returns:
+#   0:OK
+#   1:failed
+#######################################
+function verify() {
+    local envfile=${1}
+    local procfile=${2}
+    local flag=0
+
+    if [[ -f ${envfile} ]]; then
+        local eline
+        local elinenum=0
+        #for env file format check
+        while read eline; do
+            local earg=${eline%%=*}
+            local epoc=${eline#*=}
+            echo ${eline} | grep -P -q '^[a-zA-Z_0-9]+='
+            if [[ ${?} -ne 0 ]]; then
+                flag=1
+                err "[ERROR] Envfile_error: invalid_char"
+            fi
+
+            if [[ $(echo ${epoc} | grep -P ' ' ) ]]; then
+                err "[ERROR] Envfile_error: value_have_space"
+            fi
+
+            if [[ $(echo ${epoc} | grep -P '=' ) ]]; then
+                err "[ERROR] Envfile_error: no_equal_mark"
+            fi
+
+            elinenum=$((elinenum+1))
+            if [[ ${earg} && ${epoc} ]]; then
+                continue
+            else
+                flag=1
+                err "[ERROR] Envfile_error: no_equal_mark."
+            fi
+        done< <(grep -P -v '^\s+#|^#|^$|^\s+$' ${envfile})
+    else
+        #don't exist
+        flag=1
+        err "file ${envfile} not exist!"
+    fi
+    if [[ -f ${procfile} ]]; then
+        local pline
+        local plinenum=0
+        #for proc file format check
+        while read pline; do
+            local parg=${pline%%:*}
+            local pval=${pline#*:}
+            echo ${pline} | grep -P -q '^[a-zA-Z0-9_]+:'
+            if [[ ${?} -ne 0 ]]; then
+                flag=1
+                err "[ERROR] Procfile_error: invalid_char"
+            fi
+            plinenum=$((plinenum+1))
+            if [[ $(echo ${pline} | grep -P -v ':') ]]; then
+                flag=1
+                err "[ERROR] Procfile_error: no_colon_command."
+            fi
+
+        done< <(grep -P -v '^\s+#|^#|^$|^\s+$' ${procfile})
+    else
+        #don't exist
+        flag=1
+        err "file ${procfile} not exist!"
+    fi
+
+    #null test
+    if [[ -z ${envfile} ]]; then
+        flag=1
+        err "file ${envfile} is null."
+    fi
+
+    #null test
+    if [[ -z ${procfile} ]]; then
+        flag=1
+        msg "file ${procfile} is null."
+    fi
+
+    return ${flag}
+
+}
+
+#######################################
+# Brief:
+#   for trap single function
+#   kill all process
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function kill_all() {
+    local pidfile
+    log '\033[m' 'main' 'quit!'
+    #ls all pid file,and kill it
+    for pidfile in $(ls prod/*.pid); do
+        local runpid=$(cat ${pidfile})
+        kill -9 ${runpid} >/dev/null 2>&1 
+        rm -f ${pidfile}
+    done
+}
+
+
+#######################################
+# Brief:
+#   message output function
+# Globals:
+#   None
+# Arguments:
+#   color processname command
+# Returns:
+#   None
+#######################################
+function run_command() {
+    local color=${1}
+    shift
+    local procname=${1}
+    shift
+    local cmd=${@}
+    local line
+    (
+    #read all messages and print in format
+    while read line; do
+        log ${color} ${procname} $line
+    done < <(
+            #for make run
+            mkdir -p prod
+            #for make run
+            cd prod
+            #for make run
+            if [[ ! -f 'index.html' ]]; then
+                cp ../index.html . >/dev/null 2>&1
+            fi
+            #run command
+            eval "${cmd} 2>&1 &" 
+            echo "${cmd} started with pid ${!}"
+            #recode the pid for single kill
+            echo "${!}" >${!}.pid
+            )
+    )&
+    if [[ ${?} -ne 0 ]]; then
+        err "command ${cmd} run failed!"
+    fi
+}
+
+#######################################
+# Brief:
+#   check port num and source env file
+# Globals:
+#   None
+# Arguments:
+#   envfile
+# Returns:
+#   None
+#######################################
+function load_env_file() {
+    local envfile=${1}
+    local line
+    local envtmp='envtmp'
+    #delete blank and annotation line
+    grep -P -v '^\s+#|^#|^$|^\s+$' ${envfile} >${envtmp}
+    if [[ -f ${envfile} ]]; then
+        while read line; do
+            if [[ $(echo ${line} | grep '^PORT') ]]; then
+
+                local port=${line##*=}
+                #check prot num
+                if [[ ${port} -lt 1000 || ${port} -gt 65535 ]]; then
+                    err "Port check failed,exiting!"
+                    exit 1
+                fi
+            fi
+        done <${envtmp}
+        source ${envtmp}
+        rm -f ${envtmp}
+    else
+        echo "envfile not exists"
+        exit 1
+    fi
+}
+
+#######################################
+# Brief:
+#  load procfile and run them 
+# Globals:
+#   None
+# Arguments:
+#   procfile
+# Returns:
+#   None
+#######################################
+function run_procfile() {
+    local procfile=${1}
+    local colorstart=33
+    local line
+    if [[ -f ${procfile} ]]; then
+        while read line; do
+            local procname=${line%%:*}
+            local cmd=${line#*:}
+            local color='\033[40;'${colorstart}'m'
+
+            #color increment
+            colorstart=$((colorstart+1))
+
+            #color is between 31 and 36
+            if [[ ${colorstart} -gt 36 ]]; then
+                colorstart=31
+            fi
+            if [[ $(echo ${line} | grep '$PORT') ]]; then
+                cmd=${cmd/\$PORT/$PORT}
+                run_command ${color} ${procname}  ${cmd}
+
+                #port increment
+                PORT=$((PORT+1))
+                continue
+            fi
+                cmd=${cmd/\$DATE_FORMAT/\'${DATE_FORMAT}\'}
+                run_command ${color} ${procname} ${cmd}
+            done < <(grep -P -v '^\s+#|^#|^$|^\s+$' ${procfile})
+    else
+        err "no procfile ,check it!"
+        exit 1
+    fi
+
+}
+
+#######################################
+# Brief:
+#  main,get args 
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function main() {
+    #getopts
+    while getopts "f:e:ch" arg; do
+        case "${arg}" in
+            c)  CHECKCONF=1;;
+            f)  PROCFILE=${OPTARG};;
+            e)  ENVFILE=${OPTARG};;
+            *)  usage;;
+        esac
+    done
+    #default env and procfile
+    if [[ -z ${PROCFILE} ]]; then
+        PROCFILE='prod/Procfile'
+    fi
+    if [[ -z ${ENVFILE} ]]; then
+        ENVFILE='prod/.env'
+    fi
+
+    #for dist path
+    if [[ ! -f ${PROCFILE} ]]; then
+        PROCFILE='Procfile'
+    fi
+    if [[ ! -f ${ENVFILE} ]]; then
+        ENVFILE='.env'
+    fi
+
+    verify ${ENVFILE} ${PROCFILE} 2>&1
+    local ret=${?}
+    if [[ ${ret} -ne 0 ]]; then
+        err "verify env and proc file failed!"
+        exit 1
+    fi
+    #only check
+    if [[ $CHECKCONF && ${ret} -eq 0 ]]; then
+        msg "verify file format ok!"
+        exit
+    fi
+    load_env_file ${ENVFILE}
+    run_procfile ${PROCFILE}
+    wait
+}
+
+
+main $@
