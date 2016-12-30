@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+#
+# Copyright (c) 2014 Baidu.com, Inc. All Rights Reserved
+#
+################################################################################
+"""
+This module provide the main function to manage the getter and handler process.
+
+Authors: Kai Yang(yangkai04@baidu.com)
+Date:    2014/11/11 12:23:06
+"""
+
+import time
+import signal
+import logging
+import ConfigParser
+import multiprocessing
+
+import common
+import process
+
+def main():
+    """the main function of this module."""
+    if not common.init_log():
+        logging.error("init_log error.")
+        exit(1)
+    logging.info("PROCESS BEGIN.")
+    signal.signal(signal.SIGINT, common.sigint_handler)
+    signal.signal(signal.SIGTERM, common.sigint_handler)
+    central_ctrl = process.CentralCtrl(0)
+    central_ctrl.start()
+    central_ctrl.join()
+    central_ctrl.dumpidx()
+    time.sleep(1)
+    logging.info("PROCESS FINISH.")
+
+
+if __name__ == '__main__':
+    ret = main()
+    exit(ret)
+

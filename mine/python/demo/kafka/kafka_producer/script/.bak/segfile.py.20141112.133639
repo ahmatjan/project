@@ -1,0 +1,187 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+#
+# Copyright (c) 2014 Baidu.com, Inc. All Rights Reserved
+#
+################################################################################
+"""
+This module provide input segment file and output segment file.
+
+Authors: Kai Yang(yangkai04@baidu.com)
+Date:    2014/11/11 12:23:06
+"""
+
+import os
+import sys
+import time
+import signal
+import logging
+import threading
+
+class Segfile(object):
+    """read file [prefix.TIMESTAMP.postfix]."""
+    def __init__(self, path, prefix, postfix, cycle):
+        super(Segfile, self).__init__()
+        self.path = path
+        self.prefix = prefix
+        self.postfix = postfix
+        self.cycle = cycle
+        self.ftimestamp = ""
+        self.fpos = 0
+        self.file_fp = None
+
+    def nextfileexist(self):
+        """function to return nextfile if exist."""
+        return os.path.isfile(self.get_nextfilename())
+
+    def close(self):
+        """function to close the file opened."""
+        if self.file_fp is not None and not self.file_fp.closed:
+            self.file_fp.close()
+
+    def desc(self):
+        """function to describe the main property."""
+        return ("path[%s] prefix[%s] postfix[%s] cycle[%d] ftimestamp[%s] fpos[%d]") \
+            % (self.path, self.prefix, self.postfix, self.cycle, self.ftimestamp, self.fpos)
+
+    def set_filename(self):
+        """function to set file_name and file_path."""
+        day = self.ftimestamp[0:8]
+        self.file_name = "%s%s%s" % (self.prefix, self.ftimestamp, self.postfix)
+        self.file_path = "%s/%s/%s" % (self.path, day, self.file_name)
+        return
+
+    def get_filename(self):
+        """function to get file name."""
+        return self.file_path
+
+    def get_nextfilename(self):
+        """function the get next file name."""
+        nexttimesec = int(self.gettimesecs(self.ftimestamp) + self.cycle)
+        nexttimestamp = self.gettimestamp(nexttimesec, "%Y%m%d-%H%M")
+        day = nexttimestamp[0:8]
+        file_name = "%s%s%s" % (self.prefix, nexttimestamp, self.postfix)
+        file_path = "%s/%s/%s" % (self.path, day, file_name)
+        return file_path
+
+    def gettimesecs(self, timestamp):
+        """function to get the UTC seconds of timestamp."""
+        year = int(timestamp[0:4])
+        month = int(timestamp[4:6])
+        day = int(timestamp[6:8])
+        hour = int(timestamp[9:11])
+        minutes = int(timestamp[11:13])
+        timelist = [year, month, day, hour, minutes, 0, 0, 0, 0]
+        return time.mktime(timelist)
+
+    def gettimestamp(self, timesecs, formatstr):
+        """function to get the timestamp of the UTC seconds."""
+        return time.strftime(formatstr, time.localtime(timesecs))
+
+    def getidxstr(self):
+        """function to get the idx tring."""
+        return "%s\t%s" % (self.ftimestamp, self.fpos)
+
+
+class ISegfile(Segfile):
+    """read file [prefix.TIMESTAMP.postfix]."""
+    def __init__(self, path, prefix, postfix, cycle):
+        super(ISegfile, self).__init__(path, prefix, postfix, cycle)
+        self.retrylimit = 5
+        self.retrytimes = 0
+
+    def open(self, ftimestamp, fpos):
+        """function to open file for reading."""
+        self.ftimestamp = ftimestamp
+        self.fpos = fpos
+        self.set_filename()
+        self.close()
+        if not os.path.isfile(self.file_path):
+            logging.error("file[%s] not exist!" % self.file_path)
+            return False
+        try:
+            self.file_fp = open(self.file_path)
+        except Exception as ex:
+            logging.error('open file error, file:[%s] , %s:%s' \
+                    % (self.file_path, Exception, ex))
+            return False
+        try:
+            self.file_fp.seek(self.fpos)
+        except Exception as ex:
+            logging.error('open file error, file:[%s] , %s:%s' \
+                    % (self.file_path, Exception, ex))
+            return False
+        logging.info("isegfile file[%s] open succ. pos[%d]" % (self.file_path, self.fpos))
+        return True
+
+    def readline(self):
+        """function to read a line from reading file."""
+        line = ""
+        try:
+            line = self.file_fp.readline()
+        except Exception as ex:
+            logging.error('readline error, file:[%s] , %s:%s' \
+                    % (self.file_path, Exception, ex))
+            raise Exception('file not open')
+            return ""
+        if line != "":
+            self.retrytimes = 0
+            self.fpos = self.file_fp.tell()
+            return line.strip()
+        if self.nextfileexist():
+            if self.retrytimes > self.retrylimit:
+                nexttimesec = int(self.gettimesecs(self.ftimestamp) + self.cycle)
+                nexttimestamp = self.gettimestamp(nexttimesec, "%Y%m%d-%H%M")
+                if not self.open(nexttimestamp, 0):
+                    logging.error('open file error, file:[%s] , %s:%s' \
+                            % (self.file_path, Exception, ex))
+            self.retrytimes += 1
+        time.sleep(1)
+        return ""
+
+
+class OSegfile(Segfile):
+    """write file [prefix.TIMESTAMP.postfix]."""
+    def __init__(self, path, prefix, postfix, cycle):
+        super(OSegfile, self).__init__(path, prefix, postfix, cycle)
+        self.ftimestamp = self.getnowtimestamp()
+
+    def open(self):
+        """function to open the file for writing."""
+        self.set_filename()
+        self.close()
+        dirname = os.path.dirname(self.file_path)
+        if not os.path.isdir(dirname):
+            os.mkdir(dirname)
+        try:
+            self.file_fp = open(self.file_path, 'a+')
+        except Exception as ex:
+            logging.error('open file error, file:[%s] , %s:%s' \
+                    % (self.file_path, Exception, ex))
+            return False
+        self.file_fp.seek(0, os.SEEK_END)
+        self.fpos = self.file_fp.tell()
+        logging.info("osegfile file[%s] open succ. pos[%d]" % (self.file_path, self.fpos))
+        return True
+
+    def writeline(self, line):
+        """function to write a line to the file."""
+        ftimestamp = self.getnowtimestamp()
+        while self.ftimestamp != ftimestamp:
+            nexttimesec = int(self.gettimesecs(self.ftimestamp) + self.cycle)
+            nexttimestamp = self.gettimestamp(nexttimesec, "%Y%m%d-%H%M")
+            self.ftimestamp = nexttimestamp
+            if not self.open():
+                logging.error("file[%s] open fail." % self.file_path)
+                return False
+        #logging.info("file[%s] writeline[%s]." % (self.file_path, line))
+        self.file_fp.write("%s\n" % line)
+        self.file_fp.flush()
+        return True
+
+    def getnowtimestamp(self):
+        """function to get now timestamp."""
+        timesec = int(time.time() / self.cycle) * self.cycle
+        return self.gettimestamp(timesec, "%Y%m%d-%H%M")
+

@@ -1,0 +1,226 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+#
+# Copyright (c) 2014 Baidu.com, Inc. All Rights Reserved
+#
+################################################################################
+"""
+This module provide the class get data and write to file.
+
+Authors: Kai Yang(yangkai04@baidu.com)
+Date:    2014/11/11 12:23:06
+"""
+
+import time
+import signal
+import logging
+import ConfigParser
+import multiprocessing
+
+import common
+import segfile
+
+class ProcessBase(multiprocessing.Process):
+    """base class for data process."""
+    def __init__(self, process_no):
+        super(ProcessBase, self).__init__()
+        signal.signal(signal.SIGTERM, self.handler)
+        self.isalive = True
+        self.process_no = process_no
+
+    def handler(self, signum, frame):
+        """handle the sigint signal for the process class."""
+        self.isalive = False
+
+    def run(self):
+        """the main function of the process. include three parts: pre->proc->post"""
+        logging.info("class[%s] process[%d] begin." 
+                % (self.__class__.__name__, self.process_no))
+        signal.signal(signal.SIGINT, self.handler) 
+        signal.signal(signal.SIGTERM, self.handler)
+        if not self.pre():
+            logging.error("class[%s] process[%d] pre fail." 
+                    % (self.__class__.__name__, self.process_no))
+            return 1
+        while self.isalive:
+            if not self.proc():
+                logging.info("class[%s] process[%d] proc fail." 
+                        % (self.__class__.__name__, self.process_no))
+        if not self.post():
+            logging.error("class[%s] process[%d] post fail." 
+                    % (self.__class__.__name__, self.process_no))
+            return 1
+        logging.info("class[%s] process[%d] finish." 
+                % (self.__class__.__name__, self.process_no))
+        return 0
+
+    def pre(self):
+        """the first function in the run function. run once"""
+        return True
+
+    def proc(self):
+        """the main function in the run function. run circle"""
+        return True
+
+    def post(self):
+        """the last function in the run function. run once"""
+        return True
+
+
+class DataGetter(ProcessBase):
+    """class to get data and write to file."""
+    def __init__(self, process_no):
+        super(DataGetter, self).__init__(process_no)
+        self.osegfile = None
+
+    def prepare(self):
+        """the function called before run. equals init."""
+        try:
+            config = ConfigParser.ConfigParser()
+            config.read(common.get_confpath())
+            path = config.get("datachange", "path")
+            prefix = config.get("datachange", "prefix")
+            postfix = config.get("datachange", "postfix")
+            cycle = config.getint("datachange", "cycle")
+            self.osegfile = segfile.OSegfile(path, prefix, postfix, cycle)
+            if not self.osegfile.open():
+                logging.error("open osegfile[%s] error." % self.osegfile.get_filename())
+                return False
+        except Exception as ex:
+            logging.error('prepare error, %s:%s' % (Exception, ex))
+            return False
+        return True
+
+    def proc(self):
+        """the main func in run."""
+        line = "test ouput and input"
+        if not self.osegfile.writeline(line):
+            logging.error("osegfile writeline error.")
+        print("class[%s] process[%d] write line:[%s]" 
+                % (self.__class__.__name__, self.process_no, line))
+        time.sleep(1)
+        return True
+
+
+class DataHandler(ProcessBase):
+    """class to read data from file and handle."""
+    def __init__(self, process_no, idxdict):
+        super(DataHandler, self).__init__(process_no)
+        self.isegfile = None
+        self.idxdict = idxdict
+
+    def prepare(self, ftimestamp, fpos):
+        """the function called before run. equals init."""
+        try:
+            config = ConfigParser.ConfigParser()
+            config.read(common.get_confpath())
+            path = config.get("datachange", "path")
+            prefix = config.get("datachange", "prefix")
+            postfix = config.get("datachange", "postfix")
+            cycle = config.getint("datachange", "cycle")
+            self.isegfile = segfile.ISegfile(path, prefix, postfix, cycle)
+            if not self.isegfile.open(ftimestamp, fpos):
+                logging.error("open isegfile[%s] error." % self.isegfile.get_filename())
+                return False
+        except Exception as ex:
+            logging.error('prepare error, %s:%s' % (Exception, ex))
+            return False
+        return True
+
+    def proc(self):
+        """the main func in run."""
+        try:
+            line = self.isegfile.readline()
+            if line != "":
+                print("class[%s] process[%d] read line:[%s]" 
+                        % (self.__class__.__name__, self.process_no, line))
+            self.idxdict[self.process_no] = self.isegfile.getidxstr()
+        except Exception as ex:
+            logging.error('proc error, %s:%s' % (Exception, ex))
+            return False
+        time.sleep(1)
+        return True
+
+
+class CentralCtrl(ProcessBase):
+    """class to create process, start process, dump idx"""
+    def __init__(self, process_no):
+        super(CentralCtrl, self).__init__(process_no)
+        self.getterprocess = None
+        self.handlerprocessmap = {} 
+        self.handlerprocess_num = 0
+        self.idx_path = ""
+        mgr = multiprocessing.Manager()
+        self.idxstr_dict = mgr.dict()
+
+    def pre(self):
+        """function to prepare all the process to be started and start them all."""
+        try:
+            self.getterprocess = DataGetter(0)
+            if not self.getterprocess.prepare():
+                return False
+            config = ConfigParser.ConfigParser()
+            config.read(common.get_confpath())
+            self.handlerprocess_num = config.getint("handlerprocess", "process_num")
+            self.idx_path = config.get("idx", "idx_path")
+            with open(self.idx_path) as idx_file:
+                for line in idx_file:
+                    linevalues = line.strip().split("\t")
+                    process_no = (int)(linevalues[0])
+                    ftimestamp = linevalues[1]
+                    fpos = (int)(linevalues[2])
+                    if process_no in self.handlerprocessmap:
+                        logging.error("process_no[%d] repeat error." % process_no)
+                        return False
+                    self.handlerprocessmap[process_no] = DataHandler(process_no, 
+                            self.idxstr_dict)
+                    if not self.handlerprocessmap[process_no].prepare(ftimestamp, fpos):
+                        logging.error("handler process[%d] prepare error." % process_no)
+                        return False
+            if len(self.handlerprocessmap) != self.handlerprocess_num:
+                logging.error("process number[%d] in idx != process number[%d] in conf." 
+                        % (len(self.handlerprocessmap), self.handlerprocess_num))
+                return False
+            for process_no in range(self.handlerprocess_num):
+                if process_no not in self.handlerprocessmap:
+                    logging.error("process_no[%d] not in idx_file != process number[%d] in conf." 
+                            % (process_no, self.handlerprocess_num))
+                    return False
+            # start sub process
+            self.getterprocess.start()
+            for process_no in self.handlerprocessmap:
+                self.handlerprocessmap[process_no].start()
+        except Exception as ex:
+            logging.error('pre error, %s:%s' % (Exception, ex))
+            return False
+        return True
+
+    def proc(self):
+        """the main func in run."""
+        return self.dumpidx()
+
+    def dumpidx(self):
+        """function to dump all the handlerprocess timestamp and file pos to idx file."""
+        try:
+            if len(self.idxstr_dict) != self.handlerprocess_num:
+                return True
+            idx_file = open(self.idx_path, 'w')
+            for process_no in self.idxstr_dict.keys():
+                idx_file.write("%d\t%s\n" % (process_no, self.idxstr_dict[process_no]))
+            idx_file.close()
+        except Exception as ex:
+            logging.error('proc error, %s:%s' % (Exception, ex))
+            return False
+        return True
+
+    def post(self):
+        """function to wait all the sub process to be finished."""
+        try:
+            self.getterprocess.join()
+            for process_no in self.handlerprocessmap:
+                self.handlerprocessmap[process_no].join()
+        except Exception as ex:
+            logging.error('post error, %s:%s' % (Exception, ex))
+        return True
+
