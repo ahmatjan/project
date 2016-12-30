@@ -76,10 +76,11 @@ function step_root() {
 }
 
 function step_network() {
-    if [[ ! -f "./anyconnect-64.sh" ]]; then
-        wget http://pac.internal.baidu.com/bin/anyconnect-64.sh
+    ANYCONNECT_FILE="./tools/anyconnect-64.sh"
+    if [[ ! -f "${ANYCONNECT_FILE}" ]]; then
+        wget http://pac.internal.baidu.com/bin/anyconnect-64.sh -O ${ANYCONNECT_FILE}
     fi
-    sudo bash anyconnect-64.sh 
+    sudo bash ${ANYCONNECT_FILE}
     mkdir ~/bin
     echo -e "#!/bin/bash\n\n/opt/cisco/anyconnect/bin/vpnui &" > ~/bin/connect
     chmod 755 ~/bin/connect
@@ -133,6 +134,10 @@ function step_libs() {
     sudo apt-get install libgflags-dev && \
     sudo apt-get install libgoogle-glog-dev && \
     sudo apt-get install libgtest-dev && \
+    cd /usr/src/gtest && \
+    sudo cmake CMakeLists.txt && \
+    sudo make && \
+    sudo cp *.a /usr/lib/ && \
     sudo apt-get install libeigen3-dev && \
     sudo apt-get install libflann-dev
 }
@@ -157,7 +162,7 @@ function step_nvidia(){
 function step_cuda() {
     #https://developer.nvidia.com/cuda-downloads
     #wget https://developer.nvidia.com/compute/cuda/8.0/prod/local_installers/cuda_8.0.44_linux-run
-    #sudo sh cuda_8.0.44_linux.run
+    sudo sh cuda_8.0.44_linux.run
     #如果已经更新了显卡驱动，就跳过安装驱动
     #最后到example的安装目录，执行make，编译所有测试用例
 }
@@ -178,6 +183,21 @@ function step_git() {
     git clone ssh://yangkai04@icode.baidu.com:8235/baidu/adu/perception ~/project/baidu/adu/perception
 }
 
+function step_ros_deps() {
+    # 先执行前面配好的connect，连接内网进行
+    ROS_DEPS_PATH="./tools/ros_deps"
+    ROS_DEPS_DATA_PATH="${ROS_DEPS_PATH}/data"
+    mkdir -p ${ROS_DEPS_DATA_PATH}
+    while read -r line; do
+	    echo ${line}
+	    srcpath="http://buildkit.scm.baidu.com/adu-deps/${line}"
+	    dstpath="${ROS_DEPS_DATA_PATH}/${line}"
+	    wget ${srcpath} -O ${dstpath}
+	    sudo dpkg -i ${dstpath}
+    done <"${ROS_DEPS_PATH}/ros_drivers_deps.list"
+    return 0
+}
+
 function step_ros() {
     grep 'source /opt/ros/indigo/setup.bash' ~/.bashrc
     if [[ $? -ne 0 ]]; then
@@ -195,17 +215,14 @@ function step_ros() {
     #source ~/.bashrc
 }
 
-function step_ros_deps() {
-    ROS_DEPS_PATH="./tools/ros_deps"
-    ROS_DEPS_DATA_PATH="${ROS_DEPS_PATH}/data"
-    mkdir -p ${ROS_DEPS_DATA_PATH}
-    while read -r line; do
-	    echo ${line}
-	    srcpath="http://buildkit.scm.baidu.com/adu-deps/${line}"
-	    dstpath="${ROS_DEPS_DATA_PATH}/${line}"
-	    wget ${srcpath} -O ${dstpath}
-	    sudo dpkg -i ${dstpath}
-    done <"${ROS_DEPS_PATH}/ros_drivers_deps.list"
+function step_baidu_tools() {
+    #wget http://buildkit.scm.baidu.com/comake2/install_comake2.sh
+    #wget http://buildkit.scm.baidu.com/bcloud/package/install.sh
+    #wget http://fatcat.baidu.com/ota/download/eagle.py
+    bash ./tools/install_comake2.sh && \
+    bash ./tools/install_bcloud.sh && \
+    chmod 755 ./tools/eagle.py && \
+    cp ./tools/eagle.py ~/bin/
 }
 
 ##! @TODO: 运行所有处理函数
@@ -224,6 +241,7 @@ function run_all_step() {
         step_git
         step_ros_deps
         step_ros
+        step_baidu_tools
         "
 
     local FN_ALL_STEPS=${ALL_STEPS}
