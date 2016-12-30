@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ $# != 2 ]
+then
+    echo "param num error"
+    exit 1
+fi
+
+pat=$1
+rep=$2
+
+ls . | sed -n "s/\(.*\)${pat}\(.*\)/mv & \1${rep}\2/e"
+

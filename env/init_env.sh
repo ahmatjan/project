@@ -199,6 +199,7 @@ function step_ros() {
     sudo mkdir /var/lib/apt/lists/partial && \
     sudo apt-get update && \
     sudo apt-get install ros-indigo-desktop-full && \
+    source ~/.bashrc && \
     sudo rosdep init && \
     sudo rosdep update && \
     sudo apt-get install python-rosinstall python-rosdep
@@ -235,9 +236,11 @@ function step_baidu_tools() {
     chmod 755 ./tools/eagle.py && \
     chmod 755 ./tools/pwdftp && \
     chmod 755 ./tools/pwdscp && \
+    chmod 755 ./tools/my* && \
     cp ./tools/pwdftp ~/bin && \
     cp ./tools/pwdscp ~/bin && \
     cp ./tools/eagle.py ~/bin/ && \
+    cp ./tools/my* ~/bin/ && \
     ~/.BCloud/bin/bcloud login -u yangkai04 -p yangkai416@
 }
 
