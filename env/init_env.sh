@@ -115,7 +115,7 @@ function step_vim() {
     vim-addons install winmanager && \
     vim-addons install project  && \
     vim-addons status && \
-    cp vimrc ~/.vimrc
+    cp ./tools/vimrc ~/.vimrc
 }
 
 function step_libs() {
@@ -125,6 +125,31 @@ function step_libs() {
     sudo apt-get install libgtest-dev && \
     sudo apt-get install libeigen3-dev && \
     sudo apt-get install libflann-dev
+}
+
+function step_nvidia(){
+    #显卡型号：NVIDIA GeForce 730 2GB GDDR3
+    #如果是uefi的主版，请关掉secure boot。启动按F2进BIOS，选择boot选项卡，disable掉secure boot
+    lspci | grep -i NVIDIA
+    sudo apt-get install mesa-utils
+    glxinfo | grep rendering
+    #lsmod | grep nouveau，发现存在nouveau
+    #在/etc/modprobe.d/blacklist.conf文件中，将nouveau模块加入
+    #sudo reboot
+    #lsmod | grep nouveau，发现已经没有了
+    #到http://www.geforce.cn/drivers，下载合适驱动 NVIDIA GeForce 730 2GB GDDR3
+    sudo ./NVIDIA-Linux-x86_64-375.26.run -no-x-check -no-nouveau-check -no-opengl-files
+    sudo service lightdm stop
+    sudo service lightdm start
+    #执行nvidia-settings，检查是否安装成功
+}
+
+function step_cuda() {
+    #https://developer.nvidia.com/cuda-downloads
+    #wget https://developer.nvidia.com/compute/cuda/8.0/prod/local_installers/cuda_8.0.44_linux-run
+    #sudo sh cuda_8.0.44_linux.run
+    #如果已经更新了显卡驱动，就跳过安装驱动
+    #最后到example的安装目录，执行make，编译所有测试用例
 }
 
 function step_git() {
@@ -160,6 +185,14 @@ function step_ros() {
     #source ~/.bashrc
 }
 
+function step_root() {
+    sudo passwd root
+    #[sudo] password for yangkai04: 
+    #Enter new UNIX password: 
+    #Retype new UNIX password: 
+    #passwd: password updated successfully
+}
+
 ##! @TODO: 运行所有处理函数
 ##! @AUTHOR: yangkai04@baidu.com
 ##! @OUT: 0 => success; other => failed
@@ -174,6 +207,7 @@ function run_all_step() {
         step_libs
         step_git
         step_ros
+        step_root
         "
 
     local FN_ALL_STEPS=${ALL_STEPS}

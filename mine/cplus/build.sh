@@ -87,6 +87,7 @@ function caffe_install() {
     sudo apt-get install libprotobuf-dev && \
     sudo apt-get install libleveldb-dev && \
     sudo apt-get install libsnappy-dev && \
+    sudo apt-get install libgtk2.0-dev && \
     sudo apt-get install libopencv-dev && \
     sudo apt-get install libboost-all-dev && \
     sudo apt-get install libhdf5-serial-dev && \
