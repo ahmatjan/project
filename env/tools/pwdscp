@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#HOST_IP=`/sbin/ifconfig|grep "inet addr:.* Bcast:.* Mask:.*" | sed 's/inet addr:\([^ ]*\) .*/\1/g'`
+#
+#if [ -z "${HOST_IP}" ]
+#then
+#	echo "get host ip error!"
+#	exit 1
+#fi
+#
+#HOST_NAME=`host ${HOST_IP} | grep ".*domain name pointer .*" | sed 's/.*domain name pointer \(.*\)\./\1/g'`
+#if [ -z "${HOST_NAME}" ]
+#then
+#	echo "get host ip error!"
+#	exit 1
+#fi
+#
+#echo "${USER}@${HOST_NAME}:/`pwd`/"
+
+hostip="172.23.236.56"
+
+if [ 0  -eq $# ]
+then
+	#echo "${USER}@$(hostname):/`pwd`/"
+	echo "${USER}@${hostip}:/`pwd`/"
+	exit 0
+fi
+
+for i in $@
+do
+	#echo "${USER}@$(hostname):/`pwd`/$i"
+	echo "${USER}@${hostip}:/`pwd`/$i"
+done

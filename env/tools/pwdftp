@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#HOST_IP=`/sbin/ifconfig|grep "inet addr:.* Bcast:.* Mask:.*" | sed 's/inet addr:\([^ ]*\) .*/\1/g'`
+#
+#if [ -z "${HOST_IP}" ]
+#then
+#	echo "get host ip error!"
+#	exit 1
+#fi
+#
+#HOST_NAME=`host ${HOST_IP} | grep ".*domain name pointer .*" | sed 's/.*domain name pointer \(.*\)\./\1/g'`
+#if [ -z "${HOST_NAME}" ]
+#then
+#	echo "get host ip error!"
+#	exit 1
+#fi
+
+if [ 0  -eq $# ]
+then
+	echo "ftp://$(hostname)`pwd`/"
+	exit 0
+fi
+
+for i in $@
+do
+	echo "ftp://$(hostname)`pwd`/$i"
+done

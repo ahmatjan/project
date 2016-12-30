@@ -222,6 +222,10 @@ function step_baidu_tools() {
     bash ./tools/install_comake2.sh && \
     bash ./tools/install_bcloud.sh && \
     chmod 755 ./tools/eagle.py && \
+    chmod 755 ./tools/pwdftp && \
+    chmod 755 ./tools/pwdscp && \
+    cp ./tools/pwdftp ~/bin && \
+    cp ./tools/pwdscp ~/bin && \
     cp ./tools/eagle.py ~/bin/
 }
 
