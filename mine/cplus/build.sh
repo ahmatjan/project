@@ -310,6 +310,9 @@ function build_pro() {
         if [[ "${SUB_NAME}" == "test" ]]; then
             continue
         fi
+        if [[ "${SUB_NAME}" == "proto" ]]; then
+            continue
+        fi
         ABSOLUTE_PATH="${CUR_PATH}/${SUB_PATH}"
         ABSOLUTE_RELEASE_PATH="${ABSOLUTE_PATH}/release"
         echo ${ABSOLUTE_RELEASE_PATH}

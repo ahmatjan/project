@@ -216,6 +216,10 @@ function step_ros() {
 }
 
 function step_baidu_tools() {
+    #grep 'export PATH=${HOME}/.Comake2/comake:${HOME}/.BCloud/bin:$PATH' ~/.bashrc
+    #if [[ $? -ne 0 ]]; then
+    #    echo -e 'export PATH=${HOME}/.Comake2/comake:${HOME}/.BCloud/bin:$PATH' >> ~/.bashrc
+    #fi
     #wget http://buildkit.scm.baidu.com/comake2/install_comake2.sh
     #wget http://buildkit.scm.baidu.com/bcloud/package/install.sh
     #wget http://fatcat.baidu.com/ota/download/eagle.py
@@ -226,7 +230,8 @@ function step_baidu_tools() {
     chmod 755 ./tools/pwdscp && \
     cp ./tools/pwdftp ~/bin && \
     cp ./tools/pwdscp ~/bin && \
-    cp ./tools/eagle.py ~/bin/
+    cp ./tools/eagle.py ~/bin/ && \
+    ~/.BCloud/bin/bcloud login -u yangkai04 -p yangkai416@
 }
 
 ##! @TODO: 运行所有处理函数
@@ -243,7 +248,6 @@ function run_all_step() {
         step_vim
         step_libs
         step_git
-        step_ros_deps
         step_ros
         step_baidu_tools
         "
