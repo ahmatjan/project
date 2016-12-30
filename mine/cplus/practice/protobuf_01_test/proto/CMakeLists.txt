@@ -16,4 +16,6 @@ ADD_LIBRARY(${PROTO_NAME} ${PROTO_SRCS})
 
 #ADD_SUBDIRECTORY(test)
 #MESSAGE(HELLO ${PROTO_HEADERS})
+
+# we include .h here, cant't affect father dir, cmake's property
 #INCLUDE_DIRECTORIES(${PROTO_HEADERS})

@@ -75,6 +75,10 @@ function step_network() {
     mkdir ~/bin
     echo -e "#!/bin/bash\n\n/opt/cisco/anyconnect/bin/vpnui &" > ~/bin/connect
     chmod 755 ~/bin/connect
+    # ~/bin/connect
+    #在弹出的界面中填入：izhunru.baidu.com
+    #点击设置：全部不选中
+    #点击Connect anyway，输入用户名和密码（PIN+TOKEN）即可
 }
 function step_source() {
     sudo rm -rf /var/lib/apt/lists/* && \ 
@@ -139,6 +143,23 @@ function step_git() {
     git clone ssh://yangkai04@icode.baidu.com:8235/baidu/adu/perception ~/project/baidu/adu/perception
 }
 
+function step_ros() {
+    grep 'source /opt/ros/indigo/setup.bash' ~/.bashrc
+    if [[ $? -ne 0 ]]; then
+        echo "source /opt/ros/indigo/setup.bash" >> ~/.bashrc
+    fi
+    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' && \
+    sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 0xB01FA116 && \
+    sudo rm -rf /var/lib/apt/lists/* && \ 
+    sudo mkdir /var/lib/apt/lists/partial && \
+    sudo apt-get update && \
+    sudo apt-get install ros-indigo-desktop-full && \
+    sudo rosdep init && \
+    sudo rosdep update && \
+    sudo apt-get install python-rosinstall python-rosdep
+    #source ~/.bashrc
+}
+
 ##! @TODO: 运行所有处理函数
 ##! @AUTHOR: yangkai04@baidu.com
 ##! @OUT: 0 => success; other => failed
@@ -152,6 +173,7 @@ function run_all_step() {
         step_vim
         step_libs
         step_git
+        step_ros
         "
 
     local FN_ALL_STEPS=${ALL_STEPS}
