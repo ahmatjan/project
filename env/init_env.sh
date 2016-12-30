@@ -64,9 +64,17 @@ function check_track() {
     return 0
 }
 
-# 1 press u disk to computer, reboot computer and press F12
-# 2 restart computer
-# 3 connet to the network
+# press u disk to computer, reboot computer and press F12
+
+# modify root password
+function step_root() {
+    sudo passwd root
+    #[sudo] password for yangkai04: 
+    #Enter new UNIX password: 
+    #Retype new UNIX password: 
+    #passwd: password updated successfully
+}
+
 function step_network() {
     if [[ ! -f "./anyconnect-64.sh" ]]; then
         wget http://pac.internal.baidu.com/bin/anyconnect-64.sh
@@ -80,11 +88,13 @@ function step_network() {
     #点击设置：全部不选中
     #点击Connect anyway，输入用户名和密码（PIN+TOKEN）即可
 }
+
 function step_source() {
     sudo rm -rf /var/lib/apt/lists/* && \ 
     sudo mkdir /var/lib/apt/lists/partial && \
     sudo apt-get update  
 }
+
 function step_profile() {
     grep 'export PATH=$PATH:~/bin' ~/.bashrc
     if [[ $? -ne 0 ]]; then
@@ -185,12 +195,17 @@ function step_ros() {
     #source ~/.bashrc
 }
 
-function step_root() {
-    sudo passwd root
-    #[sudo] password for yangkai04: 
-    #Enter new UNIX password: 
-    #Retype new UNIX password: 
-    #passwd: password updated successfully
+function step_ros_deps() {
+    ROS_DEPS_PATH="./tools/ros_deps"
+    ROS_DEPS_DATA_PATH="${ROS_DEPS_PATH}/data"
+    mkdir -p ${ROS_DEPS_DATA_PATH}
+    while read -r line; do
+	    echo ${line}
+	    srcpath="http://buildkit.scm.baidu.com/adu-deps/${line}"
+	    dstpath="${ROS_DEPS_DATA_PATH}/${line}"
+	    wget ${srcpath} -O ${dstpath}
+	    sudo dpkg -i ${dstpath}
+    done <"${ROS_DEPS_PATH}/ros_drivers_deps.list"
 }
 
 ##! @TODO: 运行所有处理函数
@@ -199,6 +214,7 @@ function step_root() {
 function run_all_step() {
     echo "${FUNCNAME} start."
     ALL_STEPS="
+        step_root
         step_network
         step_source
         step_profile
@@ -206,8 +222,8 @@ function run_all_step() {
         step_vim
         step_libs
         step_git
+        step_ros_deps
         step_ros
-        step_root
         "
 
     local FN_ALL_STEPS=${ALL_STEPS}

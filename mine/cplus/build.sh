@@ -344,7 +344,9 @@ function clear_pro() {
         echo ${ABSOLUTE_RELEASE_PATH}
         rm -rf ${ABSOLUTE_RELEASE_PATH}
     done < <(find practice -name "CMakeLists.txt")
-    find . -name "tags" | xargs rm -rf
+    find ../../ -name "tags" | xargs rm -rf
+    find . -name "*.pb.cc" | xargs rm -rf
+    find . -name "*.pb.h" | xargs rm -rf
 
     echo "${FUNCNAME} finished."
     return 0
