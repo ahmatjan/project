@@ -261,6 +261,9 @@ function run_all_step() {
         step_ros
         step_network
         "
+    ALL_STEPS="
+        step_baidu_tools
+        "
         #step_baidu_tools # 连接准入后，执行这步
         #step_ros_deps # 是下载一些系统依赖，这种安装方式和apt-get有些冲突 可以不执行就不执行
 
