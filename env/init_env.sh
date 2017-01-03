@@ -19,6 +19,11 @@
 #set -u # set -o nounset
 set -o pipefail 
 
+STEP_SERI="1"
+if [[ ! -z "$1" ]]; then
+    STEP_SERI="2"
+fi
+
 TRACK="./track.log"
 #rm -f ${TRACK}
 
@@ -155,7 +160,8 @@ function step_libs() {
     sudo cp *.a /usr/lib/ && \
     cd - && \
     sudo apt-get install libeigen3-dev && \
-    sudo apt-get install libflann-dev
+    sudo apt-get install libflann-dev && \
+    sudo apt-get install libproj-dev
 }
 
 function step_git() {
@@ -188,7 +194,7 @@ function step_ros_deps() {
     return 0
 }
 
-function step_ros() {
+function step_ros1() {
     grep 'source /opt/ros/indigo/setup.bash' ~/.bashrc
     if [[ $? -ne 0 ]]; then
         echo "source /opt/ros/indigo/setup.bash" >> ~/.bashrc
@@ -197,13 +203,21 @@ function step_ros() {
     sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 0xB01FA116 && \
     sudo rm -rf /var/lib/apt/lists/* && \ 
     sudo mkdir /var/lib/apt/lists/partial && \
-    sudo apt-get update && \
-    sudo apt-get install ros-indigo-desktop-full && \
+    sudo apt-get update
+}
+
+function step_ros2() {
+    sudo apt-get install ros-indigo-desktop-full
+}
+
+function step_ros3() {
     source ~/.bashrc && \
     sudo rosdep init && \
-    sudo rosdep update && \
+    sudo rosdep update
+}
+
+function step_ros4() {
     sudo apt-get install python-rosinstall python-rosdep
-    #source ~/.bashrc
 }
 
 # connect to zhunru
@@ -250,7 +264,7 @@ function step_baidu_tools() {
 function run_all_step() {
     echo "${FUNCNAME} start."
         #step_tools # 下载脚本前执行这步
-    ALL_STEPS="
+    ALL_STEPS1="
         step_root
         step_source
         step_profile
@@ -258,16 +272,22 @@ function run_all_step() {
         step_vim
         step_libs
         step_git
-        step_ros
+        step_ros1
+        step_ros2
+        step_ros3
+        step_ros4
         step_network
         "
-    ALL_STEPS="
+    ALL_STEPS2="
         step_baidu_tools
         "
         #step_baidu_tools # 连接准入后，执行这步
         #step_ros_deps # 是下载一些系统依赖，这种安装方式和apt-get有些冲突 可以不执行就不执行
 
-    local FN_ALL_STEPS=${ALL_STEPS}
+    local FN_ALL_STEPS=${ALL_STEPS1}
+    if [[ "${STEP_SERI}" == "2" ]]; then
+        FN_ALL_STEPS=${ALL_STEPS2}
+    fi
     for step in ${FN_ALL_STEPS}; do
         STEP_START_TIME=`date +"%Y-%m-%d %H:%M:%S"`
         STEP_START_TIME_SEC=`date +"%s"`
