@@ -2,14 +2,15 @@
 
 #include <iostream> 
 
-#include <gflags/gflags.h>
 #include <glog/logging.h>
-#include <caffe/proto/caffe.pb.h>
+#include <gflags/gflags.h>
 #include <caffe/util/db.hpp>
 #include <caffe/util/format.hpp>
+#include <caffe/proto/caffe.pb.h>
 
 DEFINE_string(db_path, "../data/pointCloud.ldb", "Leveldb path.");
 DEFINE_string(label_path, "/media/yangkai04/SSD/data/PointCloud_train_data_0711/groundtruth/result.txt", "Label file path.");
+DEFINE_string(pcd_path_prefix, "/media/yangkai04/SSD/data/PointCloud_train_data_0711/original_cloud/", "pcd file path prefix.");
 
 #ifndef UNIT_TEST
 int main(int argc, char *argv[]) {
