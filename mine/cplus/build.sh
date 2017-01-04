@@ -82,7 +82,10 @@ function check_track() {
 function caffe_install() {
     CUR_LIB_NAME="caffe"
     CUR_LIB_SOURCE="https://github.com/bvlc/caffe.git"
-    CMAKE_OPTION="-DCPU_ONLY=ON"
+    #CMAKE_OPTION="-DCPU_ONLY=1"
+    CUR_LIB_LIB_PATH="${THIRD_LIB_PATH}/${CUR_LIB_NAME}"
+    CUR_LIB_SRC_PATH="${THIRD_SRC_PATH}/${CUR_LIB_NAME}"
+    CUR_LIB_BUILD_PATH="${CUR_LIB_SRC_PATH}/release"
     sudo apt-get install libatlas-base-dev && \
     sudo apt-get install libprotobuf-dev && \
     sudo apt-get install libleveldb-dev && \
