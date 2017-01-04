@@ -19,13 +19,13 @@ bool ObjectSet::load_from_memory(const string& pcd_prefix, const vector<string>&
         vector<string> fields;
         StringUtil::explode(lines[line_idx], '\t', &fields);
         if (fields.size() != 4u) {
-            LOG(WARNING) << "Invalid line: " << lines[line_idx];
+            //LOG(WARNING) << "Invalid line: " << lines[line_idx];
             continue;
         }
         string pcd_path = pcd_prefix + "/" + fields[2];
         pcl::PointCloud<PointXYZIT> raw_pc;
         if (pcl::io::loadPCDFile(pcd_path, raw_pc) < 0) {
-            LOG(WARNING) << "Failed to load pcd_path: " << pcd_path;
+            //LOG(WARNING) << "Failed to load pcd_path: " << pcd_path;
             continue;
         }
 
@@ -41,14 +41,14 @@ bool ObjectSet::load_from_memory(const string& pcd_prefix, const vector<string>&
         parse_objects(pc, fields[3], &objects);
         _all_objects[line_idx] = objects;
         // num_objects += objects.size();
-        LOG(INFO) << "Process line: " << line_idx << " num_objects: " << objects.size();
+        //LOG(INFO) << "Process line: " << line_idx << " num_objects: " << objects.size();
     }
     int num_objects = 0;
     for (auto& objects : _all_objects) {
         num_objects += objects.size();
     }
-    LOG(INFO) << "ObjectSet load num_frames: " << _all_objects.size()
-              << " num_objects: " << num_objects;
+    //LOG(INFO) << "ObjectSet load num_frames: " << _all_objects.size()
+    //          << " num_objects: " << num_objects;
     return true;
 }
 
@@ -56,10 +56,10 @@ bool ObjectSet::load_from_file(const string& pcd_prefix, const string& label_fil
     string label_path = pcd_prefix + label_file;
     vector<string> lines;
     if (!FileUtil::read_lines(label_path, &lines)) {
-        LOG(ERROR) << "Failed to open label_path: " << label_path;
+        //LOG(ERROR) << "Failed to open label_path: " << label_path;
         return false;
     }
-    LOG(INFO) << "read label_path: " << label_path << " num_lines: " << lines.size();
+    //LOG(INFO) << "read label_path: " << label_path << " num_lines: " << lines.size();
     return load_from_memory(pcd_prefix, lines);
 }
 
@@ -79,14 +79,14 @@ void ObjectSet::parse_objects(
     Json::Reader reader;
     Json::Value root;
     if (!reader.parse(json_str, root)) {
-        LOG(WARNING) << "Failed to parse json: " << json_str;
+        //LOG(WARNING) << "Failed to parse json: " << json_str;
         return;
     }
     int num_objects = root["numberBox"].asInt();
     // CHECK_EQ(num_objects, root["result"].size());
     if (num_objects != root["result"].size()) {
         num_objects = root["result"].size();
-        LOG(ERROR) << "num_objects != root['numberBox'].asInt.";
+        //LOG(ERROR) << "num_objects != root['numberBox'].asInt.";
     }
     Json::Value result = root["result"];
     for (int idx = 0; idx < num_objects; ++idx) {
@@ -114,11 +114,11 @@ void ObjectSet::parse_objects(
         obj.cloud.reset(new PointCloud);
         crop_point_cloud(pc, max_p, min_p, translation, rotation, obj.cloud);
         if (obj.cloud->size() < 4u) {
-            LOG(ERROR) << "obj.cloud.size() < 4u, so ignore it. obj: " << obj.to_string();
+            //LOG(ERROR) << "obj.cloud.size() < 4u, so ignore it. obj: " << obj.to_string();
             continue;
         }
         objects->push_back(obj);
-        VLOG(2) << "object: " << obj.to_string();
+        //VLOG(2) << "object: " << obj.to_string();
     }
 }
 
@@ -135,7 +135,7 @@ ObjectType ObjectSet::parse_object_type(const string& type_name) {
         return NON_MOT;
     } else {
         // CHECK(false) << "Invalid object_type: " << type_name;
-        LOG(ERROR) << "Invalid object_type: " << type_name;
+        //LOG(ERROR) << "Invalid object_type: " << type_name;
         return INVALID;
     }
 }

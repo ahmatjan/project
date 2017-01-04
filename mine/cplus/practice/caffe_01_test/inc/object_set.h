@@ -7,7 +7,7 @@
 #include <omp.h>
 
 #include <Eigen/Core>
-#include <glog/logging.h>
+//#include <glog/logging.h>
 #include <json/json.h>
 
 #include "macros.h"

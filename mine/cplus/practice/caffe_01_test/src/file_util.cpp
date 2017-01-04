@@ -13,6 +13,7 @@
 #include <fstream>
 
 //#include <xlog.h>
+#include <glog/logging.h>
 
 using std::string;
 using std::vector;
@@ -159,7 +160,7 @@ bool FileUtil::get_file_content(const string& path, string* content) {
 bool FileUtil::read_lines(const string& path, vector<string>* lines) {
     std::ifstream fin(path);
     if (!fin.good()) {
-        //LOG(ERROR) << "Failed to open path: " << path;
+        LOG(ERROR) << "Failed to open path: " << path;
         return false;
     }
     if (lines == nullptr) {

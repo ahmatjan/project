@@ -17,6 +17,7 @@ typedef pcl::PointCloud<Point2d>::ConstPtr PointCloud2dConstPtr;
 struct PointXYZIH;
 
 typedef pcl::PointXYZI Point;
+//typedef PointXYZIH Point;
 typedef pcl::PointCloud<Point> PointCloud;
 typedef pcl::PointCloud<Point>::Ptr PointCloudPtr;
 typedef pcl::PointCloud<Point>::ConstPtr PointCloudConstPtr;
@@ -53,6 +54,14 @@ typedef ::pcl::PointCloud<PointD> PointDCloud;
 typedef ::pcl::PointCloud<PointD>::Ptr PointDCloudPtr;
 typedef ::pcl::PointCloud<PointD>::ConstPtr PointDCloudConstPtr;
 
+POINT_CLOUD_REGISTER_POINT_STRUCT(
+    PointD,
+    (double, x, x)
+    (double, y, y)
+    (double, z, z)
+    (uint8_t, intensity, intensity)
+)
+
 struct PointXYZIH {
     PCL_ADD_POINT4D;
     float intensity;
@@ -78,14 +87,6 @@ struct PointXYZIH {
 } EIGEN_ALIGN16;
 
 POINT_CLOUD_REGISTER_POINT_STRUCT(
-    PointD,
-    (double, x, x)
-    (double, y, y)
-    (double, z, z)
-    (uint8_t, intensity, intensity)
-)
-
-POINT_CLOUD_REGISTER_POINT_STRUCT(
     PointXYZIH,
     (float, x, x)
     (float, y, y)
@@ -93,4 +94,100 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(
     (float, intensity, intensity)
     (float, h, h)
 )
+
+struct PointXYZIRT {
+    float x;
+    float y;
+    float z;
+    unsigned char intensity;
+    unsigned char ring;
+    double timestamp;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW  // make sure our new allocators are aligned
+} EIGEN_ALIGN16;  // enforce SSE padding for correct memory alignment
+
+struct PointXYZIT {
+    float x;
+    float y;
+    float z;
+    unsigned char intensity;
+    double timestamp;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW  // make sure our new allocators are aligned
+} EIGEN_ALIGN16;  // enforce SSE padding for correct memory alignment
+
+struct RawPointXYZIT {
+    PCL_ADD_POINT4D
+    uint8_t intensity;
+    double timestamp;
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW  // make sure our new allocators are aligned
+} EIGEN_ALIGN16;  // enforce SSE padding for correct memory alignment
+
+struct PointXYZIRTd {
+    double x;
+    double y;
+    double z;
+    unsigned char intensity;
+    unsigned char ring;
+    double timestamp;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW  // make sure our new allocators are aligned
+} EIGEN_ALIGN16;  // enforce SSE padding for correct memory alignment
+
+struct PointXYZITd {
+    double x;
+    double y;
+    double z;
+    unsigned char intensity;
+    double timestamp;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW  // make sure our new allocators are aligned
+} EIGEN_ALIGN16;  // enforce SSE padding for correct memory alignment
+
+POINT_CLOUD_REGISTER_POINT_STRUCT (
+        PointXYZIT,
+        (float, x, x)
+        (float, y, y)
+        (float, z, z)
+        (uint8_t, intensity, intensity)
+        (double, timestamp, timestamp)
+)
+POINT_CLOUD_REGISTER_POINT_STRUCT(
+        RawPointXYZIT,
+        (float, x, x)
+        (float, y, y)
+        (float, z, z)
+        (uint8_t, intensity, intensity)
+        (double, timestamp, timestamp)
+)
+
+POINT_CLOUD_REGISTER_POINT_STRUCT (
+        PointXYZIRT,
+        (float, x, x)
+        (float, y, y)
+        (float, z, z)
+        (uint8_t, intensity, intensity)
+        (uint8_t, ring, ring)
+        (double, timestamp, timestamp)
+)
+
+POINT_CLOUD_REGISTER_POINT_STRUCT (
+        PointXYZITd,
+        (double, x, x)
+        (double, y, y)
+        (double, z, z)
+        (uint8_t, intensity, intensity)
+        (double, timestamp, timestamp)
+)
+
+POINT_CLOUD_REGISTER_POINT_STRUCT (
+        PointXYZIRTd,
+        (double, x, x)
+        (double, y, y)
+        (double, z, z)
+        (uint8_t, intensity, intensity)
+        (uint8_t, ring, ring)
+        (double, timestamp, timestamp)
+)
+
 #endif  // ADU_PERCEPTION_LIB_PCL_UTIL_PCL_TYPES_H

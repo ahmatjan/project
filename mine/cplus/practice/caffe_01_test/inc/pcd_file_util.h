@@ -7,9 +7,9 @@
 #include <yaml-cpp/yaml.h>
 
 //#include "lib/pcl_util/du_pcl.h"
-#include "sensor_point_types.h"
 //#include "pcl_types.h"
 #include "pcl_util.h"
+//#include "sensor_point_types.h"
 
 // @brief: Load pcds
 // @param [in]: path to pcd file

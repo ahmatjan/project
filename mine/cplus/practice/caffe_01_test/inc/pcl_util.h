@@ -10,7 +10,15 @@
 #include <pcl/sample_consensus/sac_model_line.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/features/vfh.h>
+#include <pcl/io/file_io.h>
+#include <pcl/io/io.h>
 #include <pcl/io/pcd_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/filters/voxel_grid.h>
+
 
 // NOTE: exclude pcl/features/impl/normal_3d_omp.hpp
 // Any other file should do like this if they need include "normal_3d_omp.h"
