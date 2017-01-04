@@ -132,6 +132,7 @@ function step_profile() {
         echo -e "if [ -f ~/.bashrc ]; then\n. ~/.bashrc\nfi\n" > ${BASH_PROFILE}
         echo -e "if [ -f ~/.bash_order ]; then\n. ~/.bash_order\nfi\n" >> ${BASH_PROFILE}
     fi
+    cp ./tools/bash_aliases ~/.bash_aliases
     #echo "source ${BASH_PROFILE}"
 }
 
