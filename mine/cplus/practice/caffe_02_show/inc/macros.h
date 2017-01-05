@@ -1,5 +1,5 @@
-#ifndef ADU_PERCEPTION_LIB_BASE_MACROS_H
-#define ADU_PERCEPTION_LIB_BASE_MACROS_H
+#ifndef PROJECT_PATH_MACROS_H
+#define PROJECT_PATH_MACROS_H
 
 #include <iomanip>
 
@@ -20,4 +20,4 @@
 #undef UNUSED
 #define UNUSED(x) (void)(x)
 
-#endif  // ADU_PERCEPTION_LIB_BASE_MACROS_H
+#endif  // PROJECT_PATH_MACROS_H

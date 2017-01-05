@@ -1,5 +1,5 @@
-#ifndef ADU_PERCEPTION_LIB_BASE_STRING_UTIL_H
-#define ADU_PERCEPTION_LIB_BASE_STRING_UTIL_H
+#ifndef PROJECT_PATH_STRING_UTIL_H
+#define PROJECT_PATH_STRING_UTIL_H
 
 #include <string>
 #include <vector>
@@ -74,4 +74,4 @@ std::string StringUtil::digit2string(T number) {
     return std::to_string(number);
 }
 
-#endif // ADU_PERCEPTION_LIB_BASE_STRING_UTIL_H
+#endif // PROJECT_PATH_STRING_UTIL_H

@@ -1,5 +1,5 @@
-#ifndef ADU_PERCEPTION_LIB_BASE_ROSMSG_UTIL_H
-#define ADU_PERCEPTION_LIB_BASE_ROSMSG_UTIL_H
+#ifndef PROJECT_PATH_ROSMSG_UTIL_H
+#define PROJECT_PATH_ROSMSG_UTIL_H
 
 #include <fstream>
 #include <string>
@@ -43,4 +43,4 @@ void RosmsgUtil<T>::rosmsg_2_string(const T& msg, std::string* line) {
     swap(temp, *line);
 }
 
-#endif  // ADU_PERCEPTION_LIB_BASE_ROSMSG_UTIL_H
+#endif  // PROJECT_PATH_ROSMSG_UTIL_H

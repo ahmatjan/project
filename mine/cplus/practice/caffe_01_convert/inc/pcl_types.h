@@ -1,5 +1,5 @@
-#ifndef ADU_PERCEPTION_LIB_PCL_UTIL_PCL_TYPES_H
-#define ADU_PERCEPTION_LIB_PCL_UTIL_PCL_TYPES_H
+#ifndef PROJECT_PATH_PCL_TYPES_H
+#define PROJECT_PATH_PCL_TYPES_H
 
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/search/impl/kdtree.hpp>
@@ -190,4 +190,4 @@ POINT_CLOUD_REGISTER_POINT_STRUCT (
         (double, timestamp, timestamp)
 )
 
-#endif  // ADU_PERCEPTION_LIB_PCL_UTIL_PCL_TYPES_H
+#endif  // PROJECT_PATH_PCL_TYPES_H

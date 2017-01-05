@@ -1,5 +1,5 @@
-#ifndef ADU_PERCEPTION_LIB_PCL_UTIL_PCD_FILE_UTIL_H
-#define ADU_PERCEPTION_LIB_PCL_UTIL_PCD_FILE_UTIL_H
+#ifndef PROJECT_PATH_PCD_FILE_UTIL_H
+#define PROJECT_PATH_PCD_FILE_UTIL_H
 
 #include <vector>
 
@@ -40,4 +40,4 @@ bool load_pcd_poses(
 // @param [out]: extrinsic transform
 bool load_extrinsic(const std::string& file_path, Eigen::Affine3d* extrinsic);
 
-#endif  // ADU_PERCEPTION_LIB_PCL_UTIL_PCD_FILE_UTIL_H
+#endif  // PROJECT_PATH_PCD_FILE_UTIL_H

@@ -1,5 +1,5 @@
-#ifndef ADU_PERCEPTION_LIB_BASE_FILE_UTIL_H
-#define ADU_PERCEPTION_LIB_BASE_FILE_UTIL_H
+#ifndef PROJECT_PATH_FILE_UTIL_H
+#define PROJECT_PATH_FILE_UTIL_H
 
 #include <string>
 #include <boost/filesystem.hpp>
@@ -96,4 +96,4 @@ private:
     DISALLOW_COPY_AND_ASSIGN(FileUtil);
 };
 
-#endif  // ADU_PERCEPTION_LIB_BASE_FILE_UTIL_H
+#endif  // PROJECT_PATH_FILE_UTIL_H

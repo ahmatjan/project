@@ -1,5 +1,5 @@
-#ifndef ADU_PERCEPTION_LIB_BASE_NONCOPYABLE_H
-#define ADU_PERCEPTION_LIB_BASE_NONCOPYABLE_H
+#ifndef PROJECT_PATH_NONCOPYABLE_H
+#define PROJECT_PATH_NONCOPYABLE_H
 
 // There must be many copy-paste versions of these macros which are same
 // things, undefine them to avoid conflict.
@@ -36,4 +36,4 @@
     TypeName();                                         \
     DISALLOW_COPY_AND_ASSIGN(TypeName)
 
-#endif  // ADU_PERCEPTION_LIB_BASE_NONCOPYABLE_H
+#endif  // PROJECT_PATH_NONCOPYABLE_H

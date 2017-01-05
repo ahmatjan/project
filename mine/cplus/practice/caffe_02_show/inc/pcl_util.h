@@ -1,5 +1,5 @@
-#ifndef ADU_PERCEPTION_LIB_PCL_UTIL_PCL_UTIL_H
-#define ADU_PERCEPTION_LIB_PCL_UTIL_PCL_UTIL_H
+#ifndef PROJECT_PATH_PCL_UTIL_H
+#define PROJECT_PATH_PCL_UTIL_H
 
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
@@ -125,4 +125,4 @@ void filter_pointcloud(
         bool is_and,
         PointCloudPtr* pc_ptrptr);
 
-#endif  // ADU_PERCEPTION_LIB_PCL_UTIL_PCL_UTIL_H
+#endif  // PROJECT_PATH_PCL_UTIL_H
