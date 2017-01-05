@@ -104,6 +104,8 @@ function step_cuda() {
     sudo sh cuda_8.0.44_linux.run
     #如果已经更新了显卡驱动，就跳过安装驱动
     #最后到example的安装目录，执行make，编译所有测试用例
+    vim ~/.bashrc
+    #添加  export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH:/usr/local/cuda-8.0/lib64/
 }
 
 # 6 modify root password

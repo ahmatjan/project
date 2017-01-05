@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
     }
     LOG(INFO) << "read label_path: " << label_path << " num_lines: " << lines.size();
     // Skip line 0.
-    for (size_t idx = 1; idx < lines.size(); ++idx) {
+    for (size_t idx = 1000; idx < lines.size(); ++idx) {
         vector<string> fields;
         StringUtil::explode(lines[idx], '\t', &fields);
         if (fields.size() != 4u) {
@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
             p.y = obj.y;
             p.z = obj.z;
             std::string text_id = "text_" + std::to_string(idx) + "_" + std::to_string(obj_idx);
-            viewer.addText3D(obj.type, p, 0.4, 255, 0, 0, text_id);
+            //viewer.addText3D(obj.type, p, 0.4, 255, 0, 0, text_id);
 
             PointCloudPtr object_cloud(new PointCloud);
             Eigen::Vector4f min_p(-obj.length / 2, -obj.width / 2, -obj.height / 2, 1.0);
