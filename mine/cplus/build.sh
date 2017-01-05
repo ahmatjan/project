@@ -155,7 +155,7 @@ function stringencoders_install() {
     CUR_LIB_NAME="stringencoders"
     CUR_LIB_SOURCE="https://github.com/client9/stringencoders.git"
     CMAKE_OPTION=""
-    configure_install
+    configure_install2
 }
 
 function glog_install() {
@@ -251,6 +251,38 @@ function configure_install() {
     fi
 }
 
+function configure_install2() {
+    CUR_LIB_LIB_PATH="${THIRD_LIB_PATH}/${CUR_LIB_NAME}"
+    CUR_LIB_SRC_PATH="${THIRD_SRC_PATH}/${CUR_LIB_NAME}"
+    echo "CUR_LIB_LIB_PATH : ${CUR_LIB_LIB_PATH}"
+    echo "CUR_LIB_SRC_PATH : ${CUR_LIB_SRC_PATH}"
+    if [[ ! -d "${CUR_LIB_SRC_PATH}" ]]; then
+        rm -rf ${CUR_LIB_SRC_PATH} && git clone ${CUR_LIB_SOURCE} ${CUR_LIB_SRC_PATH}
+        if [[ $? -ne 0 ]]; then
+            cd ${ROOT_PATH}
+            return 1
+        fi
+    else
+        cd ${CUR_LIB_SRC_PATH} && git pull && cd -
+        if [[ $? -ne 0 ]]; then
+            cd ${ROOT_PATH}
+            return 1
+        fi
+    fi
+
+    rm -rf ${CUR_LIB_LIB_PATH} && \
+    cd ${CUR_LIB_SRC_PATH} && \
+    ./bootstrap.sh && \
+    ./configure --prefix=${CUR_LIB_LIB_PATH} && \
+    make -j4 && \
+    make install && \
+    cd -
+    if [[ $? -ne 0 ]]; then
+        cd ${ROOT_PATH}
+        return 1
+    fi
+}
+
 function tool_check() {
     sudo apt-get install git
     sudo apt-get install cmake
@@ -274,6 +306,7 @@ function build_env() {
         pcl_install
         caffe_install
         gtest_install
+        stringencoders_install
         "
 
     local FN_ALL_STEPS=${ALL_STEPS}
