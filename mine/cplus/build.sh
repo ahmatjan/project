@@ -36,7 +36,7 @@ function print_help() {
 }
 
 function get_option() {
-    while getopts hebc OPTION; do
+    while getopts hebcm OPTION; do
         case "${OPTION}" in
             h) print_help
             exit 0
@@ -48,6 +48,9 @@ function get_option() {
             exit 0
             ;;
             c) clear_pro
+            exit 0
+            ;;
+            m) modify_pro
             exit 0
             ;;
             *) print_help
@@ -388,6 +391,33 @@ function clear_pro() {
     find practice -name "*.pb.cc" | xargs rm -rf
     find practice -name "*.pb.h" | xargs rm -rf
 
+    echo "${FUNCNAME} finished."
+    return 0
+}
+
+##! @TODO: 批量修改
+##! @AUTHOR: yangkai04@baidu.com
+##! @OUT: 0 => success; other => failed
+function modify() {
+    local FN_FILENAME=$1
+    #echo ${FN_FILENAME}
+    if [[ ! -f "${FN_FILENAME}" ]]; then
+        return
+    fi
+    local FN_FILENAME_NEW="${FN_FILENAME}.tmp"
+    echo ${FN_FILENAME_NEW}
+    #cat ${FN_FILENAME} | sed "s#wget \"ftp://cq01-testing-ecom138.vm.baidu.com:/home/work/CI/tools/build_lib.sh\"#svn export https://svn.baidu.com/app/ecom/darwin/trunk/dr-toad/toad-replica/build_lib.sh#g" > ${FN_FILENAME_NEW}
+    #cat ${FN_FILENAME} | sed "s#ADU_PERCEPTION_TOOLS_LABEL#PROJECT_PATH#g" > ${FN_FILENAME_NEW}
+    #mv ${FN_FILENAME_NEW} ${FN_FILENAME}
+}
+
+function modify_pro() {
+    echo "${FUNCNAME} start."
+    find practice -name "*.h" | while read line 
+    do 
+        echo ${line}
+        modify ${line}
+    done
     echo "${FUNCNAME} finished."
     return 0
 }
