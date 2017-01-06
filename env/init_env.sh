@@ -106,31 +106,34 @@ function step_cuda() {
     #最后到example的安装目录，执行make，编译所有测试用例
     vim ~/.bashrc
     #添加  export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH:/usr/local/cuda-8.0/lib64/
+    #添加  export PATH=$PATH:/usr/local/cuda-8.0/bin/
 }
 
 # 6 init cudnn
 function step_cudnn() {
-    #安装前，cmake caffe的时候
-    #-- NVIDIA CUDA:
-    #--   Target GPU(s)     :   Auto
-    #--   GPU arch(s)       :   sm_35
-    #--   cuDNN             :   Not found
-    #cudnn下载址：https://developer.nvidia.com/cudnn, 需要注册，并通过审核才能下载，下载相应文件cudnn-7.0-linux-x64-v4.0-rc.tgz, 放到~根目录 审核一般一至两天，等不及的同学可到http://pan.baidu.com/s/1bnOKBO 下载
-    tar -zxvf ./tools/cudnn-7.0-linux-x64-v4.0-rc.tgz 
+    #https://developer.nvidia.com/rdp/cudnn-download
+    #对应cuda版本下载对应sample
+    ##安装前，cmake caffe的时候
+    ##-- NVIDIA CUDA:
+    ##--   Target GPU(s)     :   Auto
+    ##--   GPU arch(s)       :   sm_35
+    ##--   cuDNN             :   Not found
+    #tar -zxvf ./tools/cudnn-7.0-linux-x64-v4.0-rc.tgz 
+    tar -zxvf ./tools/cudnn-8.0-linux-x64-v5.0-ga.tgz
     sudo cp cuda/lib64/libcudnn* /usr/local/lib/
     sudo cp cuda/include/cudnn.h /usr/local/include/
     rm cuda -rf
     cd /usr/local/lib
-    sudo chmod +r libcudnn.so.4.0.4
-    sudo ln -sf libcudnn.so.4.0.4 libcudnn.so.4
-    sudo ln -sf libcudnn.so.4 libcudnn.so
+    sudo chmod +r libcudnn.so.5.0.5
+    sudo ln -sf libcudnn.so.5.0.5 libcudnn.so.5
+    sudo ln -sf libcudnn.so.5 libcudnn.so
     sudo ldconfig
     cd -
-    #安装后效果，cmake caffe的时候
-    #-- NVIDIA CUDA:
-    #--   Target GPU(s)     :   Auto
-    #--   GPU arch(s)       :   sm_35
-    #--   cuDNN             :   Yes (ver. 4.0.4)
+    ##安装后效果，cmake caffe的时候
+    ##-- NVIDIA CUDA:
+    ##--   Target GPU(s)     :   Auto
+    ##--   GPU arch(s)       :   sm_35
+    ##--   cuDNN             :   Yes (ver. 4.0.4)
 }
 
 function step_root() {
@@ -292,6 +295,7 @@ function run_all_step() {
     echo "${FUNCNAME} start."
         #step_tools # 下载脚本前执行这步
     ALL_STEPS1="
+        step_cudnn
         step_root
         step_source
         step_profile
