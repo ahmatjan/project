@@ -1,0 +1,236 @@
+name: "height_cnn"
+
+#input: "data"
+#input_dim: 1
+#input_dim: 11 
+#input_dim: 40
+#input_dim: 40
+
+layer {
+  name: "traindata"
+  type: "Data"
+  top: "data"
+  top: "label"
+include {
+    phase : TRAIN
+  }
+  data_param {
+    source : "../caffe_01_convert/data"
+    batch_size : 64
+    backend : LEVELDB
+  }
+}
+
+layer {
+  name: "traindata"
+  type: "Data"
+  top: "data"
+  top: "label"
+include {
+    phase : TEST
+  }
+  data_param {
+    source : "../caffe_01_convert/data2"
+    batch_size : 64
+    backend : LEVELDB
+  }
+}
+
+#layer {
+#  name: "input"
+#  type: "Input"
+#  top: "data"
+#  include {
+#    phase : TEST
+#  }
+#  input_param {
+#    shape {
+#      dim: 1
+#      dim: 11
+#      dim: 40
+#      dim: 40
+#    }
+#  }
+#}
+
+layer {
+  name: "slice_data"
+  type: "Slice"
+  bottom: "data"
+  top: "data1"
+  top: "data2"
+  slice_param {
+    axis: 1
+    slice_point: 10 
+  }
+}
+
+# --------------------------- layer 1 ------------------------
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data1"
+  top: "conv1"
+  param {
+    lr_mult: 0.1 
+  }
+  param {
+    lr_mult: 0.2 
+  }
+  convolution_param {
+    num_output: 32
+    kernel_size: 7 
+    pad: 0 
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }   
+    bias_filler {
+      type: "constant"
+    }   
+  }
+}
+layer {
+  name: "relu1"
+  type: "PReLU"
+  bottom: "conv1"
+  top: "relu1_conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "relu1_conv1"
+  top: "pooling1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+# --------------------------- data concat ------------------------
+layer {
+  name: "reshape"
+  type: "Reshape"
+  bottom: "pooling1"
+  top: "pool1"
+  reshape_param {
+    shape { dim: 0, dim: 1, dim: 1, dim: -1 }
+  }
+}
+
+layer {
+  name: "reshape"
+  type: "Reshape"
+  bottom: "data2"
+  top: "reshaped_data2"
+  reshape_param {
+    shape { dim: 0, dim: 1, dim: 1, dim: -1 }
+  }
+}
+
+layer {
+  name: "concat"
+  type: "Concat"
+  bottom: "pool1"
+  bottom: "reshaped_data2"
+  top: "concat_data"
+  concat_param {
+    axis: 3 
+  }
+}
+
+# --------------------------- fully connected ------------------------
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "concat_data"
+  top: "ip1"
+  inner_product_param {
+    num_output: 500 
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu4"
+  type: "PReLU"
+  bottom: "ip1"
+  top: "relu4_ip1"
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "relu4_ip1"
+  top: "ip2"
+  inner_product_param {
+    num_output: 5 
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+# --------------------------- output ------------------------
+layer {
+  name: "softmax"
+  type: "Softmax"
+  bottom: "ip2"
+  top: "softmax"
+  include: { phase: TRAIN }
+}
+#layer {
+#  name: "hard_negative"
+#  type: "HardNegative"
+#  bottom: "softmax"
+#  bottom: "label"
+#  top: "hard_negative"
+#  hard_negative_param {
+#    hard_ratio: 0.3 
+#    base_num: 2000
+#  }
+#  include: { phase: TRAIN }
+#}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip2"
+  bottom: "label"
+#  bottom: "hard_negative"
+  top: "loss"
+  loss_param {
+    ignore_label: -1
+  }
+  softmax_param {
+    axis: 1
+  }
+  include: { phase: TRAIN }
+}
+
+layer {
+  name: "softmax"
+  type: "Softmax"
+  bottom: "ip2"
+  top: "softmax"
+  include: { phase: TEST }
+}
+
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "softmax"
+  bottom: "label"
+  top: "accuracy"
+  accuracy_param {
+    ignore_label: -1
+    axis: 1
+  }
+  include: { phase: TEST }
+}
