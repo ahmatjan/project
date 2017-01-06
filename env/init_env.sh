@@ -108,7 +108,31 @@ function step_cuda() {
     #添加  export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH:/usr/local/cuda-8.0/lib64/
 }
 
-# 6 modify root password
+# 6 init cudnn
+function step_cudnn() {
+    #安装前，cmake caffe的时候
+    #-- NVIDIA CUDA:
+    #--   Target GPU(s)     :   Auto
+    #--   GPU arch(s)       :   sm_35
+    #--   cuDNN             :   Not found
+    #cudnn下载址：https://developer.nvidia.com/cudnn, 需要注册，并通过审核才能下载，下载相应文件cudnn-7.0-linux-x64-v4.0-rc.tgz, 放到~根目录 审核一般一至两天，等不及的同学可到http://pan.baidu.com/s/1bnOKBO 下载
+    tar -zxvf ./tools/cudnn-7.0-linux-x64-v4.0-rc.tgz 
+    sudo cp cuda/lib64/libcudnn* /usr/local/lib/
+    sudo cp cuda/include/cudnn.h /usr/local/include/
+    rm cuda -rf
+    cd /usr/local/lib
+    sudo chmod +r libcudnn.so.4.0.4
+    sudo ln -sf libcudnn.so.4.0.4 libcudnn.so.4
+    sudo ln -sf libcudnn.so.4 libcudnn.so
+    sudo ldconfig
+    cd -
+    #安装后效果，cmake caffe的时候
+    #-- NVIDIA CUDA:
+    #--   Target GPU(s)     :   Auto
+    #--   GPU arch(s)       :   sm_35
+    #--   cuDNN             :   Yes (ver. 4.0.4)
+}
+
 function step_root() {
     sudo passwd root
     #[sudo] password for yangkai04: 
