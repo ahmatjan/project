@@ -134,6 +134,12 @@ function step_cudnn() {
     ##--   Target GPU(s)     :   Auto
     ##--   GPU arch(s)       :   sm_35
     ##--   cuDNN             :   Yes (ver. 4.0.4)
+    #tar -zxvf tools/cudnn-sample-v5.tgz
+    #cd mnistCUDNN/ 
+    #make
+    #./mnistCUDNN
+    #cd ..
+    #rm -rf mnistCUDNN RNN
 }
 
 function step_root() {
@@ -286,6 +292,45 @@ function step_baidu_tools() {
     cp ./tools/eagle.py ~/bin/ && \
     cp ./tools/my* ~/bin/ && \
     ~/.BCloud/bin/bcloud login -u yangkai04 -p yangkai416@
+}
+
+function step_matlab() {
+    #在Ubuntu14.04下安装matlab2014a以及破解
+    #2015-10-12 18:41 2574人阅读 评论(0) 收藏 举报
+    #版权声明：本文为博主原创文章，未经博主允许不得转载。
+    #
+    #目录(?)[+]
+    #下载matlab安装包
+    #
+    #从网盘上下载安装包以及Crack
+    #Crack中包含license和破解文件
+    #解压得到iso镜像,并挂载到linux
+    #
+    #$sudo mkdir /download/temp_matlab (此文件夹用于临时存放挂载后的iso文件)
+    #$sudo mount -o loop /path/MATHWORKS_R2014A.iso /download/temp_matlab (path为我们存放iso的路径)
+    #安装
+    #
+    #$cd /download/temp_matlab
+    #$sudo ./install
+    #选择不联网安装
+    #安装过程中使用序列号
+    #
+    #12345-67890-12345-67890
+    #激活
+    #
+    #安装完成之后选择Crack下的license_405329_R2014a.lic文件进行激活
+    #破解
+    #
+    #由于/usr/local/MATLAB只有只读的权限, 所以先要将其权限修改为”可写”
+    #$sudo chmod -R a+w /usr/local/MATLAB
+    #将Crack/Linux下的libmwservices.so 复制到 /usr/local/MATLAB/R2014A/bin/glnxa64
+    #将先前挂载的iso卸载
+    #
+    #sudo umount /download/temp_matlab
+    #启动matlab
+    #
+    #sudo matlab
+    return 0
 }
 
 ##! @TODO: 运行所有处理函数

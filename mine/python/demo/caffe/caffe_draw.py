@@ -21,3 +21,4 @@ text_format.Merge(open(input_net_proto_file).read(), net)
 print('Drawing net to %s' % output_image_file)
 caffe.draw.draw_net_to_file(net, output_image_file, rankdir)
 print('done...')
+
