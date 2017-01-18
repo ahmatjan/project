@@ -67,8 +67,8 @@ set(rqt_top_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rqt_top_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/rqt_common_plugins/rqt_top)
-  set(rqt_top_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rqt_top)
+  set(rqt_top_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/rqt_common_plugins/rqt_top)
+  set(rqt_top_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/rqt_top)
   set(rqt_top_INSTALL_PREFIX "")
   set(rqt_top_PREFIX ${rqt_top_DEVEL_PREFIX})
 else()

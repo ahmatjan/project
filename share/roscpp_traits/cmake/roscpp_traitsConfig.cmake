@@ -67,8 +67,8 @@ set(roscpp_traits_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(roscpp_traits_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/roscpp_core/roscpp_traits)
-  set(roscpp_traits_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/roscpp_traits)
+  set(roscpp_traits_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/roscpp_core/roscpp_traits)
+  set(roscpp_traits_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/roscpp_traits)
   set(roscpp_traits_INSTALL_PREFIX "")
   set(roscpp_traits_PREFIX ${roscpp_traits_DEVEL_PREFIX})
 else()

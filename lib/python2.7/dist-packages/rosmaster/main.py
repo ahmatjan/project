@@ -56,7 +56,9 @@ def configure_logging():
     if '__log' in mappings:
         logfilename_remap = mappings['__log']
         filename = os.path.abspath(logfilename_remap.replace(".log", '_' + str(os.getpid()) + '.log'))
-    _log_filename = rosgraph.roslogging.configure_logging('rosmaster', logging.DEBUG, filename=filename)
+    #_log_filename = rosgraph.roslogging.configure_logging('rosmaster', logging.DEBUG, filename=filename)
+    _log_filename = rosgraph.roslogging.configure_logging('rosmaster', 
+            logging.INFO, filename=filename)
 
 def rosmaster_main(argv=sys.argv, stdout=sys.stdout, env=os.environ):
     parser = optparse.OptionParser(usage="usage: zenmaster [options]")

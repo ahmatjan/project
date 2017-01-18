@@ -56,7 +56,8 @@ from rosmaster.global_data import GlobalDataThread
 from rosmaster.zk.zkleaderclient import ZKLeaderClient
 import rosmaster.master_const as master_const
 
-
+import rosmaster.shm_segment
+from rosmaster.shm_segment import ShmSegmentThread
 
 DEFAULT_MASTER_PORT = 11311  # default port for master's to bind to
 
@@ -128,7 +129,7 @@ def election_callback(client, global_data):
     "election_callback func when rosmaster become the leader"
 
     _logger = logging.getLogger("leader.callback")
-    _logger.setLevel(logging.DEBUG)
+    #_logger.setLevel(logging.DEBUG)
 
     # switch master indicator .
     _logger.debug("I'm become leader with pid : %s" % os.getpid())
@@ -137,85 +138,119 @@ def election_callback(client, global_data):
         if client.exists(master_const.PARAMETERS_PERSIST_ZKPATH):
             data, stat = client.get(
                 master_const.PARAMETERS_PERSIST_ZKPATH)
-            value = byteify(json.loads(data))
-            _logger.debug(
-                "get parameters from zk : %s" % value)
-            new_dict = recursive_dict(value)
-            global_data.set_parameters_persist(
-                new_dict, master_const.PARAMETERS_PERSIST_SKIP)   
+            try: 
+                value = byteify(json.loads(data))
+                _logger.debug(
+                    "get parameters from zk : %s" % value)
+                new_dict = recursive_dict(value)
+                global_data.set_parameters_persist(
+                    new_dict, master_const.PARAMETERS_PERSIST_SKIP)   
+            except Exception as e:
+                _logger.error(traceback.format_exc())   
+                _logger.error("get parameters_persist error : %s" % e) 
         if client.exists(master_const.PARAMETERS_ZKPATH):
             data, stat = client.get(
                 master_const.PARAMETERS_ZKPATH)
-            value = byteify(json.loads(data))
-            _logger.debug(
-                "get parameters from zk : %s" % value)
-            new_dict = recursive_dict(value)
-            global_data.set_parameters(
-                new_dict, master_const.PARAMETERS_SKIP)
-      
+            try: 
+                value = byteify(json.loads(data))
+                _logger.debug(
+                    "get parameters from zk : %s" % value)
+                new_dict = recursive_dict(value)
+                global_data.set_parameters(
+                    new_dict, master_const.PARAMETERS_SKIP)
+            except Exception as e:
+                _logger.error(traceback.format_exc()) 
+                _logger.error("get parameters error : %s" % e) 
         #for merging persist parameters when parameters.
         global_data.merge_parameters()
                             
         if client.exists(master_const.TOPIC_TYPES_ZKPATH):
             data, stat = client.get(
                 master_const.TOPIC_TYPES_ZKPATH)
-            value = byteify(json.loads(data))
-            _logger.debug(
-                "get topics_types from zk : %s" % value)
-            new_dict = recursive_dict(value)
-            global_data.set_topics_types(
-                new_dict, master_const.TOPIC_TYPES_SKIP)           
+            try:
+                value = byteify(json.loads(data))
+                _logger.debug(
+                    "get topics_types from zk : %s" % value)
+                new_dict = recursive_dict(value)
+                global_data.set_topics_types(
+                    new_dict, master_const.TOPIC_TYPES_SKIP)   
+            except Exception as e:
+                _logger.error(traceback.format_exc())                             
+                _logger.error("get topics_types  error : %s" % e)
         if client.exists(master_const.NODES_ZKPATH):
             data, stat = client.get(master_const.NODES_ZKPATH)
-            value = byteify(json.loads(data))
-            _logger.debug(
-                "get nodes from zk : %s" % value)
-            new_dict = recursive_dict(value)
-            global_data.set_nodes(new_dict, master_const.NODES_SKIP)           
+            try:
+                value = byteify(json.loads(data))
+                _logger.debug(
+                    "get nodes from zk : %s" % value)
+                new_dict = recursive_dict(value)
+                global_data.set_nodes(new_dict, master_const.NODES_SKIP)   
+            except Exception as e:
+                _logger.error(traceback.format_exc())                         
+                _logger.error("get nodes  error : %s" % e)
         if client.exists(master_const.PUBLISHERS_ZKPATH):
             data, stat = client.get(
                 master_const.PUBLISHERS_ZKPATH)
-            value = byteify(json.loads(data))
-            _logger.debug(
-                "get publishers from zk : %s" % value)
-            new_dict = recursive_dict(value)
-            global_data.set_publishers_map(
-                new_dict, master_const.PUBLISHERS_SKIP)            
+            try:
+                value = byteify(json.loads(data))
+                _logger.debug(
+                    "get publishers from zk : %s" % value)
+                new_dict = recursive_dict(value)
+                global_data.set_publishers_map(
+                    new_dict, master_const.PUBLISHERS_SKIP)            
+            except Exception as e:
+                _logger.error(traceback.format_exc())   
+                _logger.error("get publishers error : %s" % e)
         if client.exists(master_const.SUBSCRIBERS_ZKPATH):
             data, stat = client.get(
                 master_const.SUBSCRIBERS_ZKPATH)
-            value = byteify(json.loads(data))
-            _logger.debug(
-                "get subscribers from zk : %s" % value)
-            new_dict = recursive_dict(value)
-            global_data.set_subscribers_map(
-                new_dict, master_const.SUBSCRIBERS_SKIP)            
+            try:
+                value = byteify(json.loads(data))
+                _logger.debug(
+                    "get subscribers from zk : %s" % value)
+                new_dict = recursive_dict(value)
+                global_data.set_subscribers_map(
+                    new_dict, master_const.SUBSCRIBERS_SKIP)  
+            except Exception as e:
+                _logger.error(traceback.format_exc())   
+                _logger.error("get subscribers error : %s" % e)                                           
         if client.exists(master_const.SERVICES_ZKPATH):
             data, stat = client.get(master_const.SERVICES_ZKPATH)
-            value = byteify(json.loads(data))
-            _logger.debug(
-                "get services from zk : %s" % value)
-            new_dict = recursive_dict(value)
-            global_data.set_services_service_api_map(
-                new_dict, master_const.SERVICES_SKIP)           
+            try:
+                value = byteify(json.loads(data))
+                _logger.debug(
+                    "get services from zk : %s" % value)
+                new_dict = recursive_dict(value)
+                global_data.set_services_service_api_map(
+                    new_dict, master_const.SERVICES_SKIP) 
+            except Exception as e:
+                _logger.error(traceback.format_exc()) 
+                _logger.error("get services error : %s" % e)                                                
         if client.exists(master_const.SERVICES_MAP_ZKPATH):
             data, stat = client.get(master_const.SERVICES_MAP_ZKPATH)
-            value = byteify(json.loads(data))
-            _logger.debug(
-                "get services_map from zk : %s" % value)
-            new_dict = recursive_dict(value)
-            global_data.set_services_map(
-                new_dict, master_const.SERVICES_MAP_SKIP)           
+            try:
+                value = byteify(json.loads(data))
+                _logger.debug(
+                    "get services_map from zk : %s" % value)
+                new_dict = recursive_dict(value)
+                global_data.set_services_map(
+                    new_dict, master_const.SERVICES_MAP_SKIP)
+            except Exception as e:
+                _logger.error(traceback.format_exc())                                 
+                _logger.error("get services_map error : %s" % e) 
         if client.exists(master_const.PARAM_SUBSCRIBERS_ZKPATH):
             data, stat = client.get(
                 master_const.PARAM_SUBSCRIBERS_ZKPATH)
-            value = byteify(json.loads(data))
-            _logger.debug(
-                "get param_subscribers from zk : %s" % value)
-            new_dict = recursive_dict(value)
-            global_data.set_param_subscribers_map(
-                new_dict, master_const.PARAM_SUBSCRIBERS_SKIP) 
-
+            try:
+                value = byteify(json.loads(data))
+                _logger.debug(
+                    "get param_subscribers from zk : %s" % value)
+                new_dict = recursive_dict(value)
+                global_data.set_param_subscribers_map(
+                    new_dict, master_const.PARAM_SUBSCRIBERS_SKIP) 
+            except Exception as e:
+                _logger.error(traceback.format_exc())
+                _logger.error("get param_subscribers error : %s" % e)                 
      
 def zookeeper_handler(func, zkclient, global_data, master_handler):
     """
@@ -290,6 +325,12 @@ def zookeeper_handler(func, zkclient, global_data, master_handler):
                 zk_dict.keys()[0], recursive_dict(zk_dict.values()[0]))
         zk_queue.task_done()
 
+def check_loop_handler(master_handler):
+    """
+    check_loop_thread
+    """
+    check_loop_thread = ShmSegmentThread(master_handler)
+    check_loop_thread.start()
 
 class Master(object):
 
@@ -345,6 +386,10 @@ class Master(object):
         logging.getLogger('rosmaster.master').info(
             "Master initialized: port[%s], uri[%s]", self.port, self.uri)
 
+        shm_segment_thread = threading.Thread(target=check_loop_handler, args=(handler,))
+        shm_segment_thread.setDaemon(True)
+        shm_segment_thread.start()
+        
         if "ZK_HOST" not in os.environ:
             logging.getLogger(__name__).error(
                 "ZK_HOST not set .")

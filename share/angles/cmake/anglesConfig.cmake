@@ -67,8 +67,8 @@ set(angles_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(angles_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/angles)
-  set(angles_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/angles)
+  set(angles_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/angles)
+  set(angles_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/angles)
   set(angles_INSTALL_PREFIX "")
   set(angles_PREFIX ${angles_DEVEL_PREFIX})
 else()

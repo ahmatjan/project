@@ -98,9 +98,13 @@ from rospy.impl.tcpros_pubsub import QueuedConnection
 
 _logger = logging.getLogger('rospy.topics')
 
+
 # wrap genpy implementation and map it to rospy namespace
 import genpy
 Message = genpy.Message
+
+
+# socket_base = "/socket_topic"
 
 #######################################################################
 # Base classes for all client-API instantiated pub/sub
@@ -153,11 +157,19 @@ class Topic(object):
 
         self.name = self.resolved_name # #1810 for backwards compatibility
 
+        # if rospy.client.has_param(socket_base+self.name):
+        #     cnt =  rospy.client.get_param(socket_base+self.name)
+        #     rospy.client.set_param(socket_base+self.name, cnt+1)
+        # else:
+        #      rospy.client.set_param(socket_base+self.name, 1)
+
         self.data_class = data_class
         self.type = data_class._type
         self.md5sum = data_class._md5sum
         self.reg_type = reg_type
         self.impl = get_topic_manager().acquire_impl(reg_type, self.resolved_name, data_class)
+
+
 
     def get_num_connections(self):
         """
@@ -180,6 +192,14 @@ class Topic(object):
         if resolved_name and self.impl:
             get_topic_manager().release_impl(self.reg_type, resolved_name)
             self.impl = self.resolved_name = self.type = self.md5sum = self.data_class = None
+
+        # if rospy.client.has_param(socket_base+resolved_name):
+        #     cnt = rospy.client.get_param(socket_base+resolved_name)
+        #     if cnt > 1 :
+        #         rospy.client.set_param(socket_base+resolved_name, cnt-1)
+        #     else:
+        #         rospy.client.delete_param(socket_base+resolved_name)  
+
 
 # #3808
 class Poller(object):

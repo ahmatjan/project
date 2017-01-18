@@ -67,8 +67,8 @@ set(pointcloud_to_laserscan_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(pointcloud_to_laserscan_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/pointcloud_to_laserscan)
-  set(pointcloud_to_laserscan_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/pointcloud_to_laserscan)
+  set(pointcloud_to_laserscan_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/pointcloud_to_laserscan)
+  set(pointcloud_to_laserscan_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/pointcloud_to_laserscan)
   set(pointcloud_to_laserscan_INSTALL_PREFIX "")
   set(pointcloud_to_laserscan_PREFIX ${pointcloud_to_laserscan_DEVEL_PREFIX})
 else()

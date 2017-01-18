@@ -51,8 +51,17 @@ import select
 
 import rosgraph
 import rosgraph.network
+import rosgraph.ros_export
+import rosgraph.sec_const as sec_const
+
 from genpy import DeserializationError, Message
 from rosgraph.network import read_ros_handshake_header, write_ros_handshake_header
+from rosgraph.network import read_ros_handshake_header_sec
+from rosgraph.network import write_ros_handshake_header_sec
+from rosgraph.ros_export import encrypt_buf_and_sign_for_python
+from rosgraph.ros_export import decrypt_buf_and_unsign_for_python
+from rosgraph.ros_export import free_ctx_for_python
+from rosgraph.ros_export import check_rules
 
 # TODO: remove * import from core
 from rospy.core import *
@@ -87,6 +96,97 @@ def _is_use_tcp_keepalive():
         code, msg, val = m.getParam(rospy.names.get_caller_id(), _PARAM_TCP_KEEPALIVE)
         _use_tcp_keepalive = val if code == 1 else True
         return _use_tcp_keepalive 
+
+
+def read_encrypt_data(sock, b, buff_size, en_b):
+    """
+    Read encrypt data from socket.
+    
+    :param sock: socket must be in blocking mode, ``socket``
+    :param b: buffer to use, ``StringIO`` for Python2, ``BytesIO`` for Python 3
+    :param buff_size: incoming buffer size to use, ``int``
+    :returns: key value pairs encoded in handshake, ``{str: str}``
+    :raises: :exc:`ROSHandshakeException` If header format does not match expected
+    """
+    has_pkg = False
+    while not has_pkg:
+        d = sock.recv(buff_size)
+        if not d:
+            raise ROSHandshakeException("connection from sender terminated before handshake header \
+received. %s bytes were received. Please check sender for additional details."%b.tell())
+        en_b.write(d)
+        btell = en_b.tell()
+        if btell > sec_const.SEC_HEAD_LENGTH:
+            # most likely we will get the full header in the first recv, so
+            # not worth tiny optimizations possible here
+            bval = en_b.getvalue()
+            cur_pos = 0
+            last_pos = 0
+            while (cur_pos + sec_const.SEC_HEAD_LENGTH < btell):
+                (size,) = struct.unpack('<I', bval[cur_pos:cur_pos + 4])
+                if btell - cur_pos - sec_const.SEC_HEAD_LENGTH >= size:
+                    has_pkg = True
+                    # memmove the remnants of the buffer back to the start
+                    en_pkg = bval[cur_pos + sec_const.SEC_HEAD_LENGTH:
+                        cur_pos + sec_const.SEC_HEAD_LENGTH + size]
+                   
+                    # process the package
+                    # here decrpyt header
+                    de_data = decrypt_buf_and_unsign_for_python(en_pkg, len(en_pkg), id(sock))
+                    cur_pos = cur_pos + sec_const.SEC_HEAD_LENGTH + size
+                    last_pos = cur_pos
+                    if de_data[0]:
+                        b.write(de_data[0])
+                else:
+                    cur_pos = cur_pos + sec_const.SEC_HEAD_LENGTH + size
+
+            if has_pkg and last_pos < btell:
+                #has left data, we should cut it,and save to decrypt next time.
+                leftovers = bval[last_pos:]
+                en_b.truncate(len(leftovers))
+                en_b.seek(0)
+                en_b.write(leftovers)
+            elif has_pkg and last_pos >= btell:
+                en_b.seek(0)
+                en_b.truncate(0)
+
+    return b.getvalue()
+
+
+def recv_buff_sec(sock, b, buff_size, en_b, encrypt):
+    """
+    Read data from socket into buffer.
+    @param sock: socket to read from
+    @type  sock: socket.socket
+    @param b: buffer to receive into
+    @type  b: StringIOf
+    @param buff_size: recv read size
+    @type  buff_size: int
+    @return: number of bytes read
+    @rtype: int
+    """
+    if encrypt is True:
+        try:
+            d = read_encrypt_data(sock, b, buff_size, en_b)
+        except Exception as e:
+            rospydebug("read_encrypt_data error: %s", traceback.format_exc())
+            d = None
+        if d:
+            return len(d)
+        else: #bomb out
+            raise TransportTerminated('''\
+	    unable to receive data from sender,\
+            check sender's logs for details''')
+    else:
+        d = sock.recv(buff_size)
+        if d:
+            b.write(d)
+            return len(d)
+        else: #bomb out
+            raise TransportTerminated('''\
+            unable to receive data from sender,\
+            check sender's logs for details''')
+
 
 def recv_buff(sock, b, buff_size):
     """
@@ -190,6 +290,7 @@ class TCPServer(object):
             server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         logdebug('binding to ' + str(rosgraph.network.get_bind_address()) + ' ' + str(self.port))
+
         server_sock.bind((rosgraph.network.get_bind_address(), self.port))
         (self.addr, self.port) = server_sock.getsockname()[0:2]
         logdebug('bound to ' + str(self.addr) + ' ' + str(self.port))
@@ -318,14 +419,23 @@ class TCPROSServer(object):
             buff_size = 4096 # size of read buffer
             if python3 == 0:
                 #initialize read_ros_handshake_header with BytesIO for Python 3 (instead of bytesarray())    
-                header = read_ros_handshake_header(sock, StringIO(), buff_size)
+                if sec_const.ENABLE_SEC_FUNCTION:
+                    header = read_ros_handshake_header_sec(sock, StringIO(), buff_size, True)
+                else:
+                    header = read_ros_handshake_header(sock, StringIO(), buff_size)
             else:
-                header = read_ros_handshake_header(sock, BytesIO(), buff_size)
-            
+                if sec_const.ENABLE_SEC_FUNCTION:
+                    header = read_ros_handshake_header_sec(sock, BytesIO(), buff_size, True)
+                else:
+                    read_ros_handshake_header(sock, BytesIO(), buff_size)
+
+            resovled_name = None
             if 'topic' in header:
                 err_msg = self.topic_connection_handler(sock, client_addr, header)
+                resovled_name = header['topic']
             elif 'service' in header:
                 err_msg = self.service_connection_handler(sock, client_addr, header)
+                resovled_name = header['service']
             else:
                 err_msg = 'no topic or service name detected'
             if err_msg:
@@ -335,15 +445,37 @@ class TCPROSServer(object):
                 # We use is_shutdown_requested() because we can get
                 # into bad connection states during client shutdown
                 # hooks.
-                if not rospy.core.is_shutdown_requested():
-                    write_ros_handshake_header(sock, {'error' : err_msg})
-                    raise TransportInitError("Could not process inbound connection: "+err_msg+str(header))
+                if sec_const.ENABLE_SEC_FUNCTION:
+                    flags = (False, 0)
+                    if not resovled_name:
+                        try:
+                            flags = check_rules(resovled_name, "*", "*")
+                        except Exception as e:
+                            rospydebug("check_rules error, in _tcp_server_callback: %s",
+                                traceback.format_exc())
+                            pass
+                    if not rospy.core.is_shutdown_requested():
+                        write_ros_handshake_header_sec(sock, {'error': err_msg}, flags[0])
+                        raise TransportInitError("""Could not process"""
+                            """ inbound connection: """ + err_msg + str(header))
+                    else:
+                        write_ros_handshake_header_sec(sock,
+                            {'error': 'node shutting down'}, flags[0])
+                        return
                 else:
-                    write_ros_handshake_header(sock, {'error' : 'node shutting down'})
-                    return
+                    if not rospy.core.is_shutdown_requested():
+                        write_ros_handshake_header(sock, {'error': err_msg})
+                        raise TransportInitError("""Could not process """
+                            """inbound connection: """ + err_msg + str(header))
+                    else:
+                        write_ros_handshake_header(sock, {'error': 'node shutting down'})
+                        return
+                
         except rospy.exceptions.TransportInitError as e:
             logwarn(str(e))
             if sock is not None:
+                if sec_const.ENABLE_SEC_FUNCTION:
+                    free_ctx_for_python(id(sock))
                 sock.close()
         except Exception as e:
             # collect stack trace separately in local log file
@@ -351,6 +483,8 @@ class TCPROSServer(object):
                 logwarn("Inbound TCP/IP connection failed: %s", e)
                 rospyerr("Inbound TCP/IP connection failed:\n%s", traceback.format_exc())
             if sock is not None:
+                if sec_const.ENABLE_SEC_FUNCTION:
+                    free_ctx_for_python(id(sock))
                 sock.close()
 
 class TCPROSTransportProtocol(object):
@@ -380,7 +514,18 @@ class TCPROSTransportProtocol(object):
         self.buff_size = buff_size
         self.direction = BIDIRECTIONAL
         
-    
+    def read_messages_sec(self, b, msg_queue, sock, en_b, encrypt):
+        """
+        @param b StringIO: read buffer        
+        @param msg_queue [Message]: queue of deserialized messages
+        @type  msg_queue: [Message]
+        @param sock socket: protocol can optionally read more data from
+        the socket, but in most cases the required data will already be
+        in b
+        """
+        # default implementation
+        deserialize_messages(b, msg_queue, self.recv_data_class, queue_size=self.queue_size)
+
     def read_messages(self, b, msg_queue, sock):
         """
         @param b StringIO: read buffer        
@@ -418,7 +563,7 @@ class TCPROSTransport(Transport):
     """
     transport_type = 'TCPROS'
     
-    def __init__(self, protocol, name, header=None):
+    def __init__(self, protocol, name, bserver, header=None):
         """
         ctor
         @param name str: identifier
@@ -437,13 +582,17 @@ class TCPROSTransport(Transport):
         self.endpoint_id = 'unknown'
         self.callerid_pub = 'unknown'
         self.dest_address = None # for reconnection
+        self.is_encrypt = True
+        self.is_server = bserver
         
         if python3 == 0: # Python 2.x
             self.read_buff = StringIO()
             self.write_buff = StringIO()
+            self.en_buff = StringIO()
         else: # Python 3.x
             self.read_buff = BytesIO()
             self.write_buff = BytesIO()
+            self.en_buff = BytesIO()
                     	    
         #self.write_buff = StringIO()
         self.header = header
@@ -604,7 +753,21 @@ class TCPROSTransport(Transport):
             _, ready, _ = select.select([], [fileno], [])
         logger.debug("[%s]: writing header", self.name)
         sock.setblocking(1)
-        self.stat_bytes += write_ros_handshake_header(sock, protocol.get_header_fields())
+        
+        if sec_const.ENABLE_SEC_FUNCTION:
+            self.stat_bytes += write_ros_handshake_header_sec(sock,\
+                protocol.get_header_fields(),\
+                self.is_encrypt)
+            if self.is_server:
+                try:
+                    flags = check_rules(self.name, "*", "*")
+                    if flags[0] is False:
+                        self.is_encrypt = False
+                except Exception as e:
+                    rospydebug("check_rules error, in write_header: %s", traceback.format_exc())
+                    pass
+        else:
+            self.stat_bytes += write_ros_handshake_header(sock, protocol.get_header_fields())
 
     def read_header(self):
         """
@@ -616,8 +779,23 @@ class TCPROSTransport(Transport):
             return
         sock.setblocking(1)
 	# TODO: add bytes received to self.stat_bytes
-        self._validate_header(read_ros_handshake_header(sock, self.read_buff, self.protocol.buff_size))
-                
+        if sec_const.ENABLE_SEC_FUNCTION:
+            self._validate_header(read_ros_handshake_header_sec(sock,\
+                self.read_buff,\
+                self.protocol.buff_size,\
+                self.is_encrypt))
+            if not self.is_server:
+                try:
+                    flags = check_rules(self.name, "*", "*")
+                    if flags[0] is False:
+                        self.is_encrypt = False
+                except Exception as e:
+                    rospydebug("check_rules error, in read_header: %s", traceback.format_exc())
+                    pass
+        else:
+            self._validate_header(read_ros_handshake_header(sock,
+                self.read_buff, self.protocol.buff_size))
+
     def send_message(self, msg, seq):
         """
         Convenience routine for services to send a message across a
@@ -647,9 +825,31 @@ class TCPROSTransport(Transport):
             raise TransportTerminated("connection closed")
         try:
             #TODO: get rid of sendalls and replace with async-style publishing
-            self.socket.sendall(data)
-            self.stat_bytes  += len(data)
-            self.stat_num_msg += 1
+            if sec_const.ENABLE_SEC_FUNCTION:
+                if self.is_encrypt is True:
+                    try:
+                        de_data = encrypt_buf_and_sign_for_python(data, len(data), id(self.socket))
+                        if de_data[0]:
+                            en_len = len(de_data[0])
+                            alldata = struct.pack('<I', en_len) + de_data[0]
+                            self.socket.sendall(alldata)
+                            self.stat_bytes += len(data)
+                            self.stat_num_msg += 1
+                        else:
+                            return False
+                    except Exception as e:
+                        rospydebug("encrypt_buf_and_sign_for_python in write_data error: %s",
+                            traceback.format_exc())
+                        return False
+                else:
+                    self.socket.sendall(data)
+                    self.stat_bytes += len(data)
+                    self.stat_num_msg += 1
+            else:
+                self.socket.sendall(data)
+                self.stat_bytes += len(data)
+                self.stat_num_msg += 1
+
         except IOError as ioe:
             #for now, just document common errno's in code
             (errno, msg) = ioe.args
@@ -687,15 +887,24 @@ class TCPROSTransport(Transport):
         if sock is None:
             raise TransportException("connection not initialized")
         b = self.read_buff
+        en_b = self.en_buff
         msg_queue = []
         p = self.protocol
         try:
             sock.setblocking(1)                
             while not msg_queue and not self.done and not is_shutdown():
-                if b.tell() >= 4:
-                    p.read_messages(b, msg_queue, sock) 
-                if not msg_queue:
-                    self.stat_bytes += recv_buff(sock, b, p.buff_size)
+                if sec_const.ENABLE_SEC_FUNCTION:
+                    if b.tell() >= 4:
+                        p.read_messages_sec(b, msg_queue, sock, en_b, self.is_encrypt) 
+                    if not msg_queue:
+                        self.stat_bytes += recv_buff_sec(sock, b,
+                            p.buff_size, en_b, self.is_encrypt)
+                else:
+                    if b.tell() >= 4:
+                        p.read_messages(b, msg_queue, sock) 
+                    if not msg_queue:
+                        self.stat_bytes += recv_buff(sock, b, p.buff_size)
+
             self.stat_num_msg += len(msg_queue) #STATS
             # set the _connection_header field
             for m in msg_queue:
@@ -735,12 +944,12 @@ class TCPROSTransport(Transport):
                 # to move to non-blocking routines.
                 self.connect(self.dest_address[0], self.dest_address[1], self.endpoint_id, timeout=30.)
             except TransportInitError:
+                if sec_const.ENABLE_SEC_FUNCTION:
+                    free_ctx_for_python(id(self.socket))
                 self.socket = None
-                
             if self.socket is None:
                 # exponential backoff
                 interval = interval * 2
-                
             time.sleep(interval)
 
     def receive_loop(self, msgs_callback):
@@ -751,6 +960,7 @@ class TCPROSTransport(Transport):
         """
         # - use assert here as this would be an internal error, aka bug
         logger.debug("receive_loop for [%s]", self.name)
+        en_b = self.en_buff
         try:
             while not self.done and not is_shutdown():
                 try:
@@ -773,6 +983,10 @@ class TCPROSTransport(Transport):
                                 self.socket.close()
                     except:
                         pass
+                    if sec_const.ENABLE_SEC_FUNCTION:
+                        free_ctx_for_python(id(self.socket))
+                    en_b.seek(0)
+                    en_b.truncate(0)
                     self.socket = None
 
                 except DeserializationError as e:
@@ -800,12 +1014,14 @@ class TCPROSTransport(Transport):
             try:
                 if self.socket is not None:
                     try:
+                        if sec_const.ENABLE_SEC_FUNCTION:
+                            free_ctx_for_python(id(self.socket))
                         self.socket.shutdown(socket.SHUT_RDWR)
                     except:
                         pass
                     finally:
                         self.socket.close()
             finally:
-                self.socket = self.read_buff = self.write_buff = self.protocol = None
+                self.socket = self.read_buff = self.write_buff = self.en_buff = self.protocol = None
                 super(TCPROSTransport, self).close()
 

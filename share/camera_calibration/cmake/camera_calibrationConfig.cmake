@@ -67,8 +67,8 @@ set(camera_calibration_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(camera_calibration_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/image_pipeline/camera_calibration)
-  set(camera_calibration_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/camera_calibration)
+  set(camera_calibration_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/image_pipeline/camera_calibration)
+  set(camera_calibration_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/camera_calibration)
   set(camera_calibration_INSTALL_PREFIX "")
   set(camera_calibration_PREFIX ${camera_calibration_DEVEL_PREFIX})
 else()

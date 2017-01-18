@@ -67,8 +67,8 @@ set(collada_parser_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(collada_parser_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/robot_model/collada_parser)
-  set(collada_parser_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/collada_parser)
+  set(collada_parser_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/robot_model/collada_parser)
+  set(collada_parser_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/collada_parser)
   set(collada_parser_INSTALL_PREFIX "")
   set(collada_parser_PREFIX ${collada_parser_DEVEL_PREFIX})
 else()

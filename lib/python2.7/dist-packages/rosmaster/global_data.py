@@ -33,7 +33,7 @@ def deco_dict(event_list=None):
         @functools.wraps(func)
         def __deco_dict(*args, **kwargs):
             _logger = logging.getLogger(__name__)
-            _logger.setLevel(logging.DEBUG)
+            #_logger.setLevel(logging.DEBUG)
             try:
                 ret = func(*args, **kwargs)
                 if event_list is not None:
@@ -120,7 +120,7 @@ class GlobalData(object):
         self.services_map = {}        
         self.param_subscribers_map = {}
         self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
+        #self._logger.setLevel(logging.DEBUG)
 
     def merge_parameters(self):
         """

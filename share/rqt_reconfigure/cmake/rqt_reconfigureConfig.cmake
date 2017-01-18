@@ -67,8 +67,8 @@ set(rqt_reconfigure_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rqt_reconfigure_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/rqt_common_plugins/rqt_reconfigure)
-  set(rqt_reconfigure_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rqt_reconfigure)
+  set(rqt_reconfigure_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/rqt_common_plugins/rqt_reconfigure)
+  set(rqt_reconfigure_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/rqt_reconfigure)
   set(rqt_reconfigure_INSTALL_PREFIX "")
   set(rqt_reconfigure_PREFIX ${rqt_reconfigure_DEVEL_PREFIX})
 else()

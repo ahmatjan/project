@@ -67,8 +67,8 @@ set(geometric_shapes_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(geometric_shapes_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/geometric_shapes)
-  set(geometric_shapes_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/geometric_shapes)
+  set(geometric_shapes_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/geometric_shapes)
+  set(geometric_shapes_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/geometric_shapes)
   set(geometric_shapes_INSTALL_PREFIX "")
   set(geometric_shapes_PREFIX ${geometric_shapes_DEVEL_PREFIX})
 else()

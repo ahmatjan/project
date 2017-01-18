@@ -67,8 +67,8 @@ set(robot_state_publisher_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(robot_state_publisher_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/robot_state_publisher)
-  set(robot_state_publisher_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/robot_state_publisher)
+  set(robot_state_publisher_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/robot_state_publisher)
+  set(robot_state_publisher_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/robot_state_publisher)
   set(robot_state_publisher_INSTALL_PREFIX "")
   set(robot_state_publisher_PREFIX ${robot_state_publisher_DEVEL_PREFIX})
 else()

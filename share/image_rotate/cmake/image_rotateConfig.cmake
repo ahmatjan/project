@@ -67,8 +67,8 @@ set(image_rotate_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(image_rotate_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/image_pipeline/image_rotate)
-  set(image_rotate_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/image_rotate)
+  set(image_rotate_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/image_pipeline/image_rotate)
+  set(image_rotate_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/image_rotate)
   set(image_rotate_INSTALL_PREFIX "")
   set(image_rotate_PREFIX ${image_rotate_DEVEL_PREFIX})
 else()

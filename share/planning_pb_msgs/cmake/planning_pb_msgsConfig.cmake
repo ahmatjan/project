@@ -67,8 +67,8 @@ set(planning_pb_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(planning_pb_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/pb_msgs/planning_pb_msgs)
-  set(planning_pb_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/planning_pb_msgs)
+  set(planning_pb_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/pb_msgs/planning_pb_msgs)
+  set(planning_pb_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/planning_pb_msgs)
   set(planning_pb_msgs_INSTALL_PREFIX "")
   set(planning_pb_msgs_PREFIX ${planning_pb_msgs_DEVEL_PREFIX})
 else()

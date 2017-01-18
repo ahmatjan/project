@@ -8,7 +8,7 @@
 
 # since this file is sourced either use the provided _CATKIN_SETUP_DIR
 # or fall back to the destination set at configure time
-: ${_CATKIN_SETUP_DIR:=/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros}
+: ${_CATKIN_SETUP_DIR:=/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install}
 _SETUP_UTIL="$_CATKIN_SETUP_DIR/_setup_util.py"
 unset _CATKIN_SETUP_DIR
 
@@ -92,6 +92,7 @@ done
 unset _i
 
 unset _CATKIN_ENVIRONMENT_HOOKS_COUNT
+#unset ZK_HOST
 
 #set library path for ros environment
 export LD_LIBRARY_PATH=$HOME/ros/lib:$LD_LIBRARY_PATH

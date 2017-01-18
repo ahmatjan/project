@@ -67,8 +67,8 @@ set(gazebo_ros_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(gazebo_ros_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/gazebo_ros_pkgs/gazebo_ros)
-  set(gazebo_ros_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/gazebo_ros)
+  set(gazebo_ros_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/gazebo_ros_pkgs/gazebo_ros)
+  set(gazebo_ros_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/gazebo_ros)
   set(gazebo_ros_INSTALL_PREFIX "")
   set(gazebo_ros_PREFIX ${gazebo_ros_DEVEL_PREFIX})
 else()

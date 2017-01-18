@@ -36,7 +36,19 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/interprocess/sync/interprocess_mutex.hpp>
+#include <boost/interprocess/sync/scoped_lock.hpp>
 #include <deque>
+
+#include "ros/subscription_callback_helper.h"
+#include <thread>
+
+#include <boost/interprocess/ipc/message_queue.hpp>
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+
+#include "sharedmem_transport/sharedmem_util.h"
 
 namespace ros
 {
@@ -52,6 +64,9 @@ class ROSCPP_DECL SubscriptionQueue : public CallbackInterface, public boost::en
 private:
   struct Item
   {
+
+    int32_t msg_index;      
+    bool default_transport;    
     SubscriptionCallbackHelperPtr helper;
     MessageDeserializerPtr deserializer;
 
@@ -67,7 +82,7 @@ public:
   SubscriptionQueue(const std::string& topic, int32_t queue_size, bool allow_concurrent_callbacks);
   ~SubscriptionQueue();
 
-  void push(const SubscriptionCallbackHelperPtr& helper, const MessageDeserializerPtr& deserializer, 
+  void push(int32_t msg_index, bool default_transport, const SubscriptionCallbackHelperPtr& helper, const MessageDeserializerPtr& deserializer, 
 	    bool has_tracked_object, const VoidConstWPtr& tracked_object, bool nonconst_need_copy, 
 	    ros::Time receipt_time = ros::Time(), bool* was_full = 0);
   void clear();
@@ -76,8 +91,26 @@ public:
   virtual bool ready();
   bool full();
 
+/*
+  void internalCallback(
+      VoidConstPtr& msg,
+      SubscriptionCallbackHelperCallParams& params,
+      // Item& i,
+      Item i,
+      std::string topic
+  );
+*/  
+
+  void removeMessageQueue(std::string topic);
+
+  void shmMessageAck(std::string topic);
+
+
 private:
   bool fullNoLock();
+
+  void cleanupExitSubscriber(int32_t index);
+
   std::string topic_;
   int32_t size_;
   bool full_;
@@ -88,6 +121,17 @@ private:
   bool allow_concurrent_callbacks_;
 
   boost::recursive_mutex callback_mutex_;
+
+  // boost::interprocess::interprocess_mutex shm_sub_mutex_;
+
+  std::thread internal_cb_;
+  bool internal_cb_runnning_;
+  bool first_run_;
+  int32_t last_read_index_;
+  boost::interprocess::managed_shared_memory* segment_;
+  sharedmem_transport::SharedMemorySegment* segment_mgr_;
+  sharedmem_transport::SharedMemoryBlock* descriptors_sub_;
+  uint32_t segment_queue_size_;
 };
 
 }

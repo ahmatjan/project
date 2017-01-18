@@ -89,6 +89,8 @@ private:
   boost::mutex lock_; ///<! Public methods must lock this to preserve internal integrity.
   struct Impl;
   boost::scoped_ptr<Impl> impl_;
+
+  uint64_t sync_counter_;
 };
 
 } // namespace nodelet

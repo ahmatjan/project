@@ -107,6 +107,8 @@ public:
    */
   uint32_t handleMessage(const SerializedMessage& m, bool ser, bool nocopy, const boost::shared_ptr<M_string>& connection_header, const PublisherLinkPtr& link);
 
+  uint32_t handleMessage(int32_t msg_index, const SerializedMessage& m, bool ser, bool nocopy, const boost::shared_ptr<M_string>& connection_header, const PublisherLinkPtr& link);
+
   const std::string datatype();
   const std::string md5sum();
 
@@ -183,6 +185,14 @@ public:
 
   void headerReceived(const PublisherLinkPtr& link, const Header& h);
 
+  bool get_self_subscribed();
+
+  void set_self_subscribed(bool self_subscribed);  
+
+  void set_last_index(int last_read_index);
+
+  int get_last_index();
+
 private:
   Subscription(const Subscription &); // not copyable
   Subscription &operator =(const Subscription &); // nor assignable
@@ -190,6 +200,8 @@ private:
   void dropAllConnections();
 
   void addPublisherLink(const PublisherLinkPtr& link);
+
+  void cleanupExitSubscriber(int32_t index);
 
   struct CallbackInfo
   {
@@ -241,6 +253,14 @@ private:
 
   typedef std::vector<std::pair<const std::type_info*, MessageDeserializerPtr> > V_TypeAndDeserializer;
   V_TypeAndDeserializer cached_deserializers_;
+
+  bool _default_transport ;
+
+  bool _self_subscribed ;
+
+  int32_t last_read_index_;
+
+  boost::interprocess::interprocess_mutex shm_sub_mutex_;
 };
 
 }

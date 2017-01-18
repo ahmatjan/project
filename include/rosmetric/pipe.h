@@ -17,7 +17,6 @@
 #define ROSMETRIC_PIPE_HPP
 
 #include <rosmetric/types.h>
-#include <glog/logging.h>
 #include "ros/time.h"
 
 namespace ros {
@@ -61,13 +60,10 @@ public:
     };
 
     Stat& run(Stat& stat) const {
-        //ROS_INFO_STREAM("LogPipe parsing stat:" << stat._node_name << ":" << stat._metric_name);
         if (stat._msg.level == 1) {
-            ROS_WARN_STREAM("node_name:" << stat._msg.message);
-            LOG(WARNING) << stat._node_name << ":" << stat._metric_name;
+            ROS_WARN_STREAM("[" << stat._node_name << "] " <<stat._msg.message);
         } else if (stat._msg.level == 2) {
-            ROS_ERROR_STREAM("node_name:" << stat._msg.message);
-            LOG(ERROR) << stat._node_name << ":" << stat._metric_name;
+            ROS_ERROR_STREAM("[" << stat._node_name << "] " <<stat._msg.message);
         }
         return stat;
     };

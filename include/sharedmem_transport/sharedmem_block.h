@@ -7,11 +7,18 @@
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include <ros/ros.h>
+#include "ros/message.h"
+#include "ros/serialization.h"
+#include "ros/init.h"
 #include <time.h>
 #include <signal.h>
 #include <setjmp.h>
 #include <inttypes.h>
+
+#include "ros/forwards.h"
+#include "ros/message_deserializer.h"
+#include "ros/subscription_callback_helper.h"
+#include "ros/config_comm.h"
 
 namespace sharedmem_transport {
 
@@ -27,7 +34,7 @@ const uint32_t ROS_SHM_BLOCK_STATUS_TIMEOUT_SEC = 2; // Timeout for block status
 const uint32_t ROS_SHM_BLOCK_MUTEX_CONSERVATIVE_TIMEOUT_SEC = 5;
 
 // Timeout for block conservative overtime, times
-const uint32_t ROS_SHM_BLOCK_CONSERVATIVE_OVERTIME_TIMES = 15000;
+const uint32_t ROS_SHM_BLOCK_CONSERVATIVE_OVERTIME_TIMES = 30000;
 
 // Timeout for block conservative reserve inteval, usec
 const uint32_t ROS_SHM_BLOCK_CONSERVATIVE_RESERVE_INTERVAL_USEC = 1000;
@@ -37,7 +44,7 @@ const std::string ROS_SHM_REGISTER_SEGMENT_SERVICE = "/sharedmem_manager/registe
 
 /**
  * \brief Class for Shared Memory Block, which is defined to describer the block.
- * 
+ *
  */
 class SharedMemoryBlock {
 public:
@@ -100,31 +107,13 @@ public:
     void release_reserve_for_conservative_read();
 
     /**
-     * \brief Set conservative block reading count. 
-     * when we want to leave the current block, we have to ensure the next 
+     * \brief Set conservative block reading count.
+     * when we want to leave the current block, we have to ensure the next
+
      * wrote block can not be written second times.
      *
      */
     void set_reading_count_for_conservative_block();
-
-    /**
-     * \brief Unset conservative reading count. 
-     * The subscriber node is aborted  when reading a block, we must unset 
-     * reading_count order to publisher node can write a new message into 
-     * the block.
-     *
-     */
-    void unset_reading_count_for_conservative_block();
-
-    /**
-     * \brief Check block status. If the block waiting time since being wrote last 
-     * is larger than some given value, we assume that there are some problems in 
-     * the block and then we reset the block status.
-     *
-     * @param wt_timeout: timeout
-     * Return if the block status has been reset, true or false.
-     */
-    bool check_and_reset_block_status(long wt_timeout);
 
     /**
      * \brief Reset conservative reading count.
@@ -136,19 +125,23 @@ public:
     void reset_reading_count_for_conservative_block();
 
     /**
+     * \brief Check block status. If the block waiting time since being wrote last
+     * is larger than some given value, we assume that there are some problems in
+     * the block and then we reset the block status.
+     *
+     * @param wt_timeout: timeout
+     * Return if the block status has been reset, true or false.
+     */
+    bool check_and_reset_block_status(long wt_timeout);
+
+    /**
      * \brief Write to block
      *
      * @param dest: block address
      * @param msg: msg waited to be wrote
      * Return write result, true or false
      */
-    template<class M>
-    bool write_to_block(uint8_t* dest, const M& msg) {
-        // Serialize Data
-        bool result = serialize(dest, msg);
-
-        return result;
-    }
+    bool write_to_block(uint8_t* dest, const ros::SerializedMessage& msg);
 
     /**
      * \brief Read from block
@@ -157,13 +150,23 @@ public:
      * @param msg: msg waited to be deserialized to
      * Return read result, true or false
      */
-    template<class Base>
-    bool read_from_block(uint8_t* src, Base& msg) {
-        // Deserialze msg from block
-        deserialize<Base>(src, msg);
-        
-        return true;
-    }
+    bool read_from_block(uint8_t* src, ros::VoidConstPtr& msg,
+                         ros::SubscriptionCallbackHelperPtr& helper);
+    /**
+     * \brief Set write message flag
+     *
+     * @param flag: whether allow write to message
+     */
+    void set_write_msg_flag(bool flag);
+
+    /**
+     * \brief Get write message flag
+     *
+     * Return allow write message, true or false
+     */
+    bool get_write_msg_flag();
+
+    bool read_from_block(uint32_t& msg_size);
 
 private:
     /**
@@ -173,13 +176,14 @@ private:
      * @param msg: msg waited to be serialized
      * Return serialize result, true or false
      */
-    template<class M>
-    bool serialize(uint8_t* dest, const M& msg) {
+    inline bool serialize(uint8_t* dest, const ros::SerializedMessage& msg) {
         ROS_DEBUG("==== Serialize start!!! ====");
 
         {
             // Check size msg, before serialize
-            _msg_size = ros::serialization::serializationLength(msg);
+            // _msg_size = ros::serialization::serializationLength(msg);
+            _msg_size = msg.num_bytes - 4;
+
             if (_msg_size > _alloc_size) {
                 ROS_WARN("==== Msg size overflows the block, serialize failed ====");
                 return false;
@@ -187,8 +191,10 @@ private:
 
             // Serialize msg to block
             ROS_DEBUG("==== Serialising to %p, %" PRIu64 " bytes ====", dest, _msg_size);
-            ros::serialization::OStream out(dest, _msg_size);
-            ros::serialization::serialize(out, msg);
+            //ros::serialization::OStream out(dest, _msg_size);
+            //ros::serialization::serialize(out, msg);
+            memcpy(dest, msg.message_start, _msg_size);
+
         }
 
         ROS_DEBUG("==== Serialize end!!! ====");
@@ -197,38 +203,21 @@ private:
     }
 
     /**
-     * \brief Deserailize msg from block
-     *
-     * @param src: block address
-     * @param msg: msg waited to be deserialized to
-     */
-    template<class Base>
-    void deserialize(uint8_t* src, Base& msg) {
-        ROS_DEBUG("==== Deserialize start!!! ====");
-
-        {
-            // Deserailize msg from block
-            ROS_DEBUG("==== Deserializing from %p, %" PRIu64 " bytes ====", src, _msg_size);
-            ros::serialization::IStream in(src, _msg_size);
-            ros::serialization::deserialize(in, msg);
-        }
-
-        ROS_DEBUG("==== Deserialize end!!! ====");
-    }
-
-    /**
-     * \brief Reset waiting_time to current system clock, when a publisher 
+     * \brief Reset waiting_time to current system clock, when a publisher
      * wrote the block every time.
      *
      * It is used to mark the time since the block has been wrote by a publisher.
-     * When the time interval is longer than some given value, we assumed that it 
+     * When the time interval is longer than some given value, we assumed that it
      * exists some timeout problem in the block, including being wrote or being read.
      */
     inline void reset_waiting_time() {
         boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(
             _waiting_time_mutex);
 
-        _waiting_time = static_cast<long>(ros::Time::now().toSec());
+        // Get raw time
+        time_t unix_time;
+        time(&unix_time);
+        _waiting_time = static_cast<long>(unix_time);
     }
 
 private:
@@ -238,9 +227,11 @@ private:
     boost::interprocess::interprocess_condition _read_cond;
     bool _writing_flag;
     uint32_t _reading_count;
- 
+
     uint64_t _msg_size;
     uint64_t _alloc_size;
+
+    bool _write_msg_flag;
 
     // Mutex to protect access to _waiting_time
     boost::interprocess::interprocess_mutex _waiting_time_mutex;

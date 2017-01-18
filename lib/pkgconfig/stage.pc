@@ -1,4 +1,4 @@
-prefix="/home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/output/ros"
+prefix="/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install"
 
 Name: stage
 Description: Stage robot simulation program, C++ library and Player plugin - part of the Player Project (http://playerstage.org)

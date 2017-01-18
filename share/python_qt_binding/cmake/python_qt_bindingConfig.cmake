@@ -67,8 +67,8 @@ set(python_qt_binding_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(python_qt_binding_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/python_qt_binding)
-  set(python_qt_binding_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/python_qt_binding)
+  set(python_qt_binding_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/python_qt_binding)
+  set(python_qt_binding_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/python_qt_binding)
   set(python_qt_binding_INSTALL_PREFIX "")
   set(python_qt_binding_PREFIX ${python_qt_binding_DEVEL_PREFIX})
 else()

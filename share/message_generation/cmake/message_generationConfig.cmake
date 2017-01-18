@@ -67,8 +67,8 @@ set(message_generation_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(message_generation_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/message_generation)
-  set(message_generation_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/message_generation)
+  set(message_generation_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/message_generation)
+  set(message_generation_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/message_generation)
   set(message_generation_INSTALL_PREFIX "")
   set(message_generation_PREFIX ${message_generation_DEVEL_PREFIX})
 else()

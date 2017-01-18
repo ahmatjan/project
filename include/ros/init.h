@@ -215,6 +215,11 @@ ROSCPP_DECL std::string getROSArg(int argc, const char* const* argv, const std::
  */
 ROSCPP_DECL void removeROSArgs(int argc, const char* const* argv, V_string& args_out);
 
+
+bool config_parse(std::string file) ;
+
+void rosbag_skip_topic_file_parse(std::string file);
+
 }
 
 #endif

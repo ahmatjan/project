@@ -67,8 +67,8 @@ set(rosmetric_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosmetric_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/rosmetric)
-  set(rosmetric_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosmetric)
+  set(rosmetric_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/ros_comm/rosmetric)
+  set(rosmetric_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/rosmetric)
   set(rosmetric_INSTALL_PREFIX "")
   set(rosmetric_PREFIX ${rosmetric_DEVEL_PREFIX})
 else()
@@ -109,7 +109,7 @@ if(NOT "include;/usr/include " STREQUAL " ")
   endforeach()
 endif()
 
-set(libraries "/home/caros/ros/lib/libtopic_tools.so;/home/caros/ros/lib/libroscpp.so;/usr/lib/x86_64-linux-gnu/libboost_chrono.so;/home/caros/ros/lib/librosconsole.so;/home/caros/ros/lib/librosconsole_log4cxx.so;/home/caros/ros/lib/librosconsole_backend_interface.so;/usr/lib/liblog4cxx.so;/home/caros/ros/lib/libroscpp_serialization.so;/home/caros/ros/lib/librostime.so;/home/caros/ros/lib/libxmlrpcpp.so;/home/caros/ros/lib/libcpp_common.so;/usr/lib/x86_64-linux-gnu/libboost_thread.so;/usr/lib/x86_64-linux-gnu/libpthread.so;/usr/lib/x86_64-linux-gnu/libconsole_bridge.so;roscpp;pthread;/usr/lib/x86_64-linux-gnu/libboost_date_time.so;/usr/lib/x86_64-linux-gnu/libboost_regex.so;/usr/lib/x86_64-linux-gnu/libboost_program_options.so;/usr/lib/x86_64-linux-gnu/libboost_filesystem.so;/usr/lib/x86_64-linux-gnu/libboost_signals.so;/usr/lib/x86_64-linux-gnu/libboost_system.so")
+set(libraries "/home/caros/ros/lib/libtopic_tools.so;/home/caros/ros/lib/libroscpp.so;/usr/lib/x86_64-linux-gnu/libboost_chrono.so;/home/caros/ros/lib/librosconsole.so;/home/caros/ros/lib/librosconsole_log4cxx.so;/home/caros/ros/lib/librosconsole_backend_interface.so;/usr/lib/liblog4cxx.so;/home/caros/ros/lib/libroslib.so;/home/caros/ros/lib/libroscpp_serialization.so;/home/caros/ros/lib/librostime.so;/home/caros/ros/lib/libxmlrpcpp.so;/home/caros/ros/lib/libcpp_common.so;/usr/lib/x86_64-linux-gnu/libboost_thread.so;/usr/lib/x86_64-linux-gnu/libpthread.so;/usr/lib/x86_64-linux-gnu/libconsole_bridge.so;roscpp;pthread;/usr/lib/x86_64-linux-gnu/libboost_date_time.so;/usr/lib/x86_64-linux-gnu/libboost_regex.so;/usr/lib/x86_64-linux-gnu/libboost_program_options.so;/usr/lib/x86_64-linux-gnu/libboost_filesystem.so;/usr/lib/x86_64-linux-gnu/libboost_signals.so;/usr/lib/x86_64-linux-gnu/libboost_system.so")
 foreach(library ${libraries})
   # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")

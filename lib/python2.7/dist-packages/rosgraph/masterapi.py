@@ -489,3 +489,15 @@ class Master(object):
         @return: (code, statusMessage, masterMetric).
         """
         return self._succeed(self.handle.getMetric(self.caller_id))
+
+    def registerSegment(self, key):
+        """
+        Register segment to segment manager.
+        @param caller_id: ROS caller id
+        @type  caller_id: str
+        @param key: topic name
+        @type  key: str
+        @rtype: (int, str, int)
+        @return: (code, statusMessage, result)
+        """
+        return self._succeed(self.handle.registerSegment(self.caller_id))

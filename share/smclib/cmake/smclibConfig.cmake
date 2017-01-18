@@ -67,8 +67,8 @@ set(smclib_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(smclib_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/bond_core/smclib)
-  set(smclib_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/smclib)
+  set(smclib_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/bond_core/smclib)
+  set(smclib_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/smclib)
   set(smclib_INSTALL_PREFIX "")
   set(smclib_PREFIX ${smclib_DEVEL_PREFIX})
 else()

@@ -67,8 +67,8 @@ set(driver_base_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(driver_base_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/driver_common/driver_base)
-  set(driver_base_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/driver_base)
+  set(driver_base_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/driver_common/driver_base)
+  set(driver_base_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/driver_base)
   set(driver_base_INSTALL_PREFIX "")
   set(driver_base_PREFIX ${driver_base_DEVEL_PREFIX})
 else()

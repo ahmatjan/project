@@ -47,6 +47,13 @@ class SubscriberLink;
 typedef boost::shared_ptr<SubscriberLink> SubscriberLinkPtr;
 typedef std::vector<SubscriberLinkPtr> V_SubscriberLink;
 
+enum TransportType
+{
+  SHARED_MEMORY,
+  SOCKET,
+  BOTH
+};
+
 /**
  * \brief A Publication manages an advertised topic
  */
@@ -92,6 +99,8 @@ public:
    */
   uint32_t getNumSubscribers();
 
+  TransportType get_subscriberlinks_transport();
+  
   void getPublishTypes(bool& serialize, bool& nocopy, const std::type_info& ti);
 
   /**
@@ -146,6 +155,10 @@ public:
 
   bool validateHeader(const Header& h, std::string& error_msg);
 
+  void set_self_published(bool self_published);
+
+  bool get_self_published();
+
 private:
   void dropAllConnections();
 
@@ -185,6 +198,8 @@ private:
   typedef std::vector<SerializedMessage> V_SerializedMessage;
   V_SerializedMessage publish_queue_;
   boost::mutex publish_queue_mutex_;
+
+  bool _self_published;
 };
 
 }

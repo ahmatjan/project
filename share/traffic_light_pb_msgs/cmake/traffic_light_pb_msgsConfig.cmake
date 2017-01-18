@@ -67,8 +67,8 @@ set(traffic_light_pb_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(traffic_light_pb_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/pb_msgs/traffic_light_pb_msgs)
-  set(traffic_light_pb_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/traffic_light_pb_msgs)
+  set(traffic_light_pb_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/pb_msgs/traffic_light_pb_msgs)
+  set(traffic_light_pb_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/traffic_light_pb_msgs)
   set(traffic_light_pb_msgs_INSTALL_PREFIX "")
   set(traffic_light_pb_msgs_PREFIX ${traffic_light_pb_msgs_DEVEL_PREFIX})
 else()

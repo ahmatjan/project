@@ -67,8 +67,8 @@ set(rosgraph_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosgraph_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/rosgraph)
-  set(rosgraph_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosgraph)
+  set(rosgraph_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/ros_comm/rosgraph)
+  set(rosgraph_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/rosgraph)
   set(rosgraph_INSTALL_PREFIX "")
   set(rosgraph_PREFIX ${rosgraph_DEVEL_PREFIX})
 else()

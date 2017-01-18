@@ -46,6 +46,12 @@ import socket
 import struct
 import sys
 import platform
+import sec_const
+
+from io import BytesIO
+from rosgraph.ros_export import encrypt_buf_and_sign_for_python
+from rosgraph.ros_export import decrypt_buf_and_unsign_for_python
+from rosgraph.ros_export import free_ctx_for_python
 
 try:
     from cStringIO import StringIO #Python 2.x
@@ -347,7 +353,8 @@ def decode_ros_handshake_header(header_str):
         value = line[idx+1:]
         d[key.strip()] = value
     return d
-    
+
+
 def read_ros_handshake_header(sock, b, buff_size):
     """
     Read in tcpros header off the socket \a sock using buffer \a b.
@@ -383,6 +390,62 @@ def read_ros_handshake_header(sock, b, buff_size):
     # process the header
     return decode_ros_handshake_header(bval)
 
+
+def read_ros_handshake_header_sec(sock, b, buff_size, encrpyt):
+    """
+    Read in tcpros header off the socket \a sock using buffer \a b.
+    
+    :param sock: socket must be in blocking mode, ``socket``
+    :param b: buffer to use, ``StringIO`` for Python2, ``BytesIO`` for Python 3
+    :param buff_size: incoming buffer size to use, ``int``
+    :returns: key value pairs encoded in handshake, ``{str: str}``
+    :raises: :exc:`ROSHandshakeException` If header format does not match expected
+    """
+    header_str = None
+    while not header_str:
+        d = sock.recv(buff_size)
+        if not d:
+            raise ROSHandshakeException(
+                """connection from sender terminated before """
+                """handshake header received."""
+                """%s bytes were received."""
+                """Please check sender for additional details.""" % (b.tell()))
+        b.write(d)
+        btell = b.tell()
+        if btell > 4:
+            # most likely we will get the full header in the first recv, so
+            # not worth tiny optimizations possible here
+            bval = b.getvalue()
+            (size,) = struct.unpack('<I', bval[0:4])
+            if btell - 4 >= size:
+                header_str = bval
+                    
+                # memmove the remnants of the buffer back to the start
+                leftovers = bval[size + 4:]
+                b.truncate(len(leftovers))
+                b.seek(0)
+                b.write(leftovers)
+                header_recvd = True
+                    
+    # process the header
+    #here decrpyt header
+    if encrpyt is True:
+        try:
+            en_data = bval[sec_const.SEC_HEAD_LENGTH:]
+            de_data = decrypt_buf_and_unsign_for_python(en_data, len(en_data), id(sock))
+            if de_data[0]:
+                d = decode_ros_handshake_header(de_data[0])
+            else:
+                d = {}
+        except Exception as e:
+            rospydebug("decrypt_buf_and_unsign_for_python error: %s", traceback.format_exc())
+            d = {}
+    else:
+        d = decode_ros_handshake_header(bval)
+
+    return d
+
+
 def encode_ros_handshake_header(header):
     """
     Encode ROS handshake header as a byte string. Each header
@@ -406,7 +469,8 @@ def encode_ros_handshake_header(header):
         #python 3 
         s = b''.join([(struct.pack('<I', len(f)) + f.encode("utf-8")) for f in fields])
         return struct.pack('<I', len(s)) + s
-                                        
+
+
 def write_ros_handshake_header(sock, header):
     """
     Write ROS handshake header header to socket sock
@@ -418,4 +482,33 @@ def write_ros_handshake_header(sock, header):
     s = encode_ros_handshake_header(header)
     sock.sendall(s)
     return len(s) #STATS
+
+          
+def write_ros_handshake_header_sec(sock, header, encrpyt):
+    """
+    Write ROS handshake header header to socket sock
+
+    :param sock: socket to write to (must be in blocking mode), ``socket.socket``
+    :param header: header field keys/values, ``{str : str}``
+    :returns: Number of bytes sent (for statistics), ``int``
+    """
+    s = encode_ros_handshake_header(header)
+    if encrpyt is True:
+        try:
+            de_data = encrypt_buf_and_sign_for_python(s, len(s), id(sock))
+            if de_data[0]:
+                en_len = len(de_data[0])
+                alldata = struct.pack('<I', en_len) + de_data[0]
+                sock.sendall(alldata)
+                return len(s) #STATS
+            else:
+                return 0
+        except Exception as e:
+            rospydebug("encrypt_buf_and_sign_for_python error: %s", traceback.format_exc())
+            return 0
+    else:
+        sock.sendall(s)
+        return len(s) #STATS
+        
+
     

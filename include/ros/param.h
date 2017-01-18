@@ -667,6 +667,8 @@ T param(const std::string& param_name, const T& default_val)
   return param_val;
 }
 
+//const std::string socket_base = "/socket_topic/";
+
 } // namespace param
 
 } // namespace ros

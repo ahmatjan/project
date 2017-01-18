@@ -63,6 +63,9 @@ import rosmsg
 import rosgraph
 import rosgraph.names
 import rosgraph.network
+import rosgraph.sec_const as sec_const
+
+from rosgraph.ros_export import free_ctx_for_python
 
 from optparse import OptionParser
 
@@ -120,12 +123,19 @@ def get_service_headers(service_name, service_uri):
             s.connect((dest_addr, dest_port))
             header = { 'probe':'1', 'md5sum':'*',
                        'callerid':'/rosservice', 'service':service_name}
-            rosgraph.network.write_ros_handshake_header(s, header)
-            return rosgraph.network.read_ros_handshake_header(s, StringIO(), 2048)
+
+            if sec_const.ENABLE_SEC_FUNCTION:
+                rosgraph.network.write_ros_handshake_header_sec(s, header, True)
+                return rosgraph.network.read_ros_handshake_header_sec(s, StringIO(), 2048, True)
+            else:
+                rosgraph.network.write_ros_handshake_header(s, header)
+                return rosgraph.network.read_ros_handshake_header(s, StringIO(), 2048)
         except socket.error:
             raise ROSServiceIOException("Unable to communicate with service [%s], address [%s]"%(service_name, service_uri))
     finally:
         if s is not None:
+            if sec_const.ENABLE_SEC_FUNCTION:
+                free_ctx_for_python(id(s))
             s.close()
             
 def get_service_type(service_name):

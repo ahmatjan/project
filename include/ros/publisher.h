@@ -33,6 +33,10 @@
 #include "ros/message.h"
 #include "ros/serialization.h"
 #include <boost/bind.hpp>
+#include <boost/thread/mutex.hpp>
+#include "roscpp/SharedMemoryHeader.h"
+#include "sharedmem_transport/sharedmem_publisher_impl.h"
+#include "ros/publication.h"
 
 namespace ros
 {
@@ -164,10 +168,16 @@ namespace ros
 
   private:
 
-    Publisher(const std::string& topic, const std::string& md5sum, 
-              const std::string& datatype, const NodeHandle& node_handle, 
-              const SubscriberCallbacksPtr& callbacks);
+    Publisher(const std::string& topic, const std::string& md5sum,
+              const std::string& datatype, const NodeHandle& node_handle,
+              const SubscriberCallbacksPtr& callbacks, const uint32_t& queue_size);
 
+    // Publisher(const std::string& topic, const std::string& md5sum, 
+    //           const std::string& datatype, const NodeHandle& node_handle, 
+    //           const SubscriberCallbacksPtr& callbacks);
+
+    void publish_shm(const boost::function<SerializedMessage(void)>& serfunc,
+                     SerializedMessage& message) const ;
     void publish(const boost::function<SerializedMessage(void)>& serfunc, SerializedMessage& m) const;
     void incrementSequence() const;
 
@@ -186,6 +196,11 @@ namespace ros
       NodeHandlePtr node_handle_;
       SubscriberCallbacksPtr callbacks_;
       bool unadvertised_;
+
+      uint32_t  queue_size_;
+      sharedmem_transport::SharedMemoryPublisherImpl shared_impl_;
+      bool _first_run;
+      enum TransportType _default_transport;      
     };
     typedef boost::shared_ptr<Impl> ImplPtr;
     typedef boost::weak_ptr<Impl> ImplWPtr;
@@ -194,6 +209,7 @@ namespace ros
 
     friend class NodeHandle;
     friend class NodeHandleBackingCollection;
+
   };
 
   typedef std::vector<Publisher> V_Publisher;

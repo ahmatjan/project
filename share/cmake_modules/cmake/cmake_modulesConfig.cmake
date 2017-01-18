@@ -67,8 +67,8 @@ set(cmake_modules_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(cmake_modules_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/cmake_modules)
-  set(cmake_modules_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/cmake_modules)
+  set(cmake_modules_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/cmake_modules)
+  set(cmake_modules_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/cmake_modules)
   set(cmake_modules_INSTALL_PREFIX "")
   set(cmake_modules_PREFIX ${cmake_modules_DEVEL_PREFIX})
 else()

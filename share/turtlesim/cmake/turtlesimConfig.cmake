@@ -67,8 +67,8 @@ set(turtlesim_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(turtlesim_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_tutorials/turtlesim)
-  set(turtlesim_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/turtlesim)
+  set(turtlesim_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/ros_tutorials/turtlesim)
+  set(turtlesim_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/turtlesim)
   set(turtlesim_INSTALL_PREFIX "")
   set(turtlesim_PREFIX ${turtlesim_DEVEL_PREFIX})
 else()

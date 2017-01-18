@@ -67,8 +67,8 @@ set(roscpp_serialization_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(roscpp_serialization_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/roscpp_core/roscpp_serialization)
-  set(roscpp_serialization_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/roscpp_serialization)
+  set(roscpp_serialization_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/roscpp_core/roscpp_serialization)
+  set(roscpp_serialization_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/roscpp_serialization)
   set(roscpp_serialization_INSTALL_PREFIX "")
   set(roscpp_serialization_PREFIX ${roscpp_serialization_DEVEL_PREFIX})
 else()

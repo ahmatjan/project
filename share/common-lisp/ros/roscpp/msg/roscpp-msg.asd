@@ -6,4 +6,6 @@
   :components ((:file "_package")
     (:file "Logger" :depends-on ("_package_Logger"))
     (:file "_package_Logger" :depends-on ("_package"))
+    (:file "SharedMemoryHeader" :depends-on ("_package_SharedMemoryHeader"))
+    (:file "_package_SharedMemoryHeader" :depends-on ("_package"))
   ))

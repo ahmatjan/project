@@ -67,8 +67,8 @@ set(turtle_tf_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(turtle_tf_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/geometry_tutorials/turtle_tf)
-  set(turtle_tf_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/turtle_tf)
+  set(turtle_tf_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/geometry_tutorials/turtle_tf)
+  set(turtle_tf_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/turtle_tf)
   set(turtle_tf_INSTALL_PREFIX "")
   set(turtle_tf_PREFIX ${turtle_tf_DEVEL_PREFIX})
 else()

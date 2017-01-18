@@ -83,7 +83,6 @@ class UDPROSHandler(rospy.transport.ProtocolHandler):
         try:
             while not rospy.core.is_shutdown():
                 data = self.server.recvfrom(self.buff_size)
-                print("received packet")
                 #TODO
         except:
             #TODO: log
@@ -221,7 +220,7 @@ class UDPROSHandler(rospy.transport.ProtocolHandler):
 
                 _configure_pub_socket(sock, tcp_nodelay)
                 protocol = TCPROSPub(resolved_topic_name, topic.data_class, is_latch=topic.is_latch, headers=topic.headers)
-                transport = TCPROSTransport(protocol, resolved_topic_name)
+                transport = TCPROSTransport(protocol, resolved_topic_name, True)
                 transport.set_socket(sock, header['callerid'])
                 transport.write_header()
                 topic.add_connection(transport)

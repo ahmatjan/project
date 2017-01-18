@@ -3,5 +3,7 @@
   (:export
    "<LOGGER>"
    "LOGGER"
+   "<SHAREDMEMORYHEADER>"
+   "SHAREDMEMORYHEADER"
   ))
 

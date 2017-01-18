@@ -67,8 +67,8 @@ set(stereo_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(stereo_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/common_msgs/stereo_msgs)
-  set(stereo_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/stereo_msgs)
+  set(stereo_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/common_msgs/stereo_msgs)
+  set(stereo_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/stereo_msgs)
   set(stereo_msgs_INSTALL_PREFIX "")
   set(stereo_msgs_PREFIX ${stereo_msgs_DEVEL_PREFIX})
 else()

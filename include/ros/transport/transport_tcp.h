@@ -81,6 +81,8 @@ public:
    */
   std::string getClientURI();
 
+  std::string get_local_ip();  
+
   typedef boost::function<void(const TransportTCPPtr&)> AcceptCallback;
   /**
    * \brief Start a server socket and listen on a port
@@ -121,6 +123,8 @@ public:
   virtual void parseHeader(const Header& header);
 
   virtual const char* getType() { return "TCPROS"; }
+
+  virtual int get_socket() { return sock_; }
 
 private:
   /**

@@ -67,8 +67,8 @@ set(rqt_gui_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rqt_gui_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/rqt/rqt_gui)
-  set(rqt_gui_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rqt_gui)
+  set(rqt_gui_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/rqt/rqt_gui)
+  set(rqt_gui_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/rqt_gui)
   set(rqt_gui_INSTALL_PREFIX "")
   set(rqt_gui_PREFIX ${rqt_gui_DEVEL_PREFIX})
 else()

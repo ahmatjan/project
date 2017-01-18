@@ -67,8 +67,8 @@ set(rosconsole_bridge_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosconsole_bridge_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/rosconsole_bridge)
-  set(rosconsole_bridge_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosconsole_bridge)
+  set(rosconsole_bridge_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/rosconsole_bridge)
+  set(rosconsole_bridge_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/rosconsole_bridge)
   set(rosconsole_bridge_INSTALL_PREFIX "")
   set(rosconsole_bridge_PREFIX ${rosconsole_bridge_DEVEL_PREFIX})
 else()

@@ -67,8 +67,8 @@ set(compressed_image_transport_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(compressed_image_transport_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/image_transport_plugins/compressed_image_transport)
-  set(compressed_image_transport_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/compressed_image_transport)
+  set(compressed_image_transport_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/image_transport_plugins/compressed_image_transport)
+  set(compressed_image_transport_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/compressed_image_transport)
   set(compressed_image_transport_INSTALL_PREFIX "")
   set(compressed_image_transport_PREFIX ${compressed_image_transport_DEVEL_PREFIX})
 else()

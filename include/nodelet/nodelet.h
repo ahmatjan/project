@@ -194,6 +194,8 @@ protected:
   ros::NodeHandle& getMTNodeHandle() const;
   ros::NodeHandle& getMTPrivateNodeHandle() const;
 
+  uint64_t* getSyncCounter();
+
   ros::CallbackQueueInterface& getSTCallbackQueue() const;
   ros::CallbackQueueInterface& getMTCallbackQueue() const;
 
@@ -210,6 +212,8 @@ private:
   NodeHandlePtr mt_private_nh_;
   V_string my_argv_;
 
+  uint64_t* counter_ptr_;
+
   // Method to be overridden by subclass when starting up.
   virtual void onInit() = 0;
 
@@ -225,7 +229,8 @@ public:
    */
   void init(const std::string& name, const M_string& remapping_args, const V_string& my_argv,
             ros::CallbackQueueInterface* st_queue = NULL,
-            ros::CallbackQueueInterface* mt_queue = NULL);
+            ros::CallbackQueueInterface* mt_queue = NULL,
+            uint64_t* sync_counter_ptr = NULL);
 
   virtual ~Nodelet();
 };

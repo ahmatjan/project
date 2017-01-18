@@ -91,6 +91,8 @@ else
     mkdir -p "$(dirname "$ZOOPIDFILE")"
 fi
 
+ZOO_LOG_DIR="`dirname ${ZOOCFG}`/../log"
+
 if [ ! -w "$ZOO_LOG_DIR" ] ; then
 mkdir -p "$ZOO_LOG_DIR"
 fi

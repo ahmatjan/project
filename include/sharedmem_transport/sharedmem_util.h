@@ -17,9 +17,15 @@ class SharedMemoryUtil {
 public:
     SharedMemoryUtil() {
     }
-    
+
     virtual ~SharedMemoryUtil() {
     }
+
+    bool init_sharedmem(const char* topic_name,
+    boost::interprocess::managed_shared_memory*& segment,
+    sharedmem_transport::SharedMemorySegment*& _segment_mgr,
+    sharedmem_transport::SharedMemoryBlock*& _descriptors_sub,
+    uint32_t& queue_size);
 
     /**
      * \brief Get segment pointer, according to topic name
@@ -36,8 +42,8 @@ public:
      * @param segment_size: segment size
      * Return segment pointer
      */
-    boost::interprocess::managed_shared_memory* create_segment(const char* topic_name, 
-        uint64_t segment_size);
+    boost::interprocess::managed_shared_memory* create_segment(const char* topic_name,
+            uint64_t segment_size);
 
     /**
      * \brief Get segment manager, according to segment pointer
@@ -62,8 +68,8 @@ public:
      * @param descriptors: block descriptors pointer
      * @param queue_size: queue size
      */
-    void get_header_and_size(boost::interprocess::managed_shared_memory*& segment, 
-        SharedMemoryBlock*& descriptors, uint32_t* queue_size);
+    void get_header_and_size(boost::interprocess::managed_shared_memory*& segment,
+                             SharedMemoryBlock*& descriptors, uint32_t* queue_size);
 
     /**
      * \brief Remove segment, according to segment name

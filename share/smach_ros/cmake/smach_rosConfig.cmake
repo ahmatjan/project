@@ -67,8 +67,8 @@ set(smach_ros_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(smach_ros_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/executive_smach/smach_ros)
-  set(smach_ros_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/smach_ros)
+  set(smach_ros_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/executive_smach/smach_ros)
+  set(smach_ros_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/smach_ros)
   set(smach_ros_INSTALL_PREFIX "")
   set(smach_ros_PREFIX ${smach_ros_DEVEL_PREFIX})
 else()

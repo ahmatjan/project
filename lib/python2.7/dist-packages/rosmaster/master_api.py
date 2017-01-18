@@ -85,6 +85,8 @@ from rosmaster.validators import valid_name
 from rosmaster.validators import empty_or_valid_name
 from rosmaster.validators import ParameterInvalid
 
+import rosmaster.master_const as master_const
+
 # number of threads we use to send publisher_update notifications
 NUM_WORKERS = 3
 
@@ -94,6 +96,14 @@ MSG = 1
 VAL = 2
 
 _logger = logging.getLogger("rosmaster.master")
+_local_topic_list_file = os.path.join(os.environ['ROS_ETC_DIR'], "local_topic_list")
+if not os.path.exists(_local_topic_list_file):
+    try:
+        file_handle = open(_local_topic_list_file, 'w')
+    except IOError:
+        _logger.error("Write file error")
+    finally:
+        file_handle.close()
 
 LOG_API = False
 
@@ -982,3 +992,55 @@ class ROSMasterHandler(object):
             self.ps_lock.release()
         return 1, "master metric value", retval        
 
+    @apivalidate(0, (non_empty_str('key'),))
+    def registerSegment(self, caller_id, key):
+        """
+        Register segment to segment manager.
+        @param caller_id: ROS caller id
+        @type  caller_id: str
+        @param key: topic name
+        @type  key: str
+        @rtype: (int, str, int)
+        @return: (code, statusMessage, retval)
+        """
+        statusMessage = "register result: "
+        retval = 0
+        try:
+            self.ps_lock.acquire()
+            
+            # Read shm_segment from file
+            try:
+                master_const.SHM_SEGMENT = []
+                file_handle = open(_local_topic_list_file, 'r')
+                for line in file_handle:
+                    if not line in master_const.SHM_SEGMENT:
+                        master_const.SHM_SEGMENT.append(line.strip('\n'))
+            except IOError:
+                _logger.error("Read file failed, file maybe not exist")
+            finally:
+                file_handle.close()
+
+            # Register segment
+            if key in master_const.SHM_SEGMENT:
+                statusMessage += "already exist!"
+            else:
+                statusMessage += "new insert"
+                master_const.SHM_SEGMENT.append(key)
+                
+                # Write shm_segment to file
+                try:
+                    file_handle = open(_local_topic_list_file, 'w')
+                    for key in master_const.SHM_SEGMENT:
+                        file_handle.write(key)
+                        file_handle.write("\n")
+                except IOError:
+                    _logger.error("Write file failed")
+                finally:
+                    file_handle.close()
+            
+            retval = int(len(master_const.SHM_SEGMENT))
+        finally:
+            self.ps_lock.release()
+
+        _logger.info(statusMessage)
+        return 1, statusMessage, retval

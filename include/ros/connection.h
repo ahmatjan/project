@@ -37,6 +37,7 @@
 
 #include "ros/header.h"
 #include "common.h"
+#include "car_sec/sec_comm.h"
 
 #include <boost/signals2.hpp>
 
@@ -60,7 +61,7 @@ typedef boost::function<void(const ConnectionPtr&, const boost::shared_array<uin
 typedef boost::function<void(const ConnectionPtr&)> WriteFinishedFunc;
 
 typedef boost::function<bool(const ConnectionPtr&, const Header&)> HeaderReceivedFunc;
-
+const int SEC_HEAD_LEN = 4;
 /**
  * \brief Encapsulates a connection to a remote host, independent of the transport type
  *
@@ -126,6 +127,7 @@ public:
    * \param finished_callback The function to call when this read is finished
    */
   void read(uint32_t size, const ReadFinishedFunc& finished_callback);
+
   /**
    * \brief Write a buffer of bytes, calling a callback when finished
    *
@@ -174,6 +176,35 @@ public:
 
   std::string getCallerId();
   std::string getRemoteString();
+  std::string get_remote_ip();
+  std::string get_local_ip();  
+
+  /**
+   * \brief set topic name to connection,in order to we can pass some topics.
+   * in order to satisfy the performance requirements, we have to skip some topics that have larger data
+   * transmission, now the size is larger than 2M.
+   *
+   */
+  bool set_topic(std::string topic);
+
+  /**
+   * \brief get data from decrypt buffer, if the data is enough.
+   */
+  int32_t get_data_from_decrypt_buf(uint8_t* buffer, uint32_t size);
+
+  /**
+   *\brief clear buffer
+   */
+  void clear_buffer(boost::shared_array<uint8_t>& buffer, uint32_t& pos, uint32_t& size);
+
+  /**
+   * \brief copy buffer from security buffer to decrypt buffer.
+   */
+  bool copy_data_to_decrypt_buffer(unsigned char* buffer, unsigned long size);
+  /**
+   * \brief judge wether a package is encrypted.
+   */
+  bool is_encrypted(uint8_t* buffer, uint32_t size);
 
 private:
   /**
@@ -195,6 +226,11 @@ private:
   void onErrorHeaderWritten(const ConnectionPtr& conn);
   void onHeaderLengthRead(const ConnectionPtr& conn, const boost::shared_array<uint8_t>& buffer, uint32_t size, bool success);
   void onHeaderRead(const ConnectionPtr& conn, const boost::shared_array<uint8_t>& buffer, uint32_t size, bool success);
+
+  /**
+   * \brief to read encrypt data
+   */
+  int32_t en_read(uint8_t* buffer, uint32_t size);
 
   /**
    * \brief Read data off our transport.  Also manages calling the read callback.  If there is any data to be read,
@@ -263,6 +299,33 @@ private:
 
   /// If we're sending a header error we disable most other calls
   bool sending_header_error_;
+
+  /// indicate if need to encrypt
+  bool encrypt_;
+
+  /// indicate if sec sdk was initialized.
+  bool sec_init_;
+
+  /// try counts to check encrypted.
+  uint32_t check_en_count_;
+
+  /// the decrypted buffer
+  boost::shared_array<uint8_t> de_read_buffer_;
+  uint32_t de_read_size_;
+  uint32_t de_pos_;
+
+  //the encrypted buff
+  boost::shared_array<uint8_t> en_read_buffer_;
+  uint32_t en_read_size_;
+  uint32_t en_pos_;
+
+   /// read pkg len, the size is 4
+  int32_t read_package_length_and_alloc();
+  uint8_t head_pkg_[SEC_HEAD_LEN];
+  uint32_t read_pkg_filled_;
+
+  /// topic name
+  std::string topic_;
 };
 typedef boost::shared_ptr<Connection> ConnectionPtr;
 

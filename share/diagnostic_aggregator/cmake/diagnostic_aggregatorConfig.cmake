@@ -67,8 +67,8 @@ set(diagnostic_aggregator_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(diagnostic_aggregator_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/diagnostics/diagnostic_aggregator)
-  set(diagnostic_aggregator_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/diagnostic_aggregator)
+  set(diagnostic_aggregator_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/diagnostics/diagnostic_aggregator)
+  set(diagnostic_aggregator_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/diagnostic_aggregator)
   set(diagnostic_aggregator_INSTALL_PREFIX "")
   set(diagnostic_aggregator_PREFIX ${diagnostic_aggregator_DEVEL_PREFIX})
 else()

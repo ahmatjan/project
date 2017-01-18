@@ -67,8 +67,8 @@ set(rosunit_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosunit_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros/rosunit)
-  set(rosunit_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosunit)
+  set(rosunit_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/ros/rosunit)
+  set(rosunit_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/rosunit)
   set(rosunit_INSTALL_PREFIX "")
   set(rosunit_PREFIX ${rosunit_DEVEL_PREFIX})
 else()

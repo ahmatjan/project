@@ -92,6 +92,7 @@ done
 unset _i
 
 unset _CATKIN_ENVIRONMENT_HOOKS_COUNT
+#unset ZK_HOST
 
 #set library path for ros environment
 export LD_LIBRARY_PATH=$HOME/ros/lib:$LD_LIBRARY_PATH

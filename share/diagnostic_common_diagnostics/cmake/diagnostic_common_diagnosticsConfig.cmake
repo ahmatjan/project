@@ -67,8 +67,8 @@ set(diagnostic_common_diagnostics_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(diagnostic_common_diagnostics_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/diagnostics/diagnostic_common_diagnostics)
-  set(diagnostic_common_diagnostics_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/diagnostic_common_diagnostics)
+  set(diagnostic_common_diagnostics_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/diagnostics/diagnostic_common_diagnostics)
+  set(diagnostic_common_diagnostics_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/diagnostic_common_diagnostics)
   set(diagnostic_common_diagnostics_INSTALL_PREFIX "")
   set(diagnostic_common_diagnostics_PREFIX ${diagnostic_common_diagnostics_DEVEL_PREFIX})
 else()

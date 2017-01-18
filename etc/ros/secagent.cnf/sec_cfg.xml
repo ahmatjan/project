@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <work switch="0">
+    <rules>
+      <rule_item start="1" topic="/camera_obstacle/camera_nodelet_manager/bond" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/camera_traffic/camera_nodelet_manager/bond" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/diagnostics" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/duperception/DuDriveObsArray" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/duperception/DuDriveObsArray3D" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/duperception/DuDriveObsArrayProto" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/dusensor/novatel/bestpos" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/dusensor/novatel/inspvax" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/frontradar/radardata" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/frontradar/radargeo" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/frontradar/radarvelocity" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/frontradardata" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/imu/data" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/imu/data_synced" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/imu/synctime" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/novatel_data/logfilestatus" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/perception/localization/100hz/Odometry" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/perception/localization/10hz/PoseWithCovarianceStamped" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/perception/signal2d/TLArray" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/rearradar/radardata" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/rearradar/radargeo" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/rearradar/radarvelocity" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/obstacle2d/camera_info" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/obstacle2d/image/compressed" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/obstacle2d/image/compressed/parameter_descriptions" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/obstacle2d/image/compressed/parameter_updates" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/obstacle2d/image/compressedDepth" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/obstacle2d/image/compressedDepth/parameter_descriptions" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/obstacle2d/image/compressedDepth/parameter_updates" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/obstacle2d/image/theora" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/obstacle2d/image/theora/parameter_descriptions" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/obstacle2d/image/theora/parameter_updates" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/traffic/camera_info" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/traffic/image/compressed" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/traffic/image/compressed/parameter_descriptions" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/traffic/image/compressed/parameter_updates" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/traffic/image/compressedDepth" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/traffic/image/compressedDepth/parameter_descriptions" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/traffic/image/compressedDepth/parameter_updates" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/traffic/image/theora" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/traffic/image/theora/parameter_descriptions" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/camera/traffic/image/theora/parameter_updates" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/Imu" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/ack" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/bestpos" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/corrimudata" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/filter/Odometry" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/inscov" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/inspva" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/inspvax" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/mark1pva" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/odometry" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/sensor/novatel/rawimu" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/tf" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/tf_static" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/trafficlights/debug" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/trafficlights/debug/compressed" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/trafficlights/debug/compressed/parameter_descriptions" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/trafficlights/debug/compressed/parameter_updates" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/trafficlights/debug/compressedDepth" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/trafficlights/debug/compressedDepth/parameter_descriptions" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/trafficlights/debug/compressedDepth/parameter_updates" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/trafficlights/debug/theora" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/trafficlights/debug/theora/parameter_descriptions" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/trafficlights/debug/theora/parameter_updates" node1="*" node2="*" flag="3"/>
+      <rule_item start="1" topic="/velodyne_nodelet_manager/bond" node1="*" node2="*" flag="3"/>
+    </rules>
+  </work>
+</config>

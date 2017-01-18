@@ -67,8 +67,8 @@ set(pcl_ros_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(pcl_ros_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/perception_pcl/pcl_ros)
-  set(pcl_ros_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/pcl_ros)
+  set(pcl_ros_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/perception_pcl/pcl_ros)
+  set(pcl_ros_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/pcl_ros)
   set(pcl_ros_INSTALL_PREFIX "")
   set(pcl_ros_PREFIX ${pcl_ros_DEVEL_PREFIX})
 else()

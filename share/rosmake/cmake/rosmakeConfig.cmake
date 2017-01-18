@@ -67,8 +67,8 @@ set(rosmake_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rosmake_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros/rosmake)
-  set(rosmake_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rosmake)
+  set(rosmake_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/ros/rosmake)
+  set(rosmake_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/rosmake)
   set(rosmake_INSTALL_PREFIX "")
   set(rosmake_PREFIX ${rosmake_DEVEL_PREFIX})
 else()

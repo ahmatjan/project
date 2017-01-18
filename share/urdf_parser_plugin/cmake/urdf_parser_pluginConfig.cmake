@@ -67,8 +67,8 @@ set(urdf_parser_plugin_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(urdf_parser_plugin_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/robot_model/urdf_parser_plugin)
-  set(urdf_parser_plugin_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/urdf_parser_plugin)
+  set(urdf_parser_plugin_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/robot_model/urdf_parser_plugin)
+  set(urdf_parser_plugin_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/urdf_parser_plugin)
   set(urdf_parser_plugin_INSTALL_PREFIX "")
   set(urdf_parser_plugin_PREFIX ${urdf_parser_plugin_DEVEL_PREFIX})
 else()

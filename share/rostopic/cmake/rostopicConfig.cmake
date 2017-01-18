@@ -67,8 +67,8 @@ set(rostopic_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(rostopic_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/rostopic)
-  set(rostopic_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/rostopic)
+  set(rostopic_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/ros_comm/rostopic)
+  set(rostopic_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/rostopic)
   set(rostopic_INSTALL_PREFIX "")
   set(rostopic_PREFIX ${rostopic_DEVEL_PREFIX})
 else()

@@ -67,8 +67,8 @@ set(tf2_kdl_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(tf2_kdl_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/geometry2/tf2_kdl)
-  set(tf2_kdl_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/tf2_kdl)
+  set(tf2_kdl_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/geometry2/tf2_kdl)
+  set(tf2_kdl_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/tf2_kdl)
   set(tf2_kdl_INSTALL_PREFIX "")
   set(tf2_kdl_PREFIX ${tf2_kdl_DEVEL_PREFIX})
 else()

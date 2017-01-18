@@ -46,6 +46,7 @@ import genpy
 import rosgraph
 import rosgraph.names
 import rosgraph.network
+import rosgraph.sec_const as sec_const
 
 from rospy.exceptions import TransportInitError, TransportTerminated, ROSException, ROSInterruptException
 from rospy.service import _Service, ServiceException
@@ -53,7 +54,7 @@ from rospy.service import _Service, ServiceException
 from rospy.impl.registration import get_service_manager
 from rospy.impl.tcpros_base import TCPROSTransport, TCPROSTransportProtocol, \
     get_tcpros_server_address, start_tcpros_server, recv_buff, \
-    DEFAULT_BUFF_SIZE
+    DEFAULT_BUFF_SIZE, recv_buff_sec
 
 from rospy.core import logwarn, loginfo, logerr, logdebug
 import rospy.core
@@ -113,7 +114,10 @@ def wait_for_service(service, timeout=None):
             h = { 'probe' : '1', 'md5sum' : '*',
                   'callerid' : rospy.core.get_caller_id(),
                   'service': resolved_name }
-            rosgraph.network.write_ros_handshake_header(s, h)
+            if sec_const.ENABLE_SEC_FUNCTION:
+                rosgraph.network.write_ros_handshake_header_sec(s, h, True)
+            else:
+                rosgraph.network.write_ros_handshake_header(s, h)
             return True
         finally:
             if s is not None:
@@ -239,7 +243,7 @@ def service_connection_handler(sock, client_addr, header):
         elif md5sum != rospy.names.SERVICE_ANYTYPE and md5sum != service.service_class._md5sum:
             return "request from [%s]: md5sums do not match: [%s] vs. [%s]"%(header['callerid'], md5sum, service.service_class._md5sum)
         else:
-            transport = TCPROSTransport(service.protocol, service_name, header=header)
+            transport = TCPROSTransport(service.protocol, service_name, True, header=header)
             transport.set_socket(sock, header['callerid'])
             transport.write_header()
             # using threadpool reduced performance by an order of
@@ -309,6 +313,76 @@ class TCPROSServiceClient(TCPROSTransportProtocol):
             headers[k] = v
         return headers
     
+    def _read_ok_byte_sec(self, b, sock, en_b, encrypt):
+        """
+        Utility for reading the OK-byte/error-message header preceding each message.
+        @param sock: socket connection. Will be read from if OK byte is
+        false and error message needs to be read
+        @type  sock: socket.socket
+        @param b: buffer to read from
+        @type  b: StringIO
+        """
+        if b.tell() == 0:
+            return
+        pos = b.tell()
+        b.seek(0)
+        ok = struct.unpack('<B', b.read(1))[0] # read in ok byte
+        b.seek(pos)
+        if not ok:
+            str = self._read_service_error_sec(sock, b, en_b, encrypt)
+            
+            #_read_ok_byte has to reset state of the buffer to
+            #consumed as this exception will bypass rest of
+            #deserialized_messages logic. we currently can't have
+            #multiple requests in flight, so we can keep this simple
+            b.seek(0)
+            b.truncate(0)
+            raise ServiceException("""service [%s] responded """
+                """with an error: %s""" % (self.resolved_name, str))
+        else:
+            # success, set seek point to start of message
+            b.seek(pos)
+        
+    def read_messages_sec(self, b, msg_queue, sock, en_b, encrypt):
+        """
+        In service implementation, reads in OK byte that preceeds each
+        response. The OK byte allows for the passing of error messages
+        instead of a response message
+        @param b: buffer
+        @type  b: StringIO
+        @param msg_queue: Message queue to append to
+        @type  msg_queue: [Message]
+        @param sock: socket to read from
+        @type  sock: socket.socket
+        """
+        self._read_ok_byte_sec(b, sock, en_b, encrypt)
+        rospy.msg.deserialize_messages(b, msg_queue, self.recv_data_class,
+            queue_size=self.queue_size, max_msgs=1, start=1) #rospy.msg
+        #deserialize_messages only resets the buffer to the start
+        #point if everything was consumed, so we have to further reset
+        #it.
+        if b.tell() == 1:
+            b.seek(0)
+        
+    def _read_service_error_sec(self, sock, b, en_b, encrypt):
+        """
+        Read service error from sock 
+        @param sock: socket to read from
+        @type  sock: socket
+        @param b: currently read data from sock
+        @type  b: StringIO
+        """
+        buff_size = 256 #can be small given that we are just reading an error string
+        while b.tell() < 5:
+            recv_buff_sec(sock, b, buff_size, en_b, encrypt)
+        bval = b.getvalue()
+        (length,) = struct.unpack('<I', bval[1:5]) # ready in len byte
+        while b.tell() < (5 + length):
+            recv_buff_sec(sock, b, buff_size, en_b, encrypt)
+        bval = b.getvalue()
+        return struct.unpack('<%ss' % length,
+            bval[5: 5 + length])[0] # ready in len byte
+
     def _read_ok_byte(self, b, sock):
         """
         Utility for reading the OK-byte/error-message header preceding each message.
@@ -375,7 +449,6 @@ class TCPROSServiceClient(TCPROSTransportProtocol):
             recv_buff(sock, b, buff_size)
         bval = b.getvalue()
         return struct.unpack('<%ss'%length, bval[5:5+length])[0] # ready in len byte
-
     
 class ServiceProxy(_Service):
     """
@@ -496,7 +569,7 @@ class ServiceProxy(_Service):
             dest_addr, dest_port = rospy.core.parse_rosrpc_uri(service_uri)
 
             # connect to service            
-            transport = TCPROSTransport(self.protocol, self.resolved_name)
+            transport = TCPROSTransport(self.protocol, self.resolved_name, False)
             transport.buff_size = self.buff_size
             try:
                 transport.connect(dest_addr, dest_port, service_uri)

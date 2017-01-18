@@ -8,6 +8,7 @@
   <group ns="/">
     <param name="rosversion" command="rosversion roslaunch" />
     <param name="rosdistro" command="rosversion -d" />
+    <!-- <node pkg="roscpp" type="sharedmem_manager" name="sharedmem_manager" respawn="true"/> -->
     <!--node pkg="rosout" type="rosout" name="rosout" respawn="true"/-->
   </group>
 </launch>

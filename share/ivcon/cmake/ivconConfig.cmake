@@ -67,8 +67,8 @@ set(ivcon_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(ivcon_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ivcon)
-  set(ivcon_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/ivcon)
+  set(ivcon_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/ivcon)
+  set(ivcon_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/ivcon)
   set(ivcon_INSTALL_PREFIX "")
   set(ivcon_PREFIX ${ivcon_DEVEL_PREFIX})
 else()

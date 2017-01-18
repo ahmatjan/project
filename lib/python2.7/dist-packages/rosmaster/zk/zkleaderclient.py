@@ -52,7 +52,9 @@ class ZKLeaderClient(object):
         self.basepath = master_const.MASTER_ZKPATH
         self.electionpath = self.basepath + master_const.ELECTION_ZKPATH
         _logger.info('zk servers %s' % servers)
-        self.client = KazooClient(servers, timeout=master_const.KAZOO_TIMEOUT)
+        self.logger = logging.getLogger("kazoo_client")
+        self.logger.setLevel(logging.WARNING)        
+        self.client = KazooClient(servers, timeout=master_const.KAZOO_TIMEOUT, logger=self.logger)
         self.lock = self.client.Lock(self.electionpath, identifier)
         self.event = threading.Event()
         self.thread_pool = MarkedThreadPool(1)
@@ -62,7 +64,7 @@ class ZKLeaderClient(object):
         self.client.start()
         self.client.ensure_path(self.electionpath)
         _logger.info('successfully initialized zkleader client')
-        _logger.setLevel(logging.DEBUG)
+        #_logger.setLevel(logging.DEBUG)
 
     def electLeader(self, func=None, arg1=None, arg2=None):
         """ electLeader call
@@ -217,7 +219,7 @@ class ZKLeaderClient(object):
                 _logger.error("ConnectionLoss!")
                 _logger.error(traceback.format_exc())
                 count = count + 1
-                time.sleep(0.1)
+                time.sleep(1)
                 if count < master_const.ZOO_RETRY_TIMES:
                     continue
                 else:
@@ -228,7 +230,7 @@ class ZKLeaderClient(object):
                 _logger.error("ConnectionDropped!")
                 _logger.error(traceback.format_exc())
                 count = count + 1
-                time.sleep(0.1)
+                time.sleep(1)
                 if count < master_const.ZOO_RETRY_TIMES:
                     continue
                 else:
@@ -239,7 +241,7 @@ class ZKLeaderClient(object):
                 _logger.error("OperationTimeoutError!")
                 _logger.error(traceback.format_exc())
                 count = count + 1
-                time.sleep(0.1)
+                time.sleep(1)
                 if count < master_const.ZOO_RETRY_TIMES:
                     continue
                 else:
@@ -250,7 +252,7 @@ class ZKLeaderClient(object):
                 _logger.error("SessionExpiredError!")
                 _logger.error(traceback.format_exc())
                 count = count + 1
-                time.sleep(0.1)
+                time.sleep(1)
                 if count < master_const.ZOO_RETRY_TIMES:
                     continue
                 else:
@@ -261,7 +263,7 @@ class ZKLeaderClient(object):
                 _logger.error("ConnectionClosedError!")
                 _logger.error(traceback.format_exc())
                 count = count + 1
-                time.sleep(0.1)
+                time.sleep(1)
                 if count < master_const.ZOO_RETRY_TIMES:
                     continue
                 else:

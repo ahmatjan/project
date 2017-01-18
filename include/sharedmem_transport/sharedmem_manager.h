@@ -3,8 +3,8 @@
 
 #include <boost/thread.hpp>
 
-#include "sharedmem_transport/SharedMemoryRegisterSegment.h"
 #include "sharedmem_transport/sharedmem_util.h"
+#include "sharedmem_transport/sharedmem_api.h"
 
 namespace sharedmem_transport {
 
@@ -33,23 +33,17 @@ public:
     void check_segment_and_timeout_loop();
 
     /**
-     * \brief Service for register segment
+     * \brief Remove expired topic segment memory
      *
-     * Return register result, true or false
+     * Return remove result, true or false
      */
-    bool register_segment(sharedmem_transport::SharedMemoryRegisterSegment::Request& req,
-        sharedmem_transport::SharedMemoryRegisterSegment::Response& res);
+    bool remove_topic_segment(const char* topic_name);
 
     /**
-     * \brief TODO: Get local topic list
+     * \brief Compare block waiting time
      *
-     * Read topic list from txt and save topic list to txt is a temporary method. It
-     * will be replaced with the node state store/restore mechanism later, the mechanism
-     * is being developed by multi_master team.
-     *
-     * Return get result, true or false
      */
-    bool get_local_topic_list();
+    void compare_block_waiting_time(const char* topic_name);
 
 private:
     /**
@@ -63,6 +57,17 @@ private:
      *
      */
     void check_timeout();
+
+    /**
+     * \brief TODO: Get local topic list
+     *
+     * Read topic list from txt and save topic list to txt is a temporary method. It
+     * will be replaced with the node state store/restore mechanism later, the mechanism
+     * is being developed by multi_master team.
+     *
+     * Return get result, true or false
+     */
+    bool get_local_topic_list();
 
     /**
      * \brief Get master topic list through executing command
@@ -95,7 +100,7 @@ private:
      * Return remove result, true or false
      */
     bool remove_topic_segment(std::string topic_name);
-    
+
     /**
      * \brief Compare block waiting time
      *
@@ -108,6 +113,20 @@ private:
     std::map<std::string, std::string> _master_topic_map;
     std::map<std::string, std::string>::iterator _master_topic_map_it;
 };
+
+extern "C"
+bool remove_segment(const char* topic_name) {
+    sharedmem_transport::SharedMemoryManager shm_manager;
+    return shm_manager.remove_topic_segment(topic_name);
+}
+
+extern "C"
+bool compare_block(const char* topic_name) {
+    sharedmem_transport::SharedMemoryManager shm_manager;
+    shm_manager.compare_block_waiting_time(topic_name);
+    return true;
+}
+
 
 } // namespace sharedmem_transport
 

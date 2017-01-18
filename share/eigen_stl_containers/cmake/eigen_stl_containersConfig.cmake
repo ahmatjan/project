@@ -67,8 +67,8 @@ set(eigen_stl_containers_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(eigen_stl_containers_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/eigen_stl_containers)
-  set(eigen_stl_containers_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/eigen_stl_containers)
+  set(eigen_stl_containers_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/eigen_stl_containers)
+  set(eigen_stl_containers_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/eigen_stl_containers)
   set(eigen_stl_containers_INSTALL_PREFIX "")
   set(eigen_stl_containers_PREFIX ${eigen_stl_containers_DEVEL_PREFIX})
 else()

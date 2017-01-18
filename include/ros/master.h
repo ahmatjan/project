@@ -123,6 +123,11 @@ ROSCPP_DECL bool getNodes(V_string& nodes);
 ROSCPP_DECL bool getMetric(const std::string& key, int & value);
 
 /**
+ * \brief Register segment to segment manager
+ */
+ROSCPP_DECL bool registerSegment(const std::string& key, int& value);
+
+/**
  * @brief Set the max time this node should spend looping trying to connect to the master
  * @param The timeout.  A negative value means infinite
  */

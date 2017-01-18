@@ -103,6 +103,9 @@ public:
    */
   PublicationPtr lookupPublication(const std::string& topic);
 
+  SubscriptionPtr lookupSubscription(const std::string& topic);
+
+
   /** @brief Return the number of subscribers a node has for a particular topic:
    *
    * @param _topic The topic name to check
@@ -111,6 +114,9 @@ public:
    */
   size_t getNumSubscribers(const std::string &_topic);
   size_t getNumSubscriptions();
+
+  L_Subscription getAllSubscription();
+
 
   /**
    * \brief Return the number of publishers connected to this node on a particular topic
@@ -136,6 +142,7 @@ public:
 
   /* METRIC */
   void register_pub_callback(const PubCallbackFunc& func);
+  void pub_callback(std::string topic_name);
 
 private:
   /** if it finds a pre-existing subscription to the same topic and of the
@@ -167,6 +174,7 @@ private:
   bool unregisterPublisher(const std::string& topic);
 
   PublicationPtr lookupPublicationWithoutLock(const std::string &topic);
+  SubscriptionPtr lookupSubscriptionWithoutLock(const std::string &topic);
 
   void processPublishQueues();
 
@@ -239,7 +247,7 @@ private:
   XMLRPCManagerPtr xmlrpc_manager_;
 
   /* METRIC */
-  void pub_callback(std::string topic_name);
+  // void pub_callback(std::string topic_name);
   std::function<void (std::string)> _pub_callback_func;
 };
 

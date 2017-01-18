@@ -67,8 +67,8 @@ set(qt_gui_py_common_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(qt_gui_py_common_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/qt_gui_core/qt_gui_py_common)
-  set(qt_gui_py_common_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/qt_gui_py_common)
+  set(qt_gui_py_common_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/qt_gui_core/qt_gui_py_common)
+  set(qt_gui_py_common_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/qt_gui_py_common)
   set(qt_gui_py_common_INSTALL_PREFIX "")
   set(qt_gui_py_common_PREFIX ${qt_gui_py_common_DEVEL_PREFIX})
 else()

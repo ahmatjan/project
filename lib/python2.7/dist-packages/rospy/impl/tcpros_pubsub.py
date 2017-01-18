@@ -96,7 +96,8 @@ class TCPROSSub(TCPROSTransportProtocol):
                 'tcp_nodelay': '1' if self.tcp_nodelay else '0',
                 'md5sum': self.recv_data_class._md5sum,
                 'type': self.recv_data_class._type,
-                'callerid': rospy.names.get_caller_id()}        
+                'callerid': rospy.names.get_caller_id(),
+                'node_type' : "rospy"}        
 
 # Separate method for easier testing
 def _configure_pub_socket(sock, is_tcp_nodelay):
@@ -145,7 +146,8 @@ class TCPROSPub(TCPROSTransportProtocol):
                 'latching': '1' if self.is_latch else '0',
                 'message_definition': self.pub_data_class._full_text,
                 'md5sum': self.pub_data_class._md5sum, 
-                'callerid': rospy.names.get_caller_id() }
+                'callerid': rospy.names.get_caller_id() ,
+                'node_type' : "rospy"}
         
         # this implementation allows the user to override builtin
         # fields.  this could potentially enable some interesting
@@ -249,7 +251,7 @@ class TCPROSHandler(rospy.impl.transport.ProtocolHandler):
         protocol = TCPROSSub(resolved_name, sub.data_class, \
                              queue_size=sub.queue_size, buff_size=sub.buff_size,
                              tcp_nodelay=sub.tcp_nodelay)
-        conn = TCPROSTransport(protocol, resolved_name)
+        conn = TCPROSTransport(protocol, resolved_name, False)
         conn.set_endpoint_id(pub_uri);
 
         t = threading.Thread(name=resolved_name, target=robust_connect_subscriber, args=(conn, dest_addr, dest_port, pub_uri, sub.receive_callback,resolved_name))
@@ -358,7 +360,7 @@ class TCPROSHandler(rospy.impl.transport.ProtocolHandler):
 
                 _configure_pub_socket(sock, tcp_nodelay)
                 protocol = TCPROSPub(resolved_topic_name, topic.data_class, is_latch=topic.is_latch, headers=topic.headers)
-                transport = TCPROSTransport(protocol, resolved_topic_name)
+                transport = TCPROSTransport(protocol, resolved_topic_name, True)
                 transport.set_socket(sock, header['callerid'])
                 transport.remote_endpoint = client_addr
                 transport.write_header()

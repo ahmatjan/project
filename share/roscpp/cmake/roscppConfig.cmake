@@ -67,8 +67,8 @@ set(roscpp_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(roscpp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/ros_comm/roscpp)
-  set(roscpp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/roscpp)
+  set(roscpp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/ros_comm/roscpp)
+  set(roscpp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/roscpp)
   set(roscpp_INSTALL_PREFIX "")
   set(roscpp_PREFIX ${roscpp_DEVEL_PREFIX})
 else()
@@ -153,7 +153,7 @@ foreach(t ${roscpp_EXPORTED_TARGETS})
   endif()
 endforeach()
 
-set(depends "cpp_common;message_runtime;rosconsole;roscpp_serialization;roscpp_traits;metric_msgs;rosgraph_msgs;rostime;std_msgs;xmlrpcpp")
+set(depends "cpp_common;message_runtime;rosconsole;roscpp_serialization;roscpp_traits;metric_msgs;rosgraph_msgs;rostime;std_msgs;xmlrpcpp;roslib")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
   # the package name of the dependency must be kept in a unique variable so that it is not overwritten in recursive calls

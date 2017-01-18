@@ -1,0 +1,11 @@
+# roscpp yaml config file. it is a map including manys comm config setting.
+# topic_white_list: it is a topic vector which used shm transport.
+# transport_mode : 
+#   0 for default mode
+#   1 for conservative mode
+#   2 for simulator engine mode
+#   other for default mode
+
+topic_white_list: ["/pc_source", "/str_source", "/chatter"]
+transport_mode: 0
+

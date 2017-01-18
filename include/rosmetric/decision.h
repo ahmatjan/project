@@ -24,9 +24,13 @@
 #include <condition_variable>
 
 #include "ros/time.h"
+#include "ros/ros.h"
+#include "std_msgs/String.h"
 #include "rosmetric/types.h"
 #include "rosmetric/job_loader.h"
 #include "rosmetric/watchdog.h"
+#include "pb/status.pb.h"
+
 namespace ros {
 
 /**
@@ -37,6 +41,7 @@ namespace ros {
 */
 struct DecisionResult {
     int level;
+    adu::common::metric::NodeStatus node_status;
 };
 
 typedef std::vector<DecisionResult> V_DecRes;
@@ -147,7 +152,7 @@ private:
      * @return  DecisionResult
      * @note
     **/
-    DecisionResult or_decision(V_DecRes& v_decres);
+    DecisionResult or_decision(M_DecRes& m_decres);
 
     /**
      * @brief : basic decision funciton. all the results do and operator.
@@ -187,6 +192,7 @@ private:
     std::thread _server_thread;
     std::mutex _server_lock;
     std::condition_variable _server_condition;
+    Publisher _detail_pub;
 };
 }
 #endif  // DECISION_H

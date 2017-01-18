@@ -67,8 +67,8 @@ set(self_test_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(self_test_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/diagnostics/self_test)
-  set(self_test_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/self_test)
+  set(self_test_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/diagnostics/self_test)
+  set(self_test_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/self_test)
   set(self_test_INSTALL_PREFIX "")
   set(self_test_PREFIX ${self_test_DEVEL_PREFIX})
 else()

@@ -67,8 +67,8 @@ set(bondcpp_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(bondcpp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/bond_core/bondcpp)
-  set(bondcpp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/bondcpp)
+  set(bondcpp_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/bond_core/bondcpp)
+  set(bondcpp_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/bondcpp)
   set(bondcpp_INSTALL_PREFIX "")
   set(bondcpp_PREFIX ${bondcpp_DEVEL_PREFIX})
 else()

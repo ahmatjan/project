@@ -67,8 +67,8 @@ set(std_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(std_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/ros/std_msgs)
-  set(std_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster/baidu.adu.ros/baidu/adu/devel_isolated/std_msgs)
+  set(std_msgs_SOURCE_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/std_msgs)
+  set(std_msgs_DEVEL_PREFIX /home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/devel_isolated/std_msgs)
   set(std_msgs_INSTALL_PREFIX "")
   set(std_msgs_PREFIX ${std_msgs_DEVEL_PREFIX})
 else()
