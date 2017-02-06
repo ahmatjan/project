@@ -96,4 +96,4 @@ unset _CATKIN_ENVIRONMENT_HOOKS_COUNT
 
 #set library path for ros environment
 export LD_LIBRARY_PATH=$HOME/ros/lib:$LD_LIBRARY_PATH
-
+export ROS_SEC_DISABLE=1
