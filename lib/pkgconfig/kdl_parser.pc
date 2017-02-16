@@ -1,0 +1,8 @@
+prefix=/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install
+
+Name: kdl_parser
+Description: Description of kdl_parser
+Version: 1.11.10
+Cflags: -I/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/include -I/usr/include/eigen3 -I/usr/include
+Libs: -L/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib -lkdl_parser -l:/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib/liborocos-kdl.so -l:/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib/liborocos-kdl.so.1.3.0 -l:/usr/lib/x86_64-linux-gnu/libtinyxml.so
+Requires: roscpp rosconsole urdf

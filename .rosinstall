@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/scmbuild/workspaces_cluster/baidu.car-os.ros/baidu/car-os/install_isolated/setup.sh

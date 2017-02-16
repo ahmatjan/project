@@ -1,0 +1,13 @@
+(cl:defpackage prediction_pb_msgs-msg
+  (:use )
+  (:export
+   "<TRAJECTORYPOINT>"
+   "TRAJECTORYPOINT"
+   "<PREDICTIONOBSTACLES>"
+   "PREDICTIONOBSTACLES"
+   "<PREDICTIONOBSTACLE>"
+   "PREDICTIONOBSTACLE"
+   "<TRAJECTORY>"
+   "TRAJECTORY"
+  ))
+

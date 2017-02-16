@@ -1,0 +1,54 @@
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
+
+import subprocess
+import os
+import shutil
+import sys
+
+
+class LibUtil(object):
+
+    lib_dir = 'lib_migrate'
+
+    def is_exe(self, fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+    def list_file(self, path):
+
+        for fpath in os.listdir(path):
+            fpath = os.path.join(path, fpath)
+
+            if os.path.isdir(fpath):
+                self.list_file(fpath)
+            elif self.is_exe(fpath):
+                self.copy_dep(fpath)
+
+    def copy_dep(self, fpath):
+        cmd = "ldd %s | awk '{print $1,$3}'" % fpath
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    
+    
+        if not os.path.exists('lib_migrate'):
+            os.makedirs(self.lib_dir)
+    
+        for line in  p.stdout.readlines():
+            lib_name, lib_path = line.split(" ")
+            dst = os.path.join(self.lib_dir, lib_name)
+
+            if 'dynamic' in line or 'vdso' in line or 'ld-linux' in line:
+                continue
+
+            try:
+                self.copy_file(lib_path.strip('\n'), dst)
+            except Exception as e:
+                pass
+            print lib_name
+    
+    def copy_file(self, src, dest):
+        shutil.copy(src, dest)
+
+
+if __name__ == '__main__':
+    lu = LibUtil()
+    lu.list_file(sys.path[0])

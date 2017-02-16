@@ -1,0 +1,45 @@
+# rosmetric yaml config file. it is a sequene including manys map of each metric.
+# group: group name for metric decision. eg. common, master, zookeeper. etc
+# name: node name 
+# testtype: metric type , 0 for rosnodes, 1 for rosmaster, 2 for zookeeper
+# testfunc: get metric function name
+# testargs: get metric function args      
+# oneshot: false for 1 time get metric , ture for periodic get metric.
+# period: tick number, eg. tick time =100ms. tick number = 10 , period time = 100*10 =1000ms. 
+# if oneshot is true, after period time and then get only one time metric.
+# if you want to immediately get only one time metric , pls set period = 1, oneshort =true . 
+- group: sensor
+  name: velodyne
+  testtype: 0
+  testfunc: /velodyne_nodelet_manager/metric_check
+  testargs: metric_frequency       
+  oneshot: false  
+  period: 5
+- group: master
+  name: master  
+  testtype: 1
+  testfunc: getMetric
+  testargs: status
+  oneshot: false  
+  period: 20
+- group: zookeeper
+  name: zookeeper1 
+  testtype: 2
+  testfunc: getMetric  
+  testargs: mntr
+  oneshot: false 
+  period: 20   
+- group: zookeeper
+  name: zookeeper2
+  testtype: 2
+  testfunc: getMetric  
+  testargs: mntr
+  oneshot: false 
+  period: 20   
+- group: zookeeper
+  name: zookeeper3
+  testtype: 2
+  testfunc: getMetric  
+  testargs: mntr
+  oneshot: false 
+  period: 20    

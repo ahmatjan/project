@@ -1,0 +1,8 @@
+prefix=/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install
+
+Name: ivcon
+Description: Description of ivcon
+Version: 0.1.5
+Cflags: 
+Libs: -L/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib 
+Requires: 

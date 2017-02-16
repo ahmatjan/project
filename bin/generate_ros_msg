@@ -1,0 +1,239 @@
+#!/usr/bin/python
+import sys
+import os
+
+TYPE_MAP = {
+        'bool':'bool',
+        'double':'float64',
+        'float':'float32',
+        'int32':'int32',
+        'uint32':'uint32',
+        'int64':'int64',
+        'uint64':'uint64',
+        'sint32':'int32',
+        'sint64':'int64',
+        'fixed32':'uint32',
+        'fixed64':'uint64',
+        'sfixed64':'int64',
+        'sfixed32':'int32',
+        'string':'string',
+        'bytes':'int8',
+}
+
+STD_TYPE = [
+    "Header"
+]
+
+COMMON_TYPE = [
+        "PointENU",
+        "PointLLH",
+        "Point3D",
+        "Quaternion"
+]
+
+
+invalid_field_name = [
+    "yield"
+]
+
+pkg_map = {}
+depend_list = {}
+msg_list = {}
+tab_list = []
+
+template_dir = os.environ["ROS_ETC_DIR"] + "/../../share/pbmsg_generator"
+
+def load_msg_from_file(file_path, file_name):
+    print("Load spec from", file_name)
+    is_comm = False
+    #import_list[file_path] = []
+    with open(os.path.join(file_path, file_name), 'r') as f:
+        text = f.readlines()
+        message_list = []
+        counter_list = []
+        try:
+            for line in text:
+                line = _strip_line(line)
+
+                if line.startswith("package"):
+                    pkg = line.split(";")[0].split('.')[-1]
+                    pkg_map[file_path] = pkg + "_pb_msgs"
+                    if pkg == "common":
+                        is_comm = True
+                elif line.startswith('message'):
+                    message = []
+                    counter = 1
+                    message_list.append(message)
+                    counter_list.append(counter)
+                    if is_comm:
+                        COMMON_TYPE.append(line.split()[1])
+                elif "{" in line:
+                    counter_list[-1] = counter_list[-1] + 1
+                elif line.startswith('}'):
+                    counter_list[-1] = counter_list[-1] - 1
+                    if counter_list[-1] == 0:
+                        yield message_list[-1]
+                        del message_list[-1]
+                        del counter_list[-1]
+                else:
+                    pass
+
+                if message_list:
+                    message_list[-1].append(line)
+        except Exception, e:
+            exit(e)
+
+def _strip_line(line):
+    return line.replace('optional', '').replace('{', ' {').strip()
+
+def write_msg_file(file_path, file_name, message):
+    file_path = os.path.join("pb_msgs", file_path, "msg")
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+
+    file_name = os.path.join(file_path, file_name + ".msg")
+    with open(file_name, "w") as f:
+        f.writelines(message)
+
+
+def parse_message(message, dir):
+    is_enum = False
+    pkg = ""
+    msg_name = ""
+    msg_content = []
+    enum_type = []
+    depends = []
+    for line in message:
+        if is_enum and not "}" in line:
+            continue
+
+        is_enum = False
+        if line.startswith('enum'):
+            is_enum = True
+            enum_type.append(line.split()[1])
+            continue
+
+        if line.startswith('//'):
+            continue
+
+        if line.startswith('message'):
+            msg_name = line.split()[1]
+        elif line == "":
+            continue
+        elif line.startswith('}'):
+            continue
+        elif line.startswith('oneof'):
+            continue
+        else:
+            field_type, field_name = line.split()[:2]
+            repeated = ""
+            prefix = ""
+            if line.startswith('repeated'):
+                _, field_type, field_name = line.split()[:3]
+                repeated =  "[]"
+
+            if field_type in STD_TYPE:
+                prefix = pkg_map[dir] + "/"
+
+            if "." in field_type:
+                dep_mod, field_type = field_type.split('.')[-2:]
+                dep_mod = dep_mod + "_pb_msgs"
+                field_type = "%s/%s" % (dep_mod, field_type)
+                depends.append(dep_mod)
+
+            if field_type in COMMON_TYPE:
+                field_type = "common_pb_msgs/" + field_type
+
+            if field_name in invalid_field_name:
+                field_name = field_name + "X"
+
+            if TYPE_MAP.has_key(field_type):
+                tmp = "%s %s \n" % (prefix + TYPE_MAP[field_type] + repeated, field_name)
+            elif field_type in enum_type:
+                tmp = "%s %s \n" % (prefix + "int32" + repeated, field_name)
+            else: 
+                tmp = "%s %s \n" % (prefix + field_type + repeated, field_name)
+            msg_content.append(tmp)
+    
+    return msg_name, msg_content, depends
+
+def parse_files(dir):
+    mod_depends = []
+    msgs = []
+    pkg = ""
+    for pf in os.listdir(dir):
+        if not pf.endswith(".proto"):
+            continue
+        #file_map[pf] = os.path.join(dir,pf)
+        for message in load_msg_from_file(dir, pf):
+            name, content, depends = parse_message(message, dir)
+            msgs.append(name + ".msg")
+            if depends:
+                mod_depends.extend(depends)
+            write_msg_file(pkg_map[dir], name, content)
+            tab_list.append("%s/%s/%s\n" % (pkg_map[dir].replace("_pb_msgs", ""), pf.split(".")[0], name))
+
+    if mod_depends:
+        depend_list[pkg_map[dir]] = list(set(mod_depends))
+    try:
+        msg_list[pkg_map[dir]] = msgs
+    except:
+        pass
+
+def generate_make_file(pkg):
+    try:
+        depends = depend_list[pkg]
+    except KeyError:
+        depends = []
+    output = []
+
+    if pkg != "common_pb_msgs":
+        depends.append("common_pb_msgs")
+
+    #generate CMakeLists.txt file
+    with open(os.path.join(template_dir, "CMakeLists.txt.in"), "r") as f:
+        for line in f.readlines():
+            if "#PROJECT" in line:
+                output.append("project(%s)\n" % pkg)
+            elif "#FILE" in line:
+                for msg in msg_list[pkg]:
+                    output.append(msg + "\n")
+            elif "#MSG_DEPENDS" in line:
+                if depends:
+                    output.append("DEPENDENCIES\n")
+                    for dep in depends:
+                        output.append(dep + "\n")
+            elif "#CATKIN_DEPENDS" in line:
+                for dep in depends:
+                    output.append(dep + "\n")
+            else:
+                output.append(line)
+
+    with open(os.path.join("pb_msgs", pkg, "CMakeLists.txt"), "w") as f:
+        f.writelines(output)
+
+    output = []
+    # generate package.xml file
+    with open(os.path.join(template_dir, "package.xml.in"), "r") as f:
+        for line in f.readlines():
+            if "#PACKAGE_NAME" in line:
+                output.append("<name>%s</name>\n" % pkg)
+            elif "#DEPENDS" in line:
+                for dep in depends:
+                    output.append("<build_depend>%s</build_depend>\n" % dep)
+                    output.append("<run_depend>%s</run_depend>\n" % dep)
+            else:
+                output.append(line)
+
+    with open(os.path.join("pb_msgs", pkg, "package.xml"), "w") as f:
+        f.writelines(output)
+
+def generate_tag_file(content):
+    with open(os.path.join(os.getenv('ROS_ETC_DIR'), 'proto.list'), 'w') as f:
+	f.writelines(content)
+
+if __name__ == "__main__":
+    [parse_files(sub_dir) for sub_dir in os.listdir(os.path.abspath(".")) if os.path.isdir(sub_dir)]
+    [generate_make_file(pkg) for pkg in pkg_map.values()]
+    generate_tag_file(tab_list)
+

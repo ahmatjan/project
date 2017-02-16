@@ -1,0 +1,8 @@
+prefix=/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install
+
+Name: rqt_rviz
+Description: Description of rqt_rviz
+Version: 0.4.3
+Cflags: 
+Libs: -L/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib -lrqt_rviz
+Requires: rqt_gui rqt_gui_cpp rviz
