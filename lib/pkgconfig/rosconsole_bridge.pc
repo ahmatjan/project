@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install
-
-Name: rosconsole_bridge
-Description: Description of rosconsole_bridge
-Version: 0.4.4
-Cflags: -I/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/include -I/usr/include
-Libs: -L/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib -lrosconsole_bridge -l:/usr/lib/x86_64-linux-gnu/libconsole_bridge.so
-Requires: rosconsole

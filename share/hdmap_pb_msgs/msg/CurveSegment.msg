@@ -1,9 +1,0 @@
-LineSegment line_segment 
-Arc arc 
-Spiral spiral 
-Spline spline 
-Poly3 poly3 
-float64 s 
-Point start_position 
-float64 heading 
-float64 length 

@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install
-
-Name: theora_image_transport
-Description: Description of theora_image_transport
-Version: 1.9.3
-Cflags: -I/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/include
-Libs: -L/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib -ltheora_image_transport
-Requires: message_runtime std_msgs

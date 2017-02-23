@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install
-
-Name: random_numbers
-Description: Description of random_numbers
-Version: 0.3.0
-Cflags: -I/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/include
-Libs: -L/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib -lrandom_numbers
-Requires: 

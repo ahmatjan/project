@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install
-
-Name: bondcpp
-Description: Description of bondcpp
-Version: 1.7.16
-Cflags: -I/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/include -I/usr/include
-Libs: -L/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib -lbondcpp -l:/usr/lib/x86_64-linux-gnu/libuuid.so
-Requires: bond roscpp smclib

@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install
-
-Name: rqt_image_view
-Description: Description of rqt_image_view
-Version: 0.3.13
-Cflags: -I/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/include
-Libs: -L/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib -lrqt_image_view
-Requires: rqt_gui rqt_gui_cpp image_transport sensor_msgs cv_bridge

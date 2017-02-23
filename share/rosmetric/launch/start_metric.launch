@@ -1,4 +1,0 @@
-<launch>
-    <arg name="config_file" default="$(find rosmetric)/config.yaml"/>
-    <node name="rosmetric" pkg="rosmetric" type="rosmetric" respawn="true" args="-f $(arg config_file)" output="screen"/>
-</launch>

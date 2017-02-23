@@ -1,8 +1,0 @@
-prefix=/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install
-
-Name: pcl_conversions
-Description: Description of pcl_conversions
-Version: 0.2.1
-Cflags: -I/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/include -I/usr/include/eigen3 -I/usr/include -I/usr/include/pcl-1.7
-Libs: -L/home/scmbuild/workspaces_cluster.tmp/tmp.20161206.225249.22574/baidu/adu/ros/output/install/lib 
-Requires: pcl_msgs roscpp sensor_msgs std_msgs
